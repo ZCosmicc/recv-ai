@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Trash2, X, Plus } from 'lucide-react';
 import { Section, CVData } from '../types';
 import CVPreview, { templates } from './CVPreview';
+import Navbar from './Navbar';
 
 interface SectionsProps {
     sections: Section[];
@@ -14,6 +15,9 @@ interface SectionsProps {
     setSelectedTemplate: (id: string) => void;
     onNavigate: (step: string) => void;
     onClearData: () => void;
+    isCloud?: boolean;
+    onSave?: () => void;
+    isSaving?: boolean;
 }
 
 export default function Sections({
@@ -23,7 +27,10 @@ export default function Sections({
     selectedTemplate,
     setSelectedTemplate,
     onNavigate,
-    onClearData
+    onClearData,
+    isCloud,
+    onSave,
+    isSaving
 }: SectionsProps) {
     const [draggedSection, setDraggedSection] = useState<number | null>(null);
 
@@ -38,19 +45,7 @@ export default function Sections({
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
-            <nav className="border-b-4 border-black bg-primary text-white py-4 px-6 md:px-12 flex justify-between items-center shadow-neo">
-                <div className="flex items-center gap-2 cursor-pointer" onClick={() => onNavigate('home')}>
-                    <Image src="/LogoPrimaryReCV.png" alt="ReCV Logo" width={120} height={40} className="object-contain" />
-                </div>
-                <div className="hidden md:flex items-center gap-8 font-bold text-sm">
-                    <a href="#" className="hover:underline decoration-2 underline-offset-4" onClick={() => onNavigate('home')}>Home</a>
-                    <a href="#" className="hover:underline decoration-2 underline-offset-4">Features</a>
-                    <a href="#" className="hover:underline decoration-2 underline-offset-4">Pricing</a>
-                    <a href="#" className="hover:underline decoration-2 underline-offset-4">FAQ</a>
-                    <button className="text-black bg-white px-6 py-2 border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold">Log in</button>
-                    <button className="text-black bg-white px-6 py-2 border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold">Sign Up</button>
-                </div>
-            </nav>
+            <Navbar onNavigate={onNavigate} />
 
             <div className="flex-1 bg-white relative overflow-hidden">
                 <div className="max-w-7xl mx-auto p-4 md:p-8 relative z-10">
@@ -59,13 +54,24 @@ export default function Sections({
                             <h1 className="text-4xl md:text-5xl font-bold text-primary mb-2">Sections</h1>
                             <p className="text-black font-medium">Create and reorder sections here</p>
                         </div>
-                        <button
-                            onClick={onClearData}
-                            className="flex items-center gap-2 px-4 py-2 text-white bg-red-500 font-bold border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
-                        >
-                            <Trash2 className="w-4 h-4" />
-                            Clear Data
-                        </button>
+                        <div className="flex gap-2">
+                            {isCloud && (
+                                <button
+                                    onClick={onSave}
+                                    disabled={isSaving}
+                                    className="flex items-center gap-2 px-4 py-2 text-white bg-green-600 font-bold border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50"
+                                >
+                                    {isSaving ? 'Saving...' : 'Save'}
+                                </button>
+                            )}
+                            <button
+                                onClick={onClearData}
+                                className="flex items-center gap-2 px-4 py-2 text-white bg-red-500 font-bold border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                                Clear Data
+                            </button>
+                        </div>
                     </div>
 
                     <div className="flex flex-col-reverse md:grid md:grid-cols-2 gap-8">

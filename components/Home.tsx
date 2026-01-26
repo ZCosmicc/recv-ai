@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Menu, FileText, Zap, Download, Check, X } from 'lucide-react';
+import Navbar from './Navbar';
 
 interface HomeProps {
     onStart: () => void;
@@ -37,38 +38,15 @@ export default function Home({ onStart }: HomeProps) {
         return () => clearTimeout(timer);
     }, [text, isDeleting, loopNum, typingSpeed]);
 
-    const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-        e.preventDefault();
-        const element = document.getElementById(id);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
-
     return (
         <div className="min-h-screen bg-white font-sans text-black">
             {/* Navigation */}
-            <nav className="border-b-4 border-black bg-primary text-white py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 shadow-neo">
-                <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                    <Image src="/LogoPrimaryReCV.png" alt="ReCV Logo" width={120} height={40} className="object-contain" />
-                </div>
-                <div className="hidden md:flex items-center gap-8 font-bold text-sm">
-                    <a href="#" className="hover:underline decoration-2 underline-offset-4" onClick={(e) => scrollToSection(e, 'home')}>Home</a>
-                    <a href="#features" className="hover:underline decoration-2 underline-offset-4" onClick={(e) => scrollToSection(e, 'features')}>Features</a>
-                    <a href="#pricing" className="hover:underline decoration-2 underline-offset-4" onClick={(e) => scrollToSection(e, 'pricing')}>Pricing</a>
-                    <a href="#faq" className="hover:underline decoration-2 underline-offset-4" onClick={(e) => scrollToSection(e, 'faq')}>FAQ</a>
-                    <button className="text-black bg-white px-6 py-2 border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold">Log in</button>
-
-                    {/* FIXED: Sign Up button matches Log in style */}
-                    <button
-                        onClick={onStart}
-                        className="text-black bg-white px-6 py-2 border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold"
-                    >
-                        Sign Up
-                    </button>
-                </div>
-                <button className="md:hidden text-white"><Menu className="w-8 h-8" /></button>
-            </nav>
+            <Navbar onSectionClick={(section) => {
+                const element = document.getElementById(section);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            }} />
 
             {/* Hero Section */}
             <div id="home" className="container mx-auto px-6 py-20 md:py-32 relative overflow-hidden">

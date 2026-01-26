@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { CVData, Section } from '../types';
 import CVPreview, { templates } from './CVPreview';
+import Navbar from './Navbar';
 
 interface FillProps {
     cvData: CVData;
@@ -18,6 +19,9 @@ interface FillProps {
     setSelectedTemplate: (id: string) => void;
     onNavigate: (step: string) => void;
     onClearData: () => void;
+    isCloud?: boolean;
+    onSave?: () => void;
+    isSaving?: boolean;
 }
 
 const Tooltip = ({ id, text }: { id: string; text: string }) => {
@@ -52,7 +56,10 @@ export default function Fill({
     selectedTemplate,
     setSelectedTemplate,
     onNavigate,
-    onClearData
+    onClearData,
+    isCloud,
+    onSave,
+    isSaving
 }: FillProps) {
     const [draggedItem, setDraggedItem] = useState<number | null>(null);
     const [draggedItemType, setDraggedItemType] = useState<string | null>(null);
@@ -245,19 +252,7 @@ export default function Fill({
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
-            <nav className="border-b-4 border-black bg-primary text-white py-4 px-6 md:px-12 flex justify-between items-center shadow-neo">
-                <div className="flex items-center gap-2 cursor-pointer" onClick={() => onNavigate('home')}>
-                    <Image src="/LogoPrimaryReCV.png" alt="ReCV Logo" width={120} height={40} className="object-contain" />
-                </div>
-                <div className="hidden md:flex items-center gap-8 font-bold text-sm">
-                    <a href="#" className="hover:underline decoration-2 underline-offset-4" onClick={() => onNavigate('home')}>Home</a>
-                    <a href="#" className="hover:underline decoration-2 underline-offset-4">Features</a>
-                    <a href="#" className="hover:underline decoration-2 underline-offset-4">Pricing</a>
-                    <a href="#" className="hover:underline decoration-2 underline-offset-4">FAQ</a>
-                    <button className="text-black bg-white px-6 py-2 border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold">Log in</button>
-                    <button className="text-black bg-white px-6 py-2 border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold">Sign Up</button>
-                </div>
-            </nav>
+            <Navbar onNavigate={onNavigate} />
 
             <div className="flex-1 bg-white relative overflow-hidden">
                 <div className="max-w-7xl mx-auto p-4 md:p-8 relative z-10">
@@ -267,6 +262,15 @@ export default function Fill({
                             <p className="text-black font-medium">Complete each section below</p>
                         </div>
                         <div className="flex items-center gap-4">
+                            {isCloud && (
+                                <button
+                                    onClick={onSave}
+                                    disabled={isSaving}
+                                    className="flex items-center gap-2 px-3 py-2 text-white bg-green-600 font-bold border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all text-sm rounded-none disabled:opacity-50"
+                                >
+                                    {isSaving ? 'Saving...' : 'Save'}
+                                </button>
+                            )}
                             <button
                                 onClick={onClearData}
                                 className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 font-bold border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all text-sm rounded-none"
@@ -821,11 +825,11 @@ export default function Fill({
                             <div className="bg-white border-4 border-black shadow-neo p-6">
                                 <div className="space-y-3">
                                     <button
-                                        onClick={() => alert('AI Suggestion features would be implemented here')}
-                                        className="w-full p-4 bg-purple-500 text-white border-2 border-black shadow-neo-sm rounded-none hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold flex items-center justify-center gap-2"
+                                        onClick={() => onNavigate('review')}
+                                        className="w-full p-4 bg-purple-600 text-white border-2 border-black shadow-neo-sm rounded-none hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold flex items-center justify-center gap-2 group"
                                     >
-                                        <Sparkles className="w-5 h-5" />
-                                        Use AI Suggestions ({aiCredits} credits)
+                                        <Sparkles className="w-5 h-5 group-hover:animate-pulse" />
+                                        Review & Improve (AI)
                                     </button>
                                     <button
                                         onClick={downloadPDF}

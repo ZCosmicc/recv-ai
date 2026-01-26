@@ -6,6 +6,7 @@ import { Trash2 } from 'lucide-react';
 import { templates } from './CVPreview';
 import CVPreview from './CVPreview';
 import { CVData, Section } from '../types';
+import Navbar from './Navbar';
 
 const DUMMY_SECTIONS: Section[] = [
     { id: 'personal', name: 'Personal', required: true, enabled: true },
@@ -89,19 +90,18 @@ export default function ChooseTemplate({
 }: ChooseTemplateProps) {
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
-            <nav className="border-b-4 border-black bg-primary text-white py-4 px-6 md:px-12 flex justify-between items-center shadow-neo">
-                <div className="flex items-center gap-2 cursor-pointer" onClick={onBack}>
-                    <Image src="/LogoPrimaryReCV.png" alt="ReCV Logo" width={120} height={40} className="object-contain" />
-                </div>
-                <div className="hidden md:flex items-center gap-8 font-bold text-sm">
-                    <a href="#" className="hover:underline decoration-2 underline-offset-4" onClick={onBack}>Home</a>
-                    <a href="#" className="hover:underline decoration-2 underline-offset-4">Features</a>
-                    <a href="#" className="hover:underline decoration-2 underline-offset-4">Pricing</a>
-                    <a href="#" className="hover:underline decoration-2 underline-offset-4">FAQ</a>
-                    <button className="text-black bg-white px-6 py-2 border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold">Log in</button>
-                    <button className="text-black bg-white px-6 py-2 border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold">Sign Up</button>
-                </div>
-            </nav>
+            <React.Fragment>
+                <nav className="sticky top-0 z-50">
+                    {/* Replaced with shared Navbar component */}
+                </nav>
+                {/* Note: The parent page passes props, but for ChooseTemplate, we need to ensure Navbar handles the navigation props correctly if needed. 
+                   However, Navbar handles internal routing for login/dashboard. The "Home" link in Navbar uses onNavigate if provided.
+               */}
+            </React.Fragment>
+            {/* Actually, looking at the code, ChooseTemplate receives `onBack`. Use Navbar with onNavigate. */}
+            <Navbar onNavigate={(step) => {
+                if (step === 'home') onBack();
+            }} />
 
             <div className="flex-1 bg-white p-8 relative overflow-hidden">
                 <div className="max-w-6xl mx-auto relative z-10">
