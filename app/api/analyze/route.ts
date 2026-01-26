@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
 
-const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY,
-});
-
 export async function POST(req: Request) {
     try {
+        // Initialize Groq client at runtime to avoid build-time env var issues
+        const groq = new Groq({
+            apiKey: process.env.GROQ_API_KEY,
+        });
+
         const { cvData } = await req.json();
 
         if (!cvData) {
