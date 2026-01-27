@@ -6,6 +6,7 @@ import { createClient } from '@/utils/supabase/client';
 import Navbar from '@/components/Navbar';
 import ConfirmModal from '@/components/ConfirmModal';
 import LimitModal from '@/components/LimitModal';
+import PlanCard from '@/components/PlanCard';
 import { Plus, FileText, Trash2, Edit2, MoreVertical, Loader2, Check, X, Lock } from 'lucide-react';
 
 interface CV {
@@ -190,9 +191,7 @@ export default function Dashboard() {
                         <p className="text-gray-600">Manage your resumes</p>
                     </div>
                     <div className="flex items-center gap-4">
-                        <div className="bg-white px-4 py-2 border-2 border-black shadow-neo-sm font-bold">
-                            Plan: <span className="text-primary uppercase">{profile?.tier}</span>
-                        </div>
+                        <PlanCard tier={profile?.tier || 'guest'} />
                         <button
                             onClick={handleCreateCV}
                             disabled={creating || isProAndLimitReached}

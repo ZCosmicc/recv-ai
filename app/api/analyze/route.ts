@@ -149,10 +149,17 @@ export async function POST(req: Request) {
             });
         }
 
-        // Increment usage count
+        // Increment usage count in profile
         await supabase.from('profiles').update({
             daily_credits_used: currentUsage + 1
         }).eq('id', user.id);
+
+        // Log to usage_logs for analytics
+        await supabase.from('usage_logs').insert({
+            user_id: user.id,
+            model: 'llama-3.3-70b', // Hardcoded for now, or dynamic if we change models
+            tokens_used: 0 // We don't have exact token count from Groq SDK easily in this context, using 0 or estimate
+        });
 
         return NextResponse.json(result);
 

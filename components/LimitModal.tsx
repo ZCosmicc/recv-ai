@@ -5,7 +5,7 @@ interface LimitModalProps {
     isOpen: boolean;
     onClose: () => void;
     tier: 'guest' | 'free' | 'pro';
-    mode?: 'cv' | 'ai'; // Default to 'cv'
+    mode?: 'cv' | 'ai' | 'premium_template'; // Default to 'cv'
 }
 
 export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: LimitModalProps) {
@@ -20,7 +20,7 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                 <div className="flex justify-between items-center p-4 border-b-4 border-black bg-yellow-100">
                     <h2 className="text-xl font-bold flex items-center gap-2">
                         {isGuest ? <Lock className="w-6 h-6" /> : <Crown className="w-6 h-6" />}
-                        {mode === 'ai' ? 'Daily AI Limit Reached' : (isGuest ? 'Unlock More Space' : 'Limit Reached')}
+                        {mode === 'ai' ? 'Daily AI Limit Reached' : mode === 'premium_template' ? 'Premium Template' : (isGuest ? 'Unlock More Space' : 'Limit Reached')}
                     </h2>
                     <button onClick={onClose} className="hover:bg-yellow-200 p-1 rounded transition-colors">
                         <X className="w-6 h-6" />
@@ -37,6 +37,15 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                                 {tier === 'pro'
                                     ? "You are a power user! Your credits will reset tomorrow."
                                     : "Upgrade to Pro for 50 AI analyses per day and more!"}
+                            </p>
+                        </>
+                    ) : mode === 'premium_template' ? (
+                        <>
+                            <p className="font-medium text-lg">
+                                This template is exclusive to <strong>Pro users</strong>.
+                            </p>
+                            <p className="text-gray-600">
+                                Upgrade to <strong>Pro Plan</strong> to unlock this premium template, unlimited downloads, and AI features.
                             </p>
                         </>
                     ) : (
@@ -67,15 +76,15 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                             onClick={onClose}
                             className="flex-1 px-4 py-3 font-bold border-2 border-black hover:bg-gray-100 transition-all"
                         >
-                            {isGuest || (mode === 'ai' && tier !== 'pro') ? 'Maybe Later' : 'Got it'}
+                            {isGuest || (mode === 'ai' && tier !== 'pro') || mode === 'premium_template' ? 'Maybe Later' : 'Got it'}
                         </button>
-                        {(isGuest || (mode === 'ai' && tier !== 'pro')) && (
+                        {(isGuest || (mode === 'ai' && tier !== 'pro') || mode === 'premium_template') && (
                             <button
                                 onClick={() => { onClose(); /* Trigger checkout logic */ alert("Redirecting to payment..."); }}
                                 className="flex-1 px-4 py-3 font-bold text-black bg-yellow-400 border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-2"
                             >
                                 <Crown className="w-4 h-4" />
-                                Go Pro
+                                {mode === 'premium_template' ? 'Upgrade to Pro' : 'Go Pro'}
                             </button>
                         )}
                     </div>

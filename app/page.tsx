@@ -53,17 +53,26 @@ function BuilderContent() {
 
   // Initial Load Logic
   useEffect(() => {
-    const init = async () => {
-      // Check User Session First
-      const { data: { user } } = await supabase.auth.getUser();
+    const loadData = async (sessionUser?: any) => {
+      let user = sessionUser;
+
+      if (!user) {
+        // If no user passed, check session from storage
+        const { data: { session } } = await supabase.auth.getSession();
+        user = session?.user;
+        console.log('🔍 Session check:', { hasSession: !!session, hasUser: !!user, email: user?.email });
+      }
 
       if (user) {
+        console.log('✅ User found:', user.email);
         // Fetch Profile for Credits
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('tier, daily_credits_used')
           .eq('id', user.id)
           .single();
+
+        console.log('📊 Profile fetch:', { profile, profileError });
 
         if (profile) {
           const userTier = profile.tier || 'free'; // Default to free if logged in
@@ -73,12 +82,15 @@ function BuilderContent() {
           // Calculate Remaining
           const limit = userTier === 'pro' ? 50 : 1;
           setAiCredits(Math.max(0, limit - (profile.daily_credits_used || 0)));
+          console.log('✅ Tier set to:', userTier, 'Credits:', limit - (profile.daily_credits_used || 0));
         } else {
-          // Logged in but no profile? treat as free
+          // Logged in but no profile? treat as free instead of guest
+          console.warn('⚠️ No profile found for user, defaulting to free');
           setTier('free');
           setAiCredits(1);
         }
       } else {
+        console.log('❌ No user session found, setting to guest');
         setTier('guest');
         setAiCredits(0); // Guests have 0 credits (must login)
       }
@@ -87,38 +99,11 @@ function BuilderContent() {
         // Load from Cloud
         const { data, error } = await supabase.from('cvs').select('*').eq('id', cvId).single();
         if (data) {
-          // data.data contains the cvData JSON. 
-          // Note: our table structure stores `data` as jsonb. 
-          // We need mapping if the schema inside differs, but I used `data` to store the whole CV object in plan.
-          // Let's assume data.data IS the object containing cvData + sections + selectedTemplate etc?
-          // The dashboard creation inserted: 
-          /* 
-              data: {
-                  personal: ...,
-                  summary: ...,
-                  ...
-              }
-          */
-          // It missed `sections` and `selectedTemplate` in the DB insert structure!
-          // Use defaults if missing, or update DB schema/insert logic. 
-          // For now, I'll update Create logic later or merge here.
-          // Fix: Restore sections and template from the saved payload
-          // The payload was saved as { ...cvData, sections, selectedTemplate }
           const loadedData = data.data as any;
-
-          // Construct CVData from the payload (excluding sections/template which are separate)
-          // Actually, since we spread ...cvData into the root, the root IS a superset of CVData.
-          // We can just pass loadedData to setCvData, extra keys are fine in JS state.
           setCvData(loadedData as CVData);
-
-          if (loadedData.sections) {
-            setSections(loadedData.sections);
-          }
-          if (loadedData.selectedTemplate) {
-            setSelectedTemplate(loadedData.selectedTemplate);
-          }
-          // Restore other states if saved, else default.
-          setStep('sections'); // directly go to sections if editing
+          if (loadedData.sections) setSections(loadedData.sections);
+          if (loadedData.selectedTemplate) setSelectedTemplate(loadedData.selectedTemplate);
+          setStep('sections');
         } else {
           console.error("CV not found", error);
         }
@@ -132,7 +117,7 @@ function BuilderContent() {
             setSelectedTemplate(parsed.selectedTemplate);
             setSections(parsed.sections);
             setCvData(parsed.cvData);
-            // setAiCredits(parsed.aiCredits); // Don't trust local credits anymore
+            // setAiCredits(parsed.aiCredits); 
           }
         } catch (error) {
           console.error('Error loading from localStorage:', error);
@@ -140,7 +125,18 @@ function BuilderContent() {
       }
       setIsLoaded(true);
     };
-    init();
+
+    loadData();
+
+    // Listen for auth changes to ensure we catch login state
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      // Always reload if session exists or if we were logged in and now are not
+      loadData(session?.user);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [cvId]);
 
   // Save Logic
@@ -204,6 +200,44 @@ function BuilderContent() {
     window.location.reload();
   };
 
+  // Handle Start button - create cloud CV if logged in
+  const handleStart = async () => {
+    // If user is logged in (not guest), create a new CV in Supabase
+    if (tier !== 'guest') {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data, error } = await supabase
+          .from('cvs')
+          .insert([
+            {
+              user_id: user.id,
+              title: 'Untitled CV',
+              data: {
+                personal: { name: '', email: '', phone: '', location: '', customFields: [] },
+                summary: '',
+                experience: [],
+                education: [],
+                skills: [],
+                certification: [],
+                language: []
+              }
+            }
+          ])
+          .select()
+          .single();
+
+        if (data) {
+          // Redirect to the new CV with ID
+          window.location.href = `/?id=${data.id}`;
+          return;
+        }
+      }
+    }
+
+    // If guest or error, use local mode
+    setStep('template');
+  };
+
   if (!isLoaded) {
     return <div className="min-h-screen bg-white flex items-center justify-center">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -213,7 +247,7 @@ function BuilderContent() {
   let content;
 
   if (step === 'home') {
-    content = <Home onStart={() => setStep('template')} />;
+    content = <Home onStart={handleStart} />;
   } else if (step === 'template') {
     content = (
       <ChooseTemplate
@@ -225,7 +259,8 @@ function BuilderContent() {
         }}
         onBack={() => setStep('home')}
         onClearData={clearAllData}
-        hasSavedData={cvData.personal.name !== '' || cvData.experience.length > 0}
+        hasSavedData={!!cvData.personal.name || !!localStorage.getItem('cvBuilderData')}
+        tier={tier}
       />
     );
   } else if (step === 'sections') {
@@ -234,21 +269,17 @@ function BuilderContent() {
         sections={sections}
         setSections={(s) => {
           setSections(s);
-          // Note: Cloud save on each change might be too much. 
-          // Maybe add explicit Save button or debounce?
-          // For now, I'll pass handleSaveToCloud to Sections to use manually or debounced?
-          // Actually, Sections just lists things. Let's not auto-save every drag.
-          // But we need a Save Button UI if in Cloud mode.
         }}
         cvData={cvData}
         selectedTemplate={selectedTemplate}
         setSelectedTemplate={setSelectedTemplate}
         onNavigate={setStep}
         onClearData={clearAllData}
-        // New Props for Cloud
         isCloud={!!cvId}
         onSave={handleSaveToCloud}
         isSaving={isSaving}
+        tier={tier}
+        aiCredits={aiCredits}
       />
     );
   } else if (step === 'fill') {
@@ -263,10 +294,10 @@ function BuilderContent() {
         setSelectedTemplate={setSelectedTemplate}
         onNavigate={setStep}
         onClearData={clearAllData}
-        // New Props for Cloud
         isCloud={!!cvId}
         onSave={handleSaveToCloud}
         isSaving={isSaving}
+        tier={tier}
       />
     );
   } else if (step === 'review') {

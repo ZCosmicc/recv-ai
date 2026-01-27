@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Menu, FileText, Zap, Download, Check, X } from 'lucide-react';
+import { Menu, FileText, Zap, Download, Check, X, Sparkles } from 'lucide-react';
 import Navbar from './Navbar';
 
 interface HomeProps {
@@ -68,7 +68,7 @@ export default function Home({ onStart }: HomeProps) {
                 {/* Features Section */}
                 <div id="features" className="mt-40 text-center scroll-mt-24">
                     <h2 className="text-4xl md:text-6xl font-extrabold text-primary mb-20 uppercase tracking-tight">Features</h2>
-                    <div className="grid md:grid-cols-3 gap-10 max-w-7xl mx-auto">
+                    <div className="grid md:grid-cols-4 gap-10 max-w-7xl mx-auto">
                         {/* Feature 1 */}
                         <div className="bg-white border-4 border-black shadow-neo p-10 flex flex-col items-center h-full hover:-translate-y-2 transition-transform duration-300">
                             <div className="w-20 h-20 bg-primary border-4 border-black mb-6 flex items-center justify-center shadow-neo-sm">
@@ -78,7 +78,16 @@ export default function Home({ onStart }: HomeProps) {
                             <p className="text-gray-700 font-medium">Optimized structure and formatting to ensure your CV gets past Applicant Tracking Systems and reaches human eyes.</p>
                         </div>
 
-                        {/* Feature 2 */}
+                        {/* Feature 2 - AI Analysis */}
+                        <div className="bg-white border-4 border-black shadow-neo p-10 flex flex-col items-center h-full hover:-translate-y-2 transition-transform duration-300">
+                            <div className="w-20 h-20 bg-purple-500 border-4 border-black mb-6 flex items-center justify-center shadow-neo-sm">
+                                <Sparkles className="w-10 h-10 text-white" />
+                            </div>
+                            <h3 className="text-2xl font-bold mb-4">AI Analysis</h3>
+                            <p className="text-gray-700 font-medium">Get instant AI-powered feedback on your CV with actionable suggestions to improve content and structure.</p>
+                        </div>
+
+                        {/* Feature 3 */}
                         <div className="bg-white border-4 border-black shadow-neo p-10 flex flex-col items-center h-full hover:-translate-y-2 transition-transform duration-300">
                             <div className="w-20 h-20 bg-yellow-400 border-4 border-black mb-6 flex items-center justify-center shadow-neo-sm">
                                 <Zap className="w-10 h-10 text-black" />
@@ -87,7 +96,7 @@ export default function Home({ onStart }: HomeProps) {
                             <p className="text-gray-700 font-medium">See your changes instantly as you type. No more guessing how your resume will look after export.</p>
                         </div>
 
-                        {/* Feature 3 */}
+                        {/* Feature 4 */}
                         <div className="bg-white border-4 border-black shadow-neo p-10 flex flex-col items-center h-full hover:-translate-y-2 transition-transform duration-300">
                             <div className="w-20 h-20 bg-green-500 border-4 border-black mb-6 flex items-center justify-center shadow-neo-sm">
                                 <Download className="w-10 h-10 text-white" />
@@ -141,7 +150,7 @@ export default function Home({ onStart }: HomeProps) {
                                 </li>
                                 <li className="flex items-center gap-3 font-bold">
                                     <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-black" /></div>
-                                    Unlimited PDF Exports
+                                    Unlimited PDF Exports (No Watermark)
                                 </li>
                                 <li className="flex items-center gap-3 font-bold">
                                     <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-black" /></div>

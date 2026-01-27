@@ -10,10 +10,11 @@ interface CVPreviewProps {
 }
 
 export const templates = [
-    { id: 'minimal', name: 'Minimal', description: 'Clean black & white design' },
-    { id: 'modern', name: 'Modern', description: 'Subtle blue accents, professional' },
-    { id: 'creative', name: 'Creative', description: 'Colored sidebar, modern fonts' },
-    { id: 'corporate', name: 'Corporate', description: 'Traditional professional layout' }
+    { id: 'minimal', name: 'Minimal', description: 'Clean black & white design', isPremium: false },
+    { id: 'corporate', name: 'Corporate', description: 'Traditional professional layout', isPremium: false },
+    { id: 'modern', name: 'Modern', description: 'Subtle blue accents, professional', isPremium: true },
+    { id: 'creative', name: 'Creative', description: 'Colored sidebar, modern fonts', isPremium: true },
+    { id: 'executive', name: 'Executive', description: 'Premium dark sidebar with gold accents', isPremium: true }
 ];
 
 export default function CVPreview({ cvData, sections, selectedTemplate }: CVPreviewProps) {
@@ -470,11 +471,151 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
         </div>
     );
 
+    const renderExecutive = () => (
+        <div className="flex bg-white text-sm font-sans h-full min-h-[800px]">
+            {/* Sidebar */}
+            <div className="w-1/3 bg-gray-900 text-white p-8 border-r-4 border-yellow-500">
+                {cvData.personal.name && (
+                    <div className="mb-10 text-center">
+                        <div className="w-16 h-1 w-full bg-yellow-500 mb-4"></div>
+                        <h1 className="text-3xl font-bold uppercase tracking-widest mb-4 font-serif text-yellow-500">{cvData.personal.name}</h1>
+                        <div className="text-gray-300 text-xs space-y-2 font-medium">
+                            {cvData.personal.email && <div className="border-b border-gray-700 pb-1">{cvData.personal.email}</div>}
+                            {cvData.personal.phone && <div className="border-b border-gray-700 pb-1">{cvData.personal.phone}</div>}
+                            {cvData.personal.location && <div className="border-b border-gray-700 pb-1">{cvData.personal.location}</div>}
+                        </div>
+                        {cvData.personal.customFields.map((field, idx) => (
+                            field.label && field.value && (
+                                <div key={idx} className="text-gray-400 text-xs mt-2 text-left">
+                                    <span className="text-yellow-600 font-bold uppercase">{field.label}:</span> {field.value}
+                                </div>
+                            )
+                        ))}
+                    </div>
+                )}
+
+                {cvData.skills.length > 0 && (
+                    <div className="mb-8">
+                        <h2 className="text-sm font-bold uppercase tracking-widest text-yellow-500 mb-4 border-b border-gray-700 pb-2">Expertise</h2>
+                        <ul className="space-y-2">
+                            {cvData.skills.filter(s => s.trim()).map((skill, idx) => (
+                                <li key={idx} className="text-gray-300 text-xs flex items-center">
+                                    <span className="w-2 h-2 bg-yellow-600 mr-2 rotate-45"></span>
+                                    {skill}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
+                {cvData.language.length > 0 && (
+                    <div className="mb-8">
+                        <h2 className="text-sm font-bold uppercase tracking-widest text-yellow-500 mb-4 border-b border-gray-700 pb-2">Languages</h2>
+                        <ul className="space-y-2">
+                            {cvData.language.filter(l => l.trim()).map((lang, idx) => (
+                                <li key={idx} className="text-gray-300 text-xs">{lang}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+            </div>
+
+            {/* Main Content */}
+            <div className="w-2/3 p-8 bg-gray-50">
+                {sections.filter(s => s.enabled).map(section => {
+                    if (section.id === 'personal' || section.id === 'skills' || section.id === 'language') return null;
+
+                    if (section.id === 'summary' && cvData.summary) {
+                        return (
+                            <div key={section.id} className="mb-8">
+                                <h2 className="text-xl font-serif font-bold text-gray-900 mb-4 uppercase tracking-wider flex items-center gap-2">
+                                    <span className="w-8 h-1 bg-gray-900"></span> Profile
+                                </h2>
+                                <p className="text-gray-700 leading-relaxed text-justify">{cvData.summary}</p>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'experience' && cvData.experience.length > 0) {
+                        return (
+                            <div key={section.id} className="mb-8">
+                                <h2 className="text-xl font-serif font-bold text-gray-900 mb-6 uppercase tracking-wider flex items-center gap-2">
+                                    <span className="w-8 h-1 bg-gray-900"></span> Experience
+                                </h2>
+                                <div className="space-y-6 relative border-l-2 border-gray-200 ml-2 pl-6">
+                                    {cvData.experience.map((exp, idx) => (
+                                        <div key={idx} className="relative">
+                                            <div className="absolute -left-[31px] top-1 w-4 h-4 bg-yellow-500 border-4 border-white rounded-full"></div>
+                                            <div className="flex justify-between items-baseline mb-1">
+                                                {exp.title && <h3 className="font-bold text-gray-900 text-lg">{exp.title}</h3>}
+                                                {(exp.startDate || exp.endDate || exp.current) && (
+                                                    <p className="text-gray-500 text-xs font-bold uppercase">
+                                                        {exp.startDate && new Date(exp.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                                                        {' - '}
+                                                        {exp.current ? 'Present' : exp.endDate && new Date(exp.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {exp.company && <p className="text-gray-600 font-serif italic mb-2">{exp.company}</p>}
+                                            {exp.description && <p className="text-gray-700 text-sm whitespace-pre-line leading-relaxed">{exp.description}</p>}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'education' && cvData.education.length > 0) {
+                        return (
+                            <div key={section.id} className="mb-8">
+                                <h2 className="text-xl font-serif font-bold text-gray-900 mb-6 uppercase tracking-wider flex items-center gap-2">
+                                    <span className="w-8 h-1 bg-gray-900"></span> Education
+                                </h2>
+                                <div className="grid gap-4">
+                                    {cvData.education.map((edu, idx) => (
+                                        <div key={idx} className="bg-white p-4 shadow-sm border-l-4 border-yellow-500">
+                                            {edu.degree && <h3 className="font-bold text-gray-900">{edu.degree}</h3>}
+                                            {edu.major && <p className="text-gray-600 text-sm">{edu.major}</p>}
+                                            <div className="flex justify-between mt-2 pt-2 border-t border-gray-100 text-xs text-gray-500 uppercase font-bold">
+                                                <span>{edu.institution}</span>
+                                                {edu.year && <span>{new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric' })}</span>}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'certification' && cvData.certification.length > 0) {
+                        return (
+                            <div key={section.id} className="mb-6">
+                                <h2 className="text-xl font-serif font-bold text-gray-900 mb-4 uppercase tracking-wider flex items-center gap-2">
+                                    <span className="w-8 h-1 bg-gray-900"></span> Certifications
+                                </h2>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {cvData.certification.filter(c => c.trim()).map((cert, idx) => (
+                                        <div key={idx} className="text-gray-700 text-sm bg-white p-2 border-l-2 border-gray-900">
+                                            {cert}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    return null;
+                })}
+            </div>
+        </div>
+    );
+
     switch (selectedTemplate) {
         case 'minimal': return renderMinimal();
         case 'modern': return renderModern();
         case 'creative': return renderCreative();
         case 'corporate': return renderCorporate();
+        case 'executive': return renderExecutive();
         default: return renderMinimal();
     }
 }

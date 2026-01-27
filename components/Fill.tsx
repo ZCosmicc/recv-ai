@@ -3,11 +3,13 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import {
-    ChevronLeft, Trash2, Info, GripVertical, X, Plus, Sparkles, Download, Menu
+    ChevronLeft, Trash2, Info, GripVertical, X, Plus, Sparkles, Download, Menu, Crown, Lock
 } from 'lucide-react';
+import LimitModal from './LimitModal';
 import { CVData, Section } from '../types';
 import CVPreview, { templates } from './CVPreview';
 import Navbar from './Navbar';
+import PlanCard from './PlanCard';
 
 interface FillProps {
     cvData: CVData;
@@ -22,6 +24,7 @@ interface FillProps {
     isCloud?: boolean;
     onSave?: () => void;
     isSaving?: boolean;
+    tier?: 'guest' | 'free' | 'pro';
 }
 
 const Tooltip = ({ id, text }: { id: string; text: string }) => {
@@ -59,8 +62,23 @@ export default function Fill({
     onClearData,
     isCloud,
     onSave,
-    isSaving
+    isSaving,
+    tier = 'guest'
 }: FillProps) {
+    const [showLimitModal, setShowLimitModal] = useState(false);
+    const [activeSection, setActiveSection] = useState('contact');
+
+    const handleTemplateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newTemplateId = e.target.value;
+        const template = templates.find(t => t.id === newTemplateId);
+
+        if (template?.isPremium && tier !== 'pro') {
+            setShowLimitModal(true);
+            return;
+        }
+
+        setSelectedTemplate(newTemplateId);
+    };
     const [draggedItem, setDraggedItem] = useState<number | null>(null);
     const [draggedItemType, setDraggedItemType] = useState<string | null>(null);
 
@@ -215,11 +233,13 @@ export default function Fill({
             ${content}
           </div>
 
-          <!-- Watermark -->
+          ${tier !== 'pro' ? `
+          <!-- Watermark (only for non-Pro users) -->
           <div class="watermark">
             <div class="watermark-text">Created by</div>
             <img src="/LogoPrimaryReCV.png" alt="Logo" class="watermark-logo" />
           </div>
+          ` : ''}
 
           <script>
             window.onload = () => {
@@ -256,32 +276,37 @@ export default function Fill({
 
             <div className="flex-1 bg-white relative overflow-hidden">
                 <div className="max-w-7xl mx-auto p-4 md:p-8 relative z-10">
-                    <div className="flex justify-between items-center mb-6">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                         <div>
                             <h1 className="text-4xl md:text-5xl font-bold text-primary mb-2">Fill Your CV</h1>
                             <p className="text-black font-medium">Complete each section below</p>
                         </div>
-                        <div className="flex items-center gap-4">
+                        <div className="flex flex-wrap items-center gap-3">
+                            {/* AI Credits Card */}
+                            <div className="bg-purple-50 border-4 border-black shadow-neo px-4 py-2 font-bold text-sm flex items-center gap-2">
+                                <Sparkles className="w-4 h-4 text-purple-600" />
+                                AI Credits: <span className="text-purple-600">{aiCredits}</span>
+                            </div>
+
+                            {/* Plan Card */}
+                            <PlanCard tier={tier} />
+
                             {isCloud && (
                                 <button
                                     onClick={onSave}
                                     disabled={isSaving}
-                                    className="flex items-center gap-2 px-3 py-2 text-white bg-green-600 font-bold border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all text-sm rounded-none disabled:opacity-50"
+                                    className="px-6 py-2 text-white bg-green-600 font-bold border-4 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50"
                                 >
                                     {isSaving ? 'Saving...' : 'Save'}
                                 </button>
                             )}
                             <button
                                 onClick={onClearData}
-                                className="flex items-center gap-2 px-3 py-2 text-white bg-red-500 font-bold border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all text-sm rounded-none"
+                                className="px-6 py-2 text-white bg-red-500 font-bold border-4 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-2"
                             >
-                                <Trash2 className="w-4 h-4" />
+                                <Trash2 className="w-5 h-5" />
                                 Clear
                             </button>
-                            <div className="text-right">
-                                <p className="text-sm font-bold text-black">AI Credits</p>
-                                <p className="text-2xl font-extrabold text-primary">{aiCredits}</p>
-                            </div>
                         </div>
                     </div>
 
@@ -848,11 +873,13 @@ export default function Fill({
                                     <h2 className="text-xl text-black font-semibold">Live Preview</h2>
                                     <select
                                         value={selectedTemplate || 'minimal'}
-                                        onChange={(e) => setSelectedTemplate(e.target.value)}
+                                        onChange={handleTemplateChange}
                                         className="px-3 py-1 border-2 border-black rounded-none text-sm text-black font-bold focus:shadow-neo-sm outline-none"
                                     >
                                         {templates.map(t => (
-                                            <option key={t.id} value={t.id}>{t.name}</option>
+                                            <option key={t.id} value={t.id}>
+                                                {t.isPremium && tier !== 'pro' ? '🔒 ' : ''}{t.name}{t.isPremium ? ' (Pro)' : ''}
+                                            </option>
                                         ))}
                                     </select>
                                 </div>
@@ -867,6 +894,13 @@ export default function Fill({
                     </div>
                 </div>
             </div>
+
+            <LimitModal
+                isOpen={showLimitModal}
+                onClose={() => setShowLimitModal(false)}
+                tier={tier || 'guest'}
+                mode="premium_template"
+            />
         </div>
     );
 }

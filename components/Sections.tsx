@@ -2,10 +2,12 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Trash2, X, Plus } from 'lucide-react';
-import { Section, CVData } from '../types';
+import { Trash2, X, Plus, Sparkles, Crown, Lock } from 'lucide-react';
+import LimitModal from './LimitModal';
 import CVPreview, { templates } from './CVPreview';
+import { Section, CVData } from '../types';
 import Navbar from './Navbar';
+import PlanCard from './PlanCard';
 
 interface SectionsProps {
     sections: Section[];
@@ -18,6 +20,8 @@ interface SectionsProps {
     isCloud?: boolean;
     onSave?: () => void;
     isSaving?: boolean;
+    tier?: 'guest' | 'free' | 'pro';
+    aiCredits?: number;
 }
 
 export default function Sections({
@@ -30,8 +34,23 @@ export default function Sections({
     onClearData,
     isCloud,
     onSave,
-    isSaving
+    isSaving,
+    tier = 'guest',
+    aiCredits = 0
 }: SectionsProps) {
+    const [showLimitModal, setShowLimitModal] = useState(false);
+
+    const handleTemplateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newTemplateId = e.target.value;
+        const template = templates.find(t => t.id === newTemplateId);
+
+        if (template?.isPremium && tier !== 'pro') {
+            setShowLimitModal(true);
+            return;
+        }
+
+        setSelectedTemplate(newTemplateId);
+    };
     const [draggedSection, setDraggedSection] = useState<number | null>(null);
 
     const handleDrop = (index: number) => {
@@ -49,27 +68,36 @@ export default function Sections({
 
             <div className="flex-1 bg-white relative overflow-hidden">
                 <div className="max-w-7xl mx-auto p-4 md:p-8 relative z-10">
-                    <div className="mb-6 flex justify-between items-start">
+                    <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                             <h1 className="text-4xl md:text-5xl font-bold text-primary mb-2">Sections</h1>
                             <p className="text-black font-medium">Create and reorder sections here</p>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-3 items-center">
+                            {/* AI Credits Card */}
+                            <div className="bg-purple-50 border-4 border-black shadow-neo px-4 py-2 font-bold text-sm flex items-center gap-2">
+                                <Sparkles className="w-4 h-4 text-purple-600" />
+                                AI Credits: <span className="text-purple-600">{aiCredits}</span>
+                            </div>
+
+                            {/* Plan Card */}
+                            <PlanCard tier={tier} />
+
                             {isCloud && (
                                 <button
                                     onClick={onSave}
                                     disabled={isSaving}
-                                    className="flex items-center gap-2 px-4 py-2 text-white bg-green-600 font-bold border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50"
+                                    className="px-6 py-2 text-white bg-green-600 font-bold border-4 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50"
                                 >
                                     {isSaving ? 'Saving...' : 'Save'}
                                 </button>
                             )}
                             <button
                                 onClick={onClearData}
-                                className="flex items-center gap-2 px-4 py-2 text-white bg-red-500 font-bold border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                                className="px-6 py-2 text-white bg-red-500 font-bold border-4 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-2"
                             >
-                                <Trash2 className="w-4 h-4" />
-                                Clear Data
+                                <Trash2 className="w-5 h-5" />
+                                Clear
                             </button>
                         </div>
                     </div>
@@ -157,11 +185,13 @@ export default function Sections({
                                 <h2 className="text-xl text-black font-semibold">Live Preview</h2>
                                 <select
                                     value={selectedTemplate || 'minimal'}
-                                    onChange={(e) => setSelectedTemplate(e.target.value)}
-                                    className="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600"
+                                    onChange={handleTemplateChange}
+                                    className="px-3 py-1 border-2 border-black rounded-none text-sm text-black font-bold focus:shadow-neo-sm outline-none"
                                 >
                                     {templates.map(t => (
-                                        <option key={t.id} value={t.id}>{t.name}</option>
+                                        <option key={t.id} value={t.id}>
+                                            {t.isPremium && tier !== 'pro' ? '🔒 ' : ''}{t.name}{t.isPremium ? ' (Pro)' : ''}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
@@ -172,6 +202,13 @@ export default function Sections({
                     </div>
                 </div>
             </div>
+
+            <LimitModal
+                isOpen={showLimitModal}
+                onClose={() => setShowLimitModal(false)}
+                tier={tier}
+                mode="premium_template"
+            />
         </div>
     );
 }

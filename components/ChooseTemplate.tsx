@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Crown, Lock } from 'lucide-react';
 import { templates } from './CVPreview';
 import CVPreview from './CVPreview';
 import { CVData, Section } from '../types';
 import Navbar from './Navbar';
+import LimitModal from './LimitModal';
 
 const DUMMY_SECTIONS: Section[] = [
     { id: 'personal', name: 'Personal', required: true, enabled: true },
@@ -79,6 +80,7 @@ interface ChooseTemplateProps {
     onBack: () => void;
     onClearData: () => void;
     hasSavedData: boolean;
+    tier?: 'guest' | 'free' | 'pro';
 }
 
 export default function ChooseTemplate({
@@ -86,8 +88,11 @@ export default function ChooseTemplate({
     onSelectTemplate,
     onBack,
     onClearData,
-    hasSavedData
+    hasSavedData,
+    tier = 'guest'
 }: ChooseTemplateProps) {
+    const [showLimitModal, setShowLimitModal] = useState(false);
+
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <React.Fragment>
@@ -121,31 +126,66 @@ export default function ChooseTemplate({
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-8">
-                        {templates.map(template => (
-                            <button
-                                key={template.id}
-                                onClick={() => onSelectTemplate(template.id)}
-                                className={`p-6 bg-white border-4 border-black transition-transform duration-300 hover:-translate-y-2 shadow-neo text-left group relative flex flex-col h-full ${selectedTemplate === template.id ? 'bg-primary' : ''}`}
-                            >
-                                <div className={`w-full h-[250px] md:h-[450px] border-2 border-black mb-4 overflow-hidden relative bg-gray-100 ${selectedTemplate === template.id ? 'bg-white' : ''}`}>
-                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[210mm] origin-top transform scale-[0.22] md:scale-[0.4] pointer-events-none select-none bg-white shadow-lg mt-4">
-                                        <CVPreview
-                                            cvData={DUMMY_CV_DATA}
-                                            sections={DUMMY_SECTIONS}
-                                            selectedTemplate={template.id}
-                                        />
+                        {templates.map(template => {
+                            const isLocked = (template.isPremium && tier !== 'pro');
+                            return (
+                                <button
+                                    key={template.id}
+                                    onClick={() => {
+                                        if (isLocked) {
+                                            setShowLimitModal(true);
+                                            return;
+                                        }
+                                        onSelectTemplate(template.id);
+                                    }}
+                                    className={`p-6 bg-white border-4 border-black transition-transform duration-300 shadow-neo text-left group relative flex flex-col h-full ${selectedTemplate === template.id ? 'bg-primary' : ''} ${!isLocked ? 'hover:-translate-y-2' : 'cursor-not-allowed opacity-90'}`}
+                                >
+                                    {template.isPremium && (
+                                        <div className="absolute top-4 right-4 z-20 bg-yellow-400 text-black px-3 py-1 font-bold border-2 border-black shadow-neo-sm flex items-center gap-2 text-xs">
+                                            <Crown className="w-3 h-3" /> PRO
+                                        </div>
+                                    )}
+
+                                    <div className={`w-full h-[250px] md:h-[450px] border-2 border-black mb-4 overflow-hidden relative bg-gray-100 ${selectedTemplate === template.id ? 'bg-white' : ''}`}>
+                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[210mm] origin-top transform scale-[0.22] md:scale-[0.4] pointer-events-none select-none bg-white shadow-lg mt-4">
+                                            <CVPreview
+                                                cvData={DUMMY_CV_DATA}
+                                                sections={DUMMY_SECTIONS}
+                                                selectedTemplate={template.id}
+                                            />
+                                        </div>
+                                        {/* Overlay to Prevent Interaction */}
+                                        <div className="absolute inset-0 z-10"></div>
+
+                                        {/* Lock Overlay for Non-Pro (Hover Only) */}
+                                        {isLocked && (
+                                            <div className="absolute inset-0 z-10 bg-black/20 flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <div className="bg-white border-4 border-black p-4 shadow-neo flex flex-col items-center transform scale-90 group-hover:scale-100 transition-transform duration-300 relative z-20">
+                                                    <Lock className="w-8 h-8 text-black mb-2" />
+                                                    <span className="font-bold text-sm">LOCKED</span>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-                                    {/* Overlay to Prevent Interaction */}
-                                    <div className="absolute inset-0 z-10"></div>
-                                </div>
-                                <div className={`w-full text-center py-2 font-bold border-2 border-black ${selectedTemplate === template.id ? 'bg-primary text-white border-white' : 'bg-primary text-white'}`}>
-                                    {template.name}
-                                </div>
-                            </button>
-                        ))}
+                                    <div className={`w-full text-center py-2 font-bold border-2 border-black ${isLocked
+                                            ? 'bg-yellow-400 text-black border-black'
+                                            : `bg-primary text-white ${selectedTemplate === template.id ? 'border-white' : ''}`
+                                        }`}>
+                                        {isLocked ? 'Upgrade to Pro' : template.name}
+                                    </div>
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
             </div>
+
+            <LimitModal
+                isOpen={showLimitModal}
+                onClose={() => setShowLimitModal(false)}
+                tier={tier}
+                mode="premium_template"
+            />
         </div>
     );
 }
