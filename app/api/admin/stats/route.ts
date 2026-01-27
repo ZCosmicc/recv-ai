@@ -1,5 +1,20 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { createClient as createServiceClient } from '@supabase/supabase-js';
+
+// Service role client for admin operations (bypasses RLS)
+function getServiceClient() {
+    return createServiceClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        {
+            auth: {
+                autoRefreshToken: false,
+                persistSession: false
+            }
+        }
+    );
+}
 
 export async function GET(req: Request) {
     const supabase = await createClient();
@@ -20,38 +35,39 @@ export async function GET(req: Request) {
         return NextResponse.json({ error: 'Forbidden: Admins only' }, { status: 403 });
     }
 
-    // 2. Fetch Stats
+    // 2. Fetch Stats - use service client to bypass RLS
+    const serviceSupabase = getServiceClient();
     const now = new Date();
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
     // A. Global Requests (Last 24h)
-    const { count: requests24h } = await supabase
+    const { count: requests24h } = await serviceSupabase
         .from('usage_logs')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', oneDayAgo);
 
     // B. Total AI Usage (All time)
-    const { count: totalUsage } = await supabase
+    const { count: totalUsage } = await serviceSupabase
         .from('usage_logs')
         .select('*', { count: 'exact', head: true });
 
     // C. User Stats
-    const { count: totalUsers } = await supabase
+    const { count: totalUsers } = await serviceSupabase
         .from('profiles')
         .select('*', { count: 'exact', head: true });
 
-    const { count: newUsers7d } = await supabase
+    const { count: newUsers7d } = await serviceSupabase
         .from('profiles')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', sevenDaysAgo);
 
-    const { count: proUsers } = await supabase
+    const { count: proUsers } = await serviceSupabase
         .from('profiles')
         .select('*', { count: 'exact', head: true })
         .eq('tier', 'pro');
 
-    const { count: freeUsers } = await supabase
+    const { count: freeUsers } = await serviceSupabase
         .from('profiles')
         .select('*', { count: 'exact', head: true })
         .or('tier.eq.free,tier.is.null,tier.eq.guest'); // Count guest/free together or separately? 
@@ -64,7 +80,7 @@ export async function GET(req: Request) {
     // OR use a raw query if we had a function. 
     // For small scale, fetching last few hundred logs is fine.
     // Better: Fetch top users by daily_credits_used from profiles!
-    const { data: topUsers } = await supabase
+    const { data: topUsers } = await serviceSupabase
         .from('profiles')
         .select('email, daily_credits_used, tier')
         .order('daily_credits_used', { ascending: false })
