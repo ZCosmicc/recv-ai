@@ -197,8 +197,8 @@ export default function Dashboard() {
                             onClick={handleCreateCV}
                             disabled={creating || isProAndLimitReached}
                             className={`flex items-center gap-2 px-6 py-3 border-2 border-black shadow-neo transition-all font-bold ${isProAndLimitReached
-                                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed shadow-none'
-                                    : 'bg-primary text-white hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none'
+                                ? 'bg-gray-200 text-gray-500 cursor-not-allowed shadow-none'
+                                : 'bg-primary text-white hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none'
                                 }`}
                         >
                             {creating ? <Loader2 className="animate-spin w-4 h-4" /> : isLimitReached && !isProAndLimitReached ? <Lock className="w-5 h-5" /> : <Plus className="w-5 h-5" />}

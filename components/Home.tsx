@@ -117,7 +117,7 @@ export default function Home({ onStart }: HomeProps) {
                                 </li>
                                 <li className="flex items-center gap-3 font-bold text-gray-400">
                                     <X className="w-6 h-6 text-red-500 border-2 border-gray-400 p-0.5" />
-                                    AI Suggestions
+                                    1 AI Analysis per day
                                 </li>
                                 <li className="flex items-center gap-3 font-bold text-gray-400">
                                     <X className="w-6 h-6 text-red-500 border-2 border-gray-400 p-0.5" />
@@ -145,7 +145,7 @@ export default function Home({ onStart }: HomeProps) {
                                 </li>
                                 <li className="flex items-center gap-3 font-bold">
                                     <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-black" /></div>
-                                    AI Content Enhancer
+                                    50 AI Analyses per day
                                 </li>
                                 <li className="flex items-center gap-3 font-bold">
                                     <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-black" /></div>

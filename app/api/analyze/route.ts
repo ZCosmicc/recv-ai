@@ -1,9 +1,54 @@
 import { NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
+import { createClient } from '@/utils/supabase/server';
 
 export async function POST(req: Request) {
     try {
-        // Initialize Groq client at runtime to avoid build-time env var issues
+        const supabase = await createClient();
+
+        // 1. Auth Check
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Unauthorized. Please log in.' }, { status: 401 });
+        }
+
+        // 2. Load Profile & Check Credits
+        const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('tier, daily_credits_used, last_credit_reset')
+            .eq('id', user.id)
+            .single();
+
+        if (profileError || !profile) {
+            return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
+        }
+
+        const now = new Date();
+        const lastReset = new Date(profile.last_credit_reset || 0);
+        const limit = profile.tier === 'pro' ? 50 : 1; // 50 for Pro, 1 for Free
+
+        // Check if 24 hours have passed since last reset
+        const hoursSuccess = Math.abs(now.getTime() - lastReset.getTime()) / 36e5;
+        let currentUsage = profile.daily_credits_used || 0;
+
+        if (hoursSuccess >= 24) {
+            // Reset credits
+            currentUsage = 0;
+            await supabase.from('profiles').update({
+                daily_credits_used: 0,
+                last_credit_reset: now.toISOString()
+            }).eq('id', user.id);
+        }
+
+        // Enforce Limit
+        if (currentUsage >= limit) {
+            return NextResponse.json(
+                { error: 'Daily limit reached. Upgrade to Pro for more.', code: 'LIMIT_REACHED' },
+                { status: 403 }
+            );
+        }
+
+        // Initialize Groq client
         const groq = new Groq({
             apiKey: process.env.GROQ_API_KEY,
         });
@@ -103,6 +148,11 @@ export async function POST(req: Request) {
                 return item;
             });
         }
+
+        // Increment usage count
+        await supabase.from('profiles').update({
+            daily_credits_used: currentUsage + 1
+        }).eq('id', user.id);
 
         return NextResponse.json(result);
 

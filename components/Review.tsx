@@ -4,6 +4,7 @@ import { CVData, Section } from '../types';
 import CVPreview from './CVPreview';
 import { downloadPDF } from '../utils/pdf';
 import Toast, { ToastType } from './Toast';
+import LimitModal from './LimitModal';
 
 interface ReviewProps {
     cvData: CVData;
@@ -11,6 +12,9 @@ interface ReviewProps {
     onNavigate: (step: string) => void;
     sections: Section[];
     selectedTemplate: string | null;
+    aiCredits: number;
+    setAiCredits: (credits: number) => void;
+    tier: 'guest' | 'free' | 'pro';
 }
 
 // Mock Data Types
@@ -28,13 +32,14 @@ interface ReviewResult {
     }[];
 }
 
-export default function Review({ cvData, setCvData, onNavigate, sections, selectedTemplate }: ReviewProps) {
+export default function Review({ cvData, setCvData, onNavigate, sections, selectedTemplate, aiCredits, setAiCredits, tier }: ReviewProps) {
     const [analyzing, setAnalyzing] = useState(false);
     const [result, setResult] = useState<ReviewResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [appliedFixes, setAppliedFixes] = useState<Set<number>>(new Set());
     const [ignoredItems, setIgnoredItems] = useState<Set<number>>(new Set());
     const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
+    const [showLimitModal, setShowLimitModal] = useState(false);
 
     // Refinement State
     const [refiningIdx, setRefiningIdx] = useState<number | null>(null);
@@ -127,6 +132,24 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
     };
 
     const handleAnalyze = async () => {
+        // 1. Guest Check -> Must Login
+        if (tier === 'guest') {
+            window.location.href = '/login'; // Or open a login modal
+            return;
+        }
+
+        // 2. Credit Check
+        if (tier === 'free' && aiCredits <= 0) {
+            setShowLimitModal(true);
+            return;
+        }
+
+        // Pro users: We check 50 limit on backend, but UI should also respect it if we passed it correctly
+        if (tier === 'pro' && aiCredits <= 0) {
+            setToast({ message: 'Daily pro limit reached (50/day). Please try again tomorrow.', type: 'error' });
+            return;
+        }
+
         setAnalyzing(true);
         setError(null);
 
@@ -140,13 +163,22 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
             const data = await response.json();
 
             if (!response.ok) {
+                if (data.code === 'LIMIT_REACHED') {
+                    setShowLimitModal(true);
+                    throw new Error(data.error); // Stop execution
+                }
                 throw new Error(data.error || 'Failed to analyze CV');
             }
 
             setResult(data);
+            // Decrement local credits on success to reflect change immediately
+            setAiCredits(Math.max(0, aiCredits - 1));
+
         } catch (err: any) {
-            console.error(err);
-            setError(err.message || 'Something went wrong. Please try again.');
+            if (err.message !== 'Daily limit reached. Upgrade to Pro for more.') {
+                console.error(err);
+                setError(err.message || 'Something went wrong. Please try again.');
+            }
         } finally {
             setAnalyzing(false);
         }
@@ -196,9 +228,15 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                         className="px-8 py-3 font-bold text-white bg-primary border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <Wand2 className="w-5 h-5" />
-                        {analyzing ? 'Analyzing...' : 'Analyze My CV'}
+                        {analyzing ? 'Analyzing...' : tier === 'guest' ? 'Log in to Analyze' : `Analyze My CV (${aiCredits} left)`}
                     </button>
                 </div>
+                <LimitModal
+                    isOpen={showLimitModal}
+                    onClose={() => setShowLimitModal(false)}
+                    tier={tier}
+                    mode="ai"
+                />
             </div>
         );
     }

@@ -42,7 +42,11 @@ function BuilderContent() {
     certification: [],
     language: []
   });
-  const [aiCredits, setAiCredits] = useState<number>(3);
+
+  // Auth & Credit State
+  const [tier, setTier] = useState<'guest' | 'free' | 'pro'>('guest');
+  const [dailyUsage, setDailyUsage] = useState<number>(0);
+  const [aiCredits, setAiCredits] = useState<number>(0); // Computed remaining credits
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
@@ -50,6 +54,35 @@ function BuilderContent() {
   // Initial Load Logic
   useEffect(() => {
     const init = async () => {
+      // Check User Session First
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (user) {
+        // Fetch Profile for Credits
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('tier, daily_credits_used')
+          .eq('id', user.id)
+          .single();
+
+        if (profile) {
+          const userTier = profile.tier || 'free'; // Default to free if logged in
+          setTier(userTier);
+          setDailyUsage(profile.daily_credits_used || 0);
+
+          // Calculate Remaining
+          const limit = userTier === 'pro' ? 50 : 1;
+          setAiCredits(Math.max(0, limit - (profile.daily_credits_used || 0)));
+        } else {
+          // Logged in but no profile? treat as free
+          setTier('free');
+          setAiCredits(1);
+        }
+      } else {
+        setTier('guest');
+        setAiCredits(0); // Guests have 0 credits (must login)
+      }
+
       if (cvId) {
         // Load from Cloud
         const { data, error } = await supabase.from('cvs').select('*').eq('id', cvId).single();
@@ -99,7 +132,7 @@ function BuilderContent() {
             setSelectedTemplate(parsed.selectedTemplate);
             setSections(parsed.sections);
             setCvData(parsed.cvData);
-            setAiCredits(parsed.aiCredits);
+            // setAiCredits(parsed.aiCredits); // Don't trust local credits anymore
           }
         } catch (error) {
           console.error('Error loading from localStorage:', error);
@@ -244,6 +277,9 @@ function BuilderContent() {
         onNavigate={setStep}
         sections={sections}
         selectedTemplate={selectedTemplate}
+        aiCredits={aiCredits}
+        setAiCredits={setAiCredits}
+        tier={tier}
       />
     );
   } else {
