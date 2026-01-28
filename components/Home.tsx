@@ -161,8 +161,28 @@ export default function Home({ onStart }: HomeProps) {
                                     Priority Support
                                 </li>
                             </ul>
-                            <button className="w-full py-4 border-4 border-black bg-yellow-400 text-black font-extrabold text-xl shadow-neo-sm hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
-                                Go Pro
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        const res = await fetch('/api/payment/create', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' }
+                                        });
+                                        const data = await res.json();
+
+                                        if (data.paymentUrl) {
+                                            window.location.href = data.paymentUrl;
+                                        } else {
+                                            alert('Please log in first to upgrade to Pro');
+                                        }
+                                    } catch (error) {
+                                        console.error('Payment error:', error);
+                                        alert('Please log in first');
+                                    }
+                                }}
+                                className="w-full py-4 border-4 border-black bg-yellow-400 text-black font-extrabold text-xl shadow-neo-sm hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                            >
+                                Go Pro - Rp.15.000
                             </button>
                         </div>
                     </div>

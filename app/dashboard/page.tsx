@@ -288,6 +288,7 @@ export default function Dashboard() {
                 isOpen={isLimitModalOpen}
                 onClose={() => setIsLimitModalOpen(false)}
                 tier={profile?.tier || 'guest'}
+                mode="cv"
             />
         </div>
     );
