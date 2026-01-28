@@ -103,7 +103,7 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                                 className="flex-1 px-4 py-3 font-bold text-black bg-yellow-400 border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-2"
                             >
                                 <Crown className="w-4 h-4" />
-                                {mode === 'premium_template' ? 'Upgrade to Pro' : 'Go Pro - Rp.15.000'}
+                                Go Pro
                             </button>
                         ) : null}
                     </div>
