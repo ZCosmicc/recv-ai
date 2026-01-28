@@ -50,7 +50,7 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                         </>
                     ) : (
                         /* CV Limit Logic */
-                        isGuest ? (
+                        isGuest || isFree ? (
                             <>
                                 <p className="font-medium text-lg">
                                     You've used your <strong>1 free CV</strong>.
@@ -60,6 +60,7 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                                 </p>
                             </>
                         ) : (
+                            /* Pro user who reached 4 CV limit */
                             <>
                                 <p className="font-medium text-lg">
                                     You've reached the maximum limit of <strong>4 CVs</strong>.
@@ -76,9 +77,9 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                             onClick={onClose}
                             className="flex-1 px-4 py-3 font-bold border-2 border-black hover:bg-gray-100 transition-all"
                         >
-                            {isGuest || (mode === 'ai' && tier !== 'pro') || mode === 'premium_template' ? 'Maybe Later' : 'Got it'}
+                            {(isGuest || isFree || (mode === 'ai' && tier !== 'pro') || mode === 'premium_template') ? 'Maybe Later' : 'Got it'}
                         </button>
-                        {(isGuest || (mode === 'ai' && tier !== 'pro') || mode === 'premium_template') && (
+                        {((isGuest || isFree) && mode === 'cv') || (mode === 'ai' && tier !== 'pro') || mode === 'premium_template' ? (
                             <button
                                 onClick={async () => {
                                     try {
@@ -104,7 +105,7 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                                 <Crown className="w-4 h-4" />
                                 {mode === 'premium_template' ? 'Upgrade to Pro' : 'Go Pro - Rp.15.000'}
                             </button>
-                        )}
+                        ) : null}
                     </div>
                 </div>
             </div>

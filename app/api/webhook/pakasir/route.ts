@@ -60,38 +60,53 @@ export async function POST(req: Request) {
         );
 
         // 7. Find user by ID prefix and update to Pro
-        const { data: profiles } = await supabase
+        console.log(`🔍 Searching for user with ID starting with: ${userIdPrefix}`);
+
+        const { data: profiles, error: profileError } = await supabase
             .from('profiles')
             .select('id, email, tier')
-            .ilike('id', `${userIdPrefix}%`)
+            .like('id', `${userIdPrefix}%`)
             .limit(1);
 
+        console.log('📊 Profile query result:', { profiles, profileError });
+
         if (!profiles || profiles.length === 0) {
+            console.error(`❌ User not found with prefix: ${userIdPrefix}`);
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
         const userId = profiles[0].id;
+        console.log(`✅ Found user: ${userId} (${profiles[0].email})`);
 
-        // 8. Set Pro tier with 30-day expiry
+        // 8. Calculate expiry date (30 days from now)
         const expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + 30);
 
-        const { error: updateError } = await supabase.from('profiles').update({
-            tier: 'pro',
-            pro_expires_at: expiryDate.toISOString()
-        }).eq('id', userId);
+        // 9. Update user to Pro tier
+        const { error: updateError } = await supabase
+            .from('profiles')
+            .update({
+                tier: 'pro',
+                pro_expires_at: expiryDate.toISOString()
+            })
+            .eq('id', userId);
 
         if (updateError) {
-            console.error('Failed to upgrade user:', updateError);
-            return NextResponse.json({ error: 'Failed to upgrade user' }, { status: 500 });
+            console.error('❌ Update error:', updateError);
+            return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
         }
 
-        console.log(`✅ User ${userId} upgraded to Pro via ${payment_method}`);
+        console.log(`✅ User ${userId} upgraded to Pro until ${expiryDate.toISOString()}`);
 
-        return NextResponse.json({ message: 'Payment processed successfully' });
+        return NextResponse.json({
+            success: true,
+            message: 'Payment processed and user upgraded to Pro',
+            userId,
+            expiresAt: expiryDate.toISOString()
+        });
 
     } catch (error: any) {
-        console.error('Webhook Error:', error);
+        console.error('❌ Webhook Error:', error);
         return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
     }
 }
