@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
 import { createClient } from '@/utils/supabase/server';
+import { refineRequestSchema } from '@/lib/validation';
 
 export async function POST(req: Request) {
     try {
@@ -53,11 +54,18 @@ export async function POST(req: Request) {
             apiKey: process.env.GROQ_API_KEY,
         });
 
-        const { original_text, current_suggestion, user_instruction, section_context } = await req.json();
+        // Parse and validate request body
+        const body = await req.json();
+        const validationResult = refineRequestSchema.safeParse(body);
 
-        if (!user_instruction) {
-            return NextResponse.json({ error: 'Instruction required' }, { status: 400 });
+        if (!validationResult.success) {
+            return NextResponse.json({
+                error: 'Invalid request data',
+                details: validationResult.error.format()
+            }, { status: 400 });
         }
+
+        const { original_text, current_suggestion, user_instruction, section_context } = validationResult.data;
 
         const prompt = `
         You are an expert CV editor assistant.

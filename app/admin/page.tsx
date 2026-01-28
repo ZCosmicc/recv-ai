@@ -10,6 +10,7 @@ export default function AdminPage() {
     const [stats, setStats] = useState<any>(null);
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isAuthorized, setIsAuthorized] = useState(false);
     const [userSearch, setUserSearch] = useState('');
     const [updating, setUpdating] = useState<string | null>(null);
     const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; userId: string; currentTier: string }>({ isOpen: false, userId: '', currentTier: '' });
@@ -22,15 +23,23 @@ export default function AdminPage() {
         try {
             // 1. Fetch Stats
             const statsRes = await fetch('/api/admin/stats');
-            if (statsRes.status === 401) return router.push('/login');
-            if (statsRes.status === 403) return router.push('/'); // Redirect non-admins
+            if (statsRes.status === 401) {
+                router.push('/login');
+                return;
+            }
+            if (statsRes.status === 403) {
+                router.push('/'); // Redirect non-admins
+                return;
+            }
             const statsData = await statsRes.json();
             setStats(statsData);
+            setIsAuthorized(true); // Only set authorized if we get past auth checks
 
             // 2. Fetch Users
             fetchUsers();
         } catch (error) {
             console.error(error);
+            router.push('/');
         } finally {
             setLoading(false);
         }
@@ -77,7 +86,17 @@ export default function AdminPage() {
         }
     };
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center">Loading Admin...</div>;
+    // Show loading state while checking authorization
+    if (loading || !isAuthorized) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                    <div className="text-2xl font-bold mb-2">Loading Admin...</div>
+                    <div className="text-gray-500">Verifying access</div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 font-sans text-black">

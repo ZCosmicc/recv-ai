@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
 import { createClient } from '@/utils/supabase/server';
+import { analyzeRequestSchema } from '@/lib/validation';
 
 export async function POST(req: Request) {
     try {
@@ -53,11 +54,18 @@ export async function POST(req: Request) {
             apiKey: process.env.GROQ_API_KEY,
         });
 
-        const { cvData } = await req.json();
+        // Parse and validate request body
+        const body = await req.json();
+        const validationResult = analyzeRequestSchema.safeParse(body);
 
-        if (!cvData) {
-            return NextResponse.json({ error: 'No CV data provided' }, { status: 400 });
+        if (!validationResult.success) {
+            return NextResponse.json({
+                error: 'Invalid request data',
+                details: validationResult.error.format()
+            }, { status: 400 });
         }
+
+        const { cvData } = validationResult.data;
 
         // 1. Flatten CV Data for the prompt
         const cvText = JSON.stringify(cvData, null, 2);
