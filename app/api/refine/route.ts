@@ -16,7 +16,7 @@ export async function POST(req: Request) {
         // 2. Load Profile & Check Credits
         const { data: profile, error: profileError } = await supabase
             .from('profiles')
-            .select('tier, daily_credits_used, last_credit_reset')
+            .select('tier, daily_credits_used, last_credit_reset, pro_expires_at')
             .eq('id', user.id)
             .single();
 
@@ -25,6 +25,21 @@ export async function POST(req: Request) {
         }
 
         const now = new Date();
+
+        // Check if Pro subscription expired - auto-downgrade
+        if (profile.tier === 'pro' && profile.pro_expires_at) {
+            const expiryDate = new Date(profile.pro_expires_at);
+            if (expiryDate < now) {
+                // Auto-downgrade to free
+                await supabase.from('profiles').update({
+                    tier: 'free',
+                    pro_expires_at: null
+                }).eq('id', user.id);
+
+                profile.tier = 'free'; // Update local copy
+            }
+        }
+
         const lastReset = new Date(profile.last_credit_reset || 0);
         const limit = profile.tier === 'pro' ? 50 : 1; // 50 for Pro, 1 for Free
 
