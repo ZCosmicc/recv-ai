@@ -11,8 +11,8 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized. Please log in.' }, { status: 401 });
         }
 
-        // 2. Generate unique order ID
-        const orderId = `PRO-${user.id.slice(0, 8)}-${Date.now()}`;
+        // 2. Generate unique order ID with ReCV branding
+        const orderId = `ReCV-PRO-${user.id.slice(0, 8)}-${Date.now()}`;
 
         // 3. Price: Rp.15,000 (Indonesian Rupiah)
         const amount = 15000;
@@ -20,17 +20,14 @@ export async function POST(req: Request) {
         // 4. Get Pakasir project slug from environment
         const slug = process.env.PAKASIR_PROJECT_SLUG || 'recv';
 
-        // 5. Construct Pakasir payment URL
-        const paymentUrl = `https://app.pakasir.com/pay/${slug}/${amount}?order_id=${orderId}`;
+        // 5. Get domain for redirect URL
+        const domain = process.env.NEXT_PUBLIC_SITE_URL || 'https://recv-ai.vercel.app';
+        const redirectUrl = `${domain}/payment/success`;
 
-        // 6. Store pending transaction in database (optional but recommended)
-        await supabase.from('payment_transactions').insert({
-            order_id: orderId,
-            user_id: user.id,
-            amount: amount,
-            status: 'pending',
-            created_at: new Date().toISOString()
-        });
+        // 6. Construct Pakasir payment URL with redirect
+        const paymentUrl = `https://app.pakasir.com/pay/${slug}/${amount}?order_id=${orderId}&rdr=${encodeURIComponent(redirectUrl)}`;
+
+        console.log('💳 Payment created:', { orderId, amount, redirectUrl });
 
         return NextResponse.json({
             paymentUrl,

@@ -3,17 +3,23 @@ import { createServerClient } from '@supabase/ssr';
 
 export async function POST(req: Request) {
     try {
+        console.log('🔔 Pakasir webhook received!');
+
         // 1. Parse webhook payload from Pakasir
         const body = await req.json();
+        console.log('📥 Webhook payload:', JSON.stringify(body, null, 2));
+
         const { amount, order_id, status, payment_method, completed_at } = body;
 
         // 2. Verify it's from Pakasir (basic validation)
         if (!order_id || !amount) {
+            console.error('❌ Missing order_id or amount');
             return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
         }
 
         // 3. Only process completed payments
         if (status !== 'completed') {
+            console.log(`⏳ Payment status: ${status} - not processing yet`);
             return NextResponse.json({ message: 'Payment not completed yet' }, { status: 200 });
         }
 
@@ -29,12 +35,16 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Payment verification failed' }, { status: 400 });
         }
 
-        // 5. Extract user ID from order_id (format: PRO-{userId}-{timestamp})
+        // 5. Extract user ID from order_id (format: ReCV-PRO-{userId}-{timestamp})
         const orderParts = order_id.split('-');
-        if (orderParts.length < 2) {
+        console.log('📦 Order ID parts:', orderParts);
+
+        // Should be: ['ReCV', 'PRO', '{userId}', '{timestamp}']
+        if (orderParts.length < 4 || orderParts[0] !== 'ReCV' || orderParts[1] !== 'PRO') {
+            console.error('❌ Invalid order ID format:', order_id);
             return NextResponse.json({ error: 'Invalid order ID format' }, { status: 400 });
         }
-        const userIdPrefix = orderParts[1];
+        const userIdPrefix = orderParts[2];
 
         // 6. Use service role to update user (bypass RLS)
         const supabase = createServerClient(
