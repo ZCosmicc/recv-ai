@@ -206,6 +206,26 @@ function BuilderContent() {
     if (tier !== 'guest') {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
+        // **FIX: Check CV limit before creating**
+        const { data: existingCVs, error: countError } = await supabase
+          .from('cvs')
+          .select('id', { count: 'exact' })
+          .eq('user_id', user.id);
+
+        const cvCount = existingCVs?.length || 0;
+        const limit = tier === 'pro' ? 4 : 1; // Free/Guest: 1 CV, Pro: 4 CVs
+
+        console.log(`📊 CV Count: ${cvCount}/${limit} (tier: ${tier})`);
+
+        if (cvCount >= limit) {
+          // Show limit modal instead of creating
+          console.warn('⚠️ CV limit reached, not creating new CV');
+          // We don't have access to LimitModal here, but we can prevent creation
+          // The user will see the limit modal when they try from dashboard
+          alert(`You've reached your CV limit (${limit}). Please delete an existing CV or upgrade to Pro.`);
+          return;
+        }
+
         const { data, error } = await supabase
           .from('cvs')
           .insert([
@@ -229,6 +249,10 @@ function BuilderContent() {
         if (data) {
           // Redirect to the new CV with ID
           window.location.href = `/?id=${data.id}`;
+          return;
+        } else if (error) {
+          console.error('Error creating CV:', error);
+          alert('Failed to create CV. Please try again.');
           return;
         }
       }
