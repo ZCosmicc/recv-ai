@@ -59,24 +59,40 @@ export async function POST(req: Request) {
             }
         );
 
-        // 7. Find user by ID prefix and update to Pro
+        // 7. Find user by ID prefix
         console.log(`🔍 Searching for user with ID starting with: ${userIdPrefix}`);
 
-        const { data: profiles, error: profileError } = await supabase
+        // Fetch all profiles (small dataset) and filter by ID prefix
+        const { data: allProfiles, error: profileError } = await supabase
             .from('profiles')
-            .select('id, email, tier')
-            .like('id', `${userIdPrefix}%`)
-            .limit(1);
+            .select('id, email, tier');
 
-        console.log('📊 Profile query result:', { profiles, profileError });
+        console.log(`📊 Total profiles found: ${allProfiles?.length || 0}`);
 
-        if (!profiles || profiles.length === 0) {
+        if (profileError) {
+            console.error('❌ Error fetching profiles:', profileError);
+            return NextResponse.json({ error: 'Failed to fetch profiles' }, { status: 500 });
+        }
+
+        if (!allProfiles || allProfiles.length === 0) {
+            console.error('❌ No profiles found in database');
+            return NextResponse.json({ error: 'No users in database' }, { status: 404 });
+        }
+
+        // Filter by ID prefix (convert UUID to string for comparison)
+        const matchingProfiles = allProfiles.filter(p => p.id.toString().startsWith(userIdPrefix));
+
+        console.log(`🎯 Profiles matching prefix ${userIdPrefix}:`, matchingProfiles.length);
+
+        if (matchingProfiles.length === 0) {
             console.error(`❌ User not found with prefix: ${userIdPrefix}`);
+            console.log('💡 All IDs in database:', allProfiles.map(p => p.id.toString().substring(0, 10)));
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
-        const userId = profiles[0].id;
-        console.log(`✅ Found user: ${userId} (${profiles[0].email})`);
+        const profile = matchingProfiles[0];
+        const userId = profile.id;
+        console.log(`✅ Found user: ${userId} (${profile.email})`);
 
         // 8. Calculate expiry date (30 days from now)
         const expiryDate = new Date();
