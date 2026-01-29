@@ -8,6 +8,7 @@ import ChooseTemplate from '../components/ChooseTemplate';
 import Sections from '../components/Sections';
 import Fill from '../components/Fill';
 import ClearDataModal from '../components/ClearDataModal';
+import AlertModal from '../components/AlertModal';
 import Review from '../components/Review'; // Import Review Component
 import { createClient } from '@/utils/supabase/client';
 import { Loader2 } from 'lucide-react';
@@ -48,6 +49,19 @@ function BuilderContent() {
   const [dailyUsage, setDailyUsage] = useState<number>(0);
   const [aiCredits, setAiCredits] = useState<number>(0); // Computed remaining credits
   const [isLoaded, setIsLoaded] = useState(false);
+
+  // Alert Modal State
+  const [alertModal, setAlertModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'info' | 'warning' | 'error';
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info'
+  });
   const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
@@ -222,9 +236,19 @@ function BuilderContent() {
           console.warn('⚠️ CV limit reached, not creating new CV');
 
           if (tier === 'pro') {
-            alert(`You've reached the maximum limit of 4 CVs. Please delete an existing CV to create a new one.`);
+            setAlertModal({
+              isOpen: true,
+              title: 'CV Limit Reached',
+              message: "You've reached the maximum limit of 4 CVs. Please delete an existing CV from your dashboard to create a new one.",
+              type: 'warning'
+            });
           } else {
-            alert(`You've reached your CV limit (1 free CV). Upgrade to Pro to create up to 4 CVs.`);
+            setAlertModal({
+              isOpen: true,
+              title: 'Upgrade to Pro',
+              message: "You've reached your CV limit (1 free CV). Upgrade to Pro to create up to 4 saved CVs and unlock premium features!",
+              type: 'info'
+            });
           }
           return;
         }
@@ -351,6 +375,13 @@ function BuilderContent() {
         isOpen={isClearModalOpen}
         onClose={() => setIsClearModalOpen(false)}
         onConfirm={confirmClearData}
+      />
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={() => setAlertModal({ ...alertModal, isOpen: false })}
+        title={alertModal.title}
+        message={alertModal.message}
+        type={alertModal.type}
       />
       {toast && (
         <Toast
