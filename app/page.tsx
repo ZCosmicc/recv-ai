@@ -218,11 +218,14 @@ function BuilderContent() {
         console.log(`📊 CV Count: ${cvCount}/${limit} (tier: ${tier})`);
 
         if (cvCount >= limit) {
-          // Show limit modal instead of creating
+          // Show appropriate message based on tier
           console.warn('⚠️ CV limit reached, not creating new CV');
-          // We don't have access to LimitModal here, but we can prevent creation
-          // The user will see the limit modal when they try from dashboard
-          alert(`You've reached your CV limit (${limit}). Please delete an existing CV or upgrade to Pro.`);
+
+          if (tier === 'pro') {
+            alert(`You've reached the maximum limit of 4 CVs. Please delete an existing CV to create a new one.`);
+          } else {
+            alert(`You've reached your CV limit (1 free CV). Upgrade to Pro to create up to 4 CVs.`);
+          }
           return;
         }
 

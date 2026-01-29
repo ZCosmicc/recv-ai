@@ -114,7 +114,7 @@ export default function Home({ onStart }: HomeProps) {
                         <div className="bg-white border-4 border-black shadow-neo p-8 text-left relative">
                             <div className="absolute top-0 right-0 bg-black text-white px-4 py-1 font-bold text-sm border-l-4 border-b-4 border-white">POPULAR</div>
                             <h3 className="text-3xl font-bold mb-2">Free</h3>
-                            <div className="text-5xl font-extrabold mb-6">Rp. 0k<span className="text-xl font-medium text-gray-500">/mo</span></div>
+                            <div className="text-5xl font-extrabold mb-6">Rp.0k<span className="text-xl font-medium text-gray-500">/mo</span></div>
                             <ul className="space-y-4 mb-8">
                                 <li className="flex items-center gap-3 font-bold">
                                     <Check className="w-6 h-6 text-green-600 border-2 border-black p-0.5" />
@@ -142,7 +142,7 @@ export default function Home({ onStart }: HomeProps) {
                         <div className="bg-primary text-white border-4 border-black shadow-neo p-8 text-left relative transform md:-translate-y-4">
                             <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-6 py-2 border-4 border-black font-extrabold shadow-neo-sm transform rotate-2">BEST VALUE</div>
                             <h3 className="text-3xl font-bold mb-2">Pro</h3>
-                            <div className="text-5xl font-extrabold mb-6">Rp. 15k<span className="text-xl font-medium text-blue-100">/mo</span></div>
+                            <div className="text-5xl font-extrabold mb-6">Rp.15k<span className="text-xl font-medium text-blue-100">/mo</span></div>
                             <ul className="space-y-4 mb-8">
                                 <li className="flex items-center gap-3 font-bold">
                                     <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-black" /></div>
@@ -215,14 +215,19 @@ export default function Home({ onStart }: HomeProps) {
                 <div className="container mx-auto px-6">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-8">
                         <div className="flex items-center gap-2">
-                            <Image src="/LogoPrimaryReCV.png" alt="ReCV Logo" width={100} height={34} className="object-contain opacity-50 grayscale hover:grayscale-0 transition-all" />
-                            <span className="font-bold text-gray-500">© 2024 ReCV Inc.</span>
+                            <span className="font-bold text-gray-600 flex items-center gap-1">
+                                © 2026 ReCV. Made with
+                                <svg className="w-4 h-4 text-red-500 fill-red-500 inline" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                </svg>
+                                by ZCo Studio.
+                            </span>
                         </div>
-                        <div className="flex gap-8 font-bold text-gray-600">
-                            <a href="#" className="hover:text-black hover:underline">Privacy</a>
-                            <a href="#" className="hover:text-black hover:underline">Terms</a>
-                            <a href="#" className="hover:text-black hover:underline">Contact</a>
-                            <a href="#" className="hover:text-black hover:underline">Twitter</a>
+                        <div className="flex gap-8 font-bold text-gray-600 flex-wrap justify-center">
+                            <a href="/privacy" className="hover:text-black hover:underline">Privacy</a>
+                            <a href="/terms" className="hover:text-black hover:underline">Terms</a>
+                            <a href="mailto:farizfadillah612@gmail.com" className="hover:text-black hover:underline">Contact</a>
+                            <a href="https://instagram.com/zcostudio" target="_blank" rel="noopener noreferrer" className="hover:text-black hover:underline">Instagram</a>
                         </div>
                     </div>
                 </div>

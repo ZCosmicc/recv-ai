@@ -56,9 +56,33 @@ export default function PaymentSuccess() {
                     <>
                         <CheckCircle2 className="w-16 h-16 mx-auto mb-4 text-green-600" />
                         <h1 className="text-2xl font-bold mb-2">Pembayaran Berhasil!</h1>
-                        <p className="text-gray-600 mb-4">
-                            Akun Anda telah diupgrade ke Pro.
+                        <p className="text-gray-600 mb-8 text-center max-w-md">
+                            Your payment is being processed. Your account will be upgraded to Pro shortly.
                         </p>
+
+                        {/* Instructions */}
+                        <div className="bg-blue-50 border-2 border-blue-200 p-4 rounded-lg mb-6">
+                            <h3 className="font-bold text-blue-900 mb-2">What's Next?</h3>
+                            <ul className="text-sm text-blue-800 space-y-2">
+                                <li>✓ We're processing your payment with Pakasir</li>
+                                <li>✓ Your tier will update automatically in a few moments</li>
+                                <li>✓ Try refreshing this page if it doesn't update within 30 seconds</li>
+                            </ul>
+                        </div>
+
+                        {/* Support Info */}
+                        <div className="bg-yellow-50 border-2 border-yellow-200 p-4 rounded-lg mb-6">
+                            <h3 className="font-bold text-yellow-900 mb-2">Having Issues?</h3>
+                            <p className="text-sm text-yellow-800 mb-2">
+                                If your tier doesn't update after refreshing, please contact support:
+                            </p>
+                            <a
+                                href="mailto:farizfadillah612@gmail.com"
+                                className="text-sm text-blue-600 hover:underline font-medium"
+                            >
+                                farizfadillah612@gmail.com
+                            </a>
+                        </div>
                     </>
                 )}
 
