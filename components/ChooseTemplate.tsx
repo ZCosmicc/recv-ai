@@ -8,6 +8,7 @@ import CVPreview from './CVPreview';
 import { CVData, Section } from '../types';
 import Navbar from './Navbar';
 import LimitModal from './LimitModal';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const DUMMY_SECTIONS: Section[] = [
     { id: 'personal', name: 'Personal', required: true, enabled: true },
@@ -91,6 +92,7 @@ export default function ChooseTemplate({
     hasSavedData,
     tier = 'guest'
 }: ChooseTemplateProps) {
+    const { t } = useLanguage();
     const [showLimitModal, setShowLimitModal] = useState(false);
 
     return (
@@ -112,7 +114,7 @@ export default function ChooseTemplate({
                 <div className="max-w-6xl mx-auto relative z-10">
                     <div className="flex justify-between items-center mb-8">
                         <div>
-                            <h1 className="text-4xl font-bold text-primary mb-2">Choose Template</h1>
+                            <h1 className="text-4xl font-bold text-primary mb-2">{t.chooseTemplate.title}</h1>
                         </div>
                         {hasSavedData && (
                             <button
@@ -120,7 +122,7 @@ export default function ChooseTemplate({
                                 className="flex items-center gap-2 px-4 py-2 text-white bg-red-500 font-bold border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all rounded-none"
                             >
                                 <Trash2 className="w-4 h-4" />
-                                Clear Data
+                                {t.chooseTemplate.clearData}
                             </button>
                         )}
                     </div>
@@ -162,16 +164,16 @@ export default function ChooseTemplate({
                                             <div className="absolute inset-0 z-10 bg-black/20 flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                                 <div className="bg-white border-4 border-black p-4 shadow-neo flex flex-col items-center transform scale-90 group-hover:scale-100 transition-transform duration-300 relative z-20">
                                                     <Lock className="w-8 h-8 text-black mb-2" />
-                                                    <span className="font-bold text-sm">LOCKED</span>
+                                                    <span className="font-bold text-sm">{t.chooseTemplate.locked}</span>
                                                 </div>
                                             </div>
                                         )}
                                     </div>
                                     <div className={`w-full text-center py-2 font-bold border-2 border-black ${isLocked
-                                            ? 'bg-yellow-400 text-black border-black'
-                                            : `bg-primary text-white ${selectedTemplate === template.id ? 'border-white' : ''}`
+                                        ? 'bg-yellow-400 text-black border-black'
+                                        : `bg-primary text-white ${selectedTemplate === template.id ? 'border-white' : ''}`
                                         }`}>
-                                        {isLocked ? 'Upgrade to Pro' : template.name}
+                                        {isLocked ? t.limitModal.upgradeToPro : template.name}
                                     </div>
                                 </button>
                             );

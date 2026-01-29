@@ -22,12 +22,14 @@ export async function POST(req: Request) {
 
         // 5. Get domain for redirect URL
         const domain = process.env.NEXT_PUBLIC_SITE_URL || 'https://recv-ai.vercel.app';
-        const redirectUrl = `${domain}/payment/success`;
+        // FIXED: Redirect directly to dashboard with success flag
+        const redirectUrl = `${domain}/?payment=success`;
 
         // 6. Construct Pakasir payment URL with redirect
-        const paymentUrl = `https://app.pakasir.com/pay/${slug}/${amount}?order_id=${orderId}&rdr=${encodeURIComponent(redirectUrl)}`;
+        // FIXED: Use 'redirect' parameter instead of 'rdr' (per Pakasir docs)
+        const paymentUrl = `https://app.pakasir.com/pay/${slug}/${amount}?order_id=${orderId}&redirect=${encodeURIComponent(redirectUrl)}`;
 
-        console.log('💳 Payment created:', { orderId, amount, redirectUrl });
+        console.log('💳 Payment created for amount:', amount);
 
         return NextResponse.json({
             paymentUrl,

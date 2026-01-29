@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   description: "Enhance your CV tailored to your needs.",
 };
 
+import { LanguageProvider } from '@/contexts/LanguageContext';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,7 +26,9 @@ export default function RootLayout({
         suppressHydrationWarning={true}
         className={`${plusJakartaSans.variable} font-sans antialiased`}
       >
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

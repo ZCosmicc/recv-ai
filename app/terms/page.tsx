@@ -3,8 +3,11 @@
 import { Mail, Instagram, Heart } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function TermsOfService() {
+    const { t } = useLanguage();
+
     return (
         <div className="min-h-screen bg-white">
             {/* Header */}
@@ -17,15 +20,15 @@ export default function TermsOfService() {
                         href="/"
                         className="px-4 py-2 border-2 border-black bg-white hover:bg-gray-50 font-bold shadow-neo-sm hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
                     >
-                        Back to Home
+                        {t.terms.backButton}
                     </Link>
                 </div>
             </nav>
 
             {/* Content */}
             <div className="container mx-auto px-6 py-16 max-w-4xl">
-                <h1 className="text-5xl font-extrabold text-black mb-6">Terms of Service</h1>
-                <p className="text-gray-600 mb-8">Last updated: January 29, 2026</p>
+                <h1 className="text-5xl font-extrabold text-black mb-6">{t.terms.title}</h1>
+                <p className="text-gray-600 mb-8">{t.terms.lastUpdated}: January 29, 2026</p>
 
                 <div className="space-y-8 text-gray-800">
                     <section>

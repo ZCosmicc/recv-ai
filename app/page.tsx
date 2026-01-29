@@ -54,8 +54,8 @@ function BuilderContent() {
   const [alertModal, setAlertModal] = useState<{
     isOpen: boolean;
     title: string;
-    message: string;
-    type: 'info' | 'warning' | 'error';
+    message: React.ReactNode;
+    type: 'info' | 'warning' | 'error' | 'success';
   }>({
     isOpen: false,
     title: '',
@@ -152,6 +152,32 @@ function BuilderContent() {
       subscription.unsubscribe();
     };
   }, [cvId]);
+
+  // Payment Success Check
+  useEffect(() => {
+    if (searchParams.get('payment') === 'success') {
+      // Clear the param from URL without reload to prevent showing modal again on refresh
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+
+      setAlertModal({
+        isOpen: true,
+        title: 'Payment Successful! 🎉',
+        message: (
+          <div className="space-y-4">
+            <p className="text-gray-800">Thank you for upgrading! Your account is now Pro. You can create up to 4 CVs and access all features.</p>
+            <p className="text-sm bg-green-50 p-3 rounded-md border border-green-200 text-green-900">
+              <strong>Note:</strong> If your tier still shows 'Free' on the dashboard, please wait a moment and refresh the page. If the issue persists, please contact us.
+            </p>
+          </div>
+        ) as any,
+        type: 'success'
+      });
+      // Force a reload of data to catch the new tier if it's ready
+      // We can trigger the loadData found in the main useEffect by... 
+      // Actually, let's just let the user refresh if needed, as the webhook might be slow.
+    }
+  }, [searchParams]);
 
   // Save Logic
   useEffect(() => {

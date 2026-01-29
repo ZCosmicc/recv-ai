@@ -8,6 +8,7 @@ import ConfirmModal from '@/components/ConfirmModal';
 import LimitModal from '@/components/LimitModal';
 import PlanCard from '@/components/PlanCard';
 import { Plus, FileText, Trash2, Edit2, MoreVertical, Loader2, Check, X, Lock } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CV {
     id: string;
@@ -23,6 +24,7 @@ interface Profile {
 export default function Dashboard() {
     const router = useRouter();
     const supabase = createClient();
+    const { t } = useLanguage();
     const [cvs, setCvs] = useState<CV[]>([]);
     const [profile, setProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState(true);
@@ -187,8 +189,8 @@ export default function Dashboard() {
             <div className="flex-1 max-w-7xl mx-auto w-full p-8">
                 <div className="flex justify-between items-center mb-8">
                     <div>
-                        <h1 className="text-4xl font-bold text-gray-900 mb-2">My Dashboard</h1>
-                        <p className="text-gray-600">Manage your resumes</p>
+                        <h1 className="text-4xl font-bold text-gray-900 mb-2">{t.dashboard.title}</h1>
+                        <p className="text-gray-600">{t.dashboard.subtitle}</p>
                     </div>
                     <div className="flex items-center gap-4">
                         <PlanCard tier={profile?.tier || 'guest'} />
@@ -201,7 +203,7 @@ export default function Dashboard() {
                                 }`}
                         >
                             {creating ? <Loader2 className="animate-spin w-4 h-4" /> : isLimitReached && !isProAndLimitReached ? <Lock className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
-                            {isProAndLimitReached ? 'Limit Reached' : 'Create New CV'}
+                            {isProAndLimitReached ? t.dashboard.limitReached : t.dashboard.createNew}
                         </button>
                     </div>
                 </div>
@@ -211,13 +213,13 @@ export default function Dashboard() {
                         <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                             <FileText className="w-10 h-10 text-gray-400" />
                         </div>
-                        <h2 className="text-2xl font-bold mb-2">No CVs yet</h2>
-                        <p className="text-gray-600 mb-8">Create your first professional resume today.</p>
+                        <h2 className="text-2xl font-bold mb-2">{t.dashboard.emptyState.title}</h2>
+                        <p className="text-gray-600 mb-8">{t.dashboard.emptyState.desc}</p>
                         <button
                             onClick={handleCreateCV}
                             className="bg-primary text-white px-8 py-3 border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold"
                         >
-                            Create CV
+                            {t.dashboard.emptyState.button}
                         </button>
                     </div>
                 ) : (
@@ -267,7 +269,7 @@ export default function Dashboard() {
                                 ) : (
                                     <h3 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors truncate">{cv.title}</h3>
                                 )}
-                                <p className="text-sm text-gray-500">Last updated: {formatDate(cv.updated_at)}</p>
+                                <p className="text-sm text-gray-500">{t.dashboard.lastUpdated} {formatDate(cv.updated_at)}</p>
                             </div>
                         ))}
                     </div>
@@ -278,9 +280,9 @@ export default function Dashboard() {
                 isOpen={!!deletingId}
                 onClose={() => setDeletingId(null)}
                 onConfirm={confirmDelete}
-                title="Delete CV"
-                message="Are you sure you want to delete this CV? This action cannot be undone."
-                confirmText="Delete"
+                title={t.dashboard.confirmDelete.title}
+                message={t.dashboard.confirmDelete.message}
+                confirmText={t.dashboard.confirmDelete.button}
                 isDestructive={true}
             />
 
