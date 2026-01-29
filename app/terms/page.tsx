@@ -2,6 +2,7 @@
 
 import { Mail, Instagram, Heart } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function TermsOfService() {
     return (
@@ -9,8 +10,8 @@ export default function TermsOfService() {
             {/* Header */}
             <nav className="border-b-4 border-black bg-white sticky top-0 z-50">
                 <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-                    <Link href="/" className="text-2xl font-extrabold">
-                        <span className="text-primary">Re</span>CV
+                    <Link href="/" className="flex items-center gap-2">
+                        <Image src="/LogoPrimaryReCV.png" alt="ReCV Logo" width={100} height={34} className="object-contain" />
                     </Link>
                     <Link
                         href="/"
@@ -45,7 +46,7 @@ export default function TermsOfService() {
                             <div>
                                 <h3 className="text-xl font-semibold mb-2">Free Tier</h3>
                                 <ul className="list-disc list-inside space-y-2 ml-4">
-                                    <li>1 CV maximum</li>
+                                    <li>1 saved CV maximum</li>
                                     <li>Basic templates</li>
                                     <li>PDF export with watermark</li>
                                     <li>Limited AI analysis (1 per day)</li>
@@ -54,7 +55,7 @@ export default function TermsOfService() {
                             <div>
                                 <h3 className="text-xl font-semibold mb-2">Pro Tier (Rp.15,000/month)</h3>
                                 <ul className="list-disc list-inside space-y-2 ml-4">
-                                    <li>Up to 4 CVs</li>
+                                    <li>Up to 4 saved CVs</li>
                                     <li>All premium templates</li>
                                     <li>Unlimited PDF exports without watermark</li>
                                     <li>50 AI analyses per day</li>
@@ -96,9 +97,7 @@ export default function TermsOfService() {
                             </p>
                             <ul className="list-disc list-inside space-y-2 ml-4">
                                 <li>Payments are non-refundable except as required by law</li>
-                                <li>Your subscription will auto-renew unless cancelled</li>
-                                <li>You can cancel your subscription at any time</li>
-                                <li>Upon cancellation, you retain Pro access until the end of your billing period</li>
+                                <li>Pro access is valid for 30 days from purchase</li>
                                 <li>We reserve the right to change pricing with 30 days notice</li>
                             </ul>
                         </div>

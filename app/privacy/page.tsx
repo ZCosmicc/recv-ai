@@ -2,6 +2,7 @@
 
 import { Mail, Instagram, Heart } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function PrivacyPolicy() {
     return (
@@ -9,8 +10,8 @@ export default function PrivacyPolicy() {
             {/* Header */}
             <nav className="border-b-4 border-black bg-white sticky top-0 z-50">
                 <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-                    <Link href="/" className="text-2xl font-extrabold">
-                        <span className="text-primary">Re</span>CV
+                    <Link href="/" className="flex items-center gap-2">
+                        <Image src="/LogoPrimaryReCV.png" alt="ReCV Logo" width={100} height={34} className="object-contain" />
                     </Link>
                     <Link
                         href="/"
@@ -115,10 +116,7 @@ export default function PrivacyPolicy() {
                             <li><strong>Export:</strong> Download your CV data at any time</li>
                         </ul>
                         <p className="mt-4">
-                            To exercise any of these rights, please contact us at{' '}
-                            <a href="mailto:farizfadillah612@gmail.com" className="text-blue-600 hover:underline font-medium">
-                                farizfadillah612@gmail.com
-                            </a>
+                            To exercise any of these rights, please refer to the <strong>Contact Us</strong> section below.
                         </p>
                     </section>
 
