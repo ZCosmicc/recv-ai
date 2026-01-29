@@ -6,8 +6,6 @@ interface AlertModalProps {
     isOpen: boolean;
     onClose: () => void;
     title: string;
-    onClose: () => void;
-    title: string;
     message: React.ReactNode;
     type?: 'info' | 'warning' | 'error' | 'success';
 }
