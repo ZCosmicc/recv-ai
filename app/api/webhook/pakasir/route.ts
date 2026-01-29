@@ -7,7 +7,6 @@ export async function POST(req: Request) {
 
         // 1. Parse webhook payload from Pakasir
         const body = await req.json();
-        console.log('📥 Webhook payload:', JSON.stringify(body, null, 2));
 
         const { amount, order_id, status, payment_method, completed_at } = body;
 
@@ -19,7 +18,6 @@ export async function POST(req: Request) {
 
         // 3. Only process completed payments
         if (status !== 'completed') {
-            console.log(`⏳ Payment status: ${status} - not processing yet`);
             return NextResponse.json({ message: 'Payment not completed yet' }, { status: 200 });
         }
 
@@ -37,11 +35,10 @@ export async function POST(req: Request) {
 
         // 5. Extract user ID from order_id (format: ReCV-PRO-{userId}-{timestamp})
         const orderParts = order_id.split('-');
-        console.log('📦 Order ID parts:', orderParts);
 
         // Should be: ['ReCV', 'PRO', '{userId}', '{timestamp}']
         if (orderParts.length < 4 || orderParts[0] !== 'ReCV' || orderParts[1] !== 'PRO') {
-            console.error('❌ Invalid order ID format:', order_id);
+            console.error('❌ Invalid order ID format');
             return NextResponse.json({ error: 'Invalid order ID format' }, { status: 400 });
         }
         const userIdPrefix = orderParts[2];
@@ -60,14 +57,11 @@ export async function POST(req: Request) {
         );
 
         // 7. Find user by ID prefix
-        console.log(`🔍 Searching for user with ID starting with: ${userIdPrefix}`);
 
         // Fetch all profiles (small dataset) and filter by ID prefix
         const { data: allProfiles, error: profileError } = await supabase
             .from('profiles')
             .select('id, email, tier');
-
-        console.log(`📊 Total profiles found: ${allProfiles?.length || 0}`);
 
         if (profileError) {
             console.error('❌ Error fetching profiles:', profileError);
@@ -82,17 +76,14 @@ export async function POST(req: Request) {
         // Filter by ID prefix (convert UUID to string for comparison)
         const matchingProfiles = allProfiles.filter(p => p.id.toString().startsWith(userIdPrefix));
 
-        console.log(`🎯 Profiles matching prefix ${userIdPrefix}:`, matchingProfiles.length);
-
         if (matchingProfiles.length === 0) {
-            console.error(`❌ User not found with prefix: ${userIdPrefix}`);
-            console.log('💡 All IDs in database:', allProfiles.map(p => p.id.toString().substring(0, 10)));
+            console.error('❌ User not found');
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
         const profile = matchingProfiles[0];
         const userId = profile.id;
-        console.log(`✅ Found user: ${userId} (${profile.email})`);
+        console.log('✅ Payment verified, upgrading user to Pro');
 
         // 8. Calculate expiry date (30 days from now)
         const expiryDate = new Date();
@@ -112,13 +103,11 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
         }
 
-        console.log(`✅ User ${userId} upgraded to Pro until ${expiryDate.toISOString()}`);
+        console.log('✅ User upgraded to Pro successfully');
 
         return NextResponse.json({
             success: true,
-            message: 'Payment processed and user upgraded to Pro',
-            userId,
-            expiresAt: expiryDate.toISOString()
+            message: 'Payment processed successfully'
         });
 
     } catch (error: any) {
