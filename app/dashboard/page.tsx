@@ -186,38 +186,38 @@ export default function Dashboard() {
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <Navbar />
 
-            <div className="flex-1 max-w-7xl mx-auto w-full p-8">
-                <div className="flex justify-between items-center mb-8">
+            <div className="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 md:p-8">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4 sm:gap-0">
                     <div>
-                        <h1 className="text-4xl font-bold text-gray-900 mb-2">{t.dashboard.title}</h1>
-                        <p className="text-gray-600">{t.dashboard.subtitle}</p>
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1 sm:mb-2">{t.dashboard.title}</h1>
+                        <p className="text-sm sm:text-base text-gray-600">{t.dashboard.subtitle}</p>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
                         <PlanCard tier={profile?.tier || 'guest'} />
                         <button
                             onClick={handleCreateCV}
                             disabled={creating || isProAndLimitReached}
-                            className={`flex items-center gap-2 px-6 py-3 border-2 border-black shadow-neo transition-all font-bold ${isProAndLimitReached
+                            className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 border-2 border-black shadow-neo transition-all font-bold text-sm sm:text-base flex-1 sm:flex-none ${isProAndLimitReached
                                 ? 'bg-gray-200 text-gray-500 cursor-not-allowed shadow-none'
                                 : 'bg-primary text-white hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none'
                                 }`}
                         >
-                            {creating ? <Loader2 className="animate-spin w-4 h-4" /> : isLimitReached && !isProAndLimitReached ? <Lock className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                            {creating ? <Loader2 className="animate-spin w-4 h-4" /> : isLimitReached && !isProAndLimitReached ? <Lock className="w-4 h-4 sm:w-5 sm:h-5" /> : <Plus className="w-4 h-4 sm:w-5 sm:h-5" />}
                             {isProAndLimitReached ? t.dashboard.limitReached : t.dashboard.createNew}
                         </button>
                     </div>
                 </div>
 
                 {cvs.length === 0 ? (
-                    <div className="bg-white border-4 border-black shadow-neo p-12 text-center">
-                        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <FileText className="w-10 h-10 text-gray-400" />
+                    <div className="bg-white border-4 border-black shadow-neo p-6 sm:p-8 md:p-12 text-center">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                            <FileText className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" />
                         </div>
-                        <h2 className="text-2xl font-bold mb-2">{t.dashboard.emptyState.title}</h2>
-                        <p className="text-gray-600 mb-8">{t.dashboard.emptyState.desc}</p>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-2">{t.dashboard.emptyState.title}</h2>
+                        <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 max-w-md mx-auto">{t.dashboard.emptyState.desc}</p>
                         <button
                             onClick={handleCreateCV}
-                            className="bg-primary text-white px-8 py-3 border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold"
+                            className="bg-primary text-white px-6 sm:px-8 py-2 sm:py-3 border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold text-sm sm:text-base w-full sm:w-auto"
                         >
                             {t.dashboard.emptyState.button}
                         </button>

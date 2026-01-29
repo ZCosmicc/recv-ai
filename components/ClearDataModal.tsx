@@ -13,20 +13,21 @@ export default function ClearDataModal({ isOpen, onClose, onConfirm }: ClearData
 
     if (!isOpen) return null;
 
+
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white border-4 border-black shadow-neo-lg w-full max-w-md animate-in fade-in zoom-in duration-200">
-                <div className="flex justify-between items-center p-4 border-b-4 border-black bg-red-100">
-                    <h2 className="text-xl font-bold flex items-center gap-2 text-red-600">
-                        <AlertTriangle className="w-6 h-6" />
-                        {t.clearDataModal.title}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 sm:p-4">
+            <div className="bg-white border-4 border-black shadow-neo-lg w-full max-w-md animate-in fade-in zoom-in duration-200 mx-2 sm:mx-0">
+                <div className="flex justify-between items-center p-3 sm:p-4 border-b-4 border-black bg-red-100">
+                    <h2 className="text-lg sm:text-xl font-bold flex items-center gap-2 text-red-600 pr-2">
+                        <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                        <span className="line-clamp-2">{t.clearDataModal.title}</span>
                     </h2>
-                    <button onClick={onClose} className="hover:bg-red-200 p-1 rounded transition-colors">
-                        <X className="w-6 h-6" />
+                    <button onClick={onClose} className="hover:bg-red-200 p-1 rounded transition-colors flex-shrink-0">
+                        <X className="w-5 h-5 sm:w-6 sm:h-6" />
                     </button>
                 </div>
 
-                <div className="p-6 space-y-4">
+                <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                     <p className="font-medium text-lg">
                         {t.clearDataModal.message}
                     </p>

@@ -101,23 +101,23 @@ export default function AdminPage() {
     return (
         <div className="min-h-screen bg-gray-50 font-sans text-black">
             {/* Nav */}
-            <div className="bg-black text-white p-4 flex justify-between items-center sticky top-0 z-50">
-                <div className="flex items-center gap-2 font-bold text-xl">
-                    <LayoutDashboard className="w-6 h-6 text-yellow-400" />
+            <div className="bg-black text-white p-3 sm:p-4 flex justify-between items-center sticky top-0 z-50 shadow-md">
+                <div className="flex items-center gap-2 font-bold text-lg sm:text-xl">
+                    <LayoutDashboard className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
                     ReCV Admin
                 </div>
-                <button onClick={() => router.push('/')} className="text-sm font-bold opacity-70 hover:opacity-100">
-                    Exit
+                <button onClick={() => router.push('/')} className="text-xs sm:text-sm font-bold opacity-70 hover:opacity-100 border-2 border-white px-2 py-1">
+                    EXIT
                 </button>
             </div>
 
-            <div className="p-8 max-w-7xl mx-auto space-y-8">
+            <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8">
                 {/* Stats Grid */}
-                <h1 className="text-4xl font-extrabold mb-8 flex items-center gap-4">
-                    Overview <div className="text-sm font-normal bg-yellow-400 text-black px-3 py-1 rounded-full border-2 border-black">Live</div>
+                <h1 className="text-2xl sm:text-4xl font-extrabold mb-4 sm:mb-8 flex items-center gap-2 sm:gap-4 flex-wrap">
+                    Overview <div className="text-xs sm:text-sm font-normal bg-yellow-400 text-black px-2 sm:px-3 py-1 rounded-full border-2 border-black">Live</div>
                 </h1>
 
-                <div className="grid md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                     <StatCard
                         title="Requests (24h)"
                         value={`${stats?.requests24h || 0} / 1000`}
@@ -144,16 +144,16 @@ export default function AdminPage() {
                     />
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
                     {/* User Management */}
-                    <div className="md:col-span-2 bg-white border-4 border-black shadow-neo p-6">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-2xl font-bold">Users</h2>
-                            <form onSubmit={handleSearch} className="flex gap-2">
+                    <div className="lg:col-span-2 bg-white border-4 border-black shadow-neo p-4 sm:p-6 text-sm sm:text-base">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-4 sm:gap-0">
+                            <h2 className="text-xl sm:text-2xl font-bold">Users</h2>
+                            <form onSubmit={handleSearch} className="flex gap-2 w-full sm:w-auto">
                                 <input
                                     type="text"
-                                    placeholder="Search email..."
-                                    className="border-2 border-black p-2 bg-gray-50"
+                                    placeholder="Search user..."
+                                    className="border-2 border-black p-2 bg-gray-50 flex-1 sm:w-60 text-sm"
                                     value={userSearch}
                                     onChange={e => setUserSearch(e.target.value)}
                                 />
@@ -200,8 +200,8 @@ export default function AdminPage() {
                     </div>
 
                     {/* Top Users Widget */}
-                    <div className="bg-white border-4 border-black shadow-neo p-6 h-fit">
-                        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                    <div className="bg-white border-4 border-black shadow-neo p-4 sm:p-6 h-fit text-sm sm:text-base">
+                        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
                             <Activity className="w-5 h-5 text-red-500" /> Top Active (24h)
                         </h2>
                         <ul className="space-y-4">
@@ -237,13 +237,13 @@ export default function AdminPage() {
 
 function StatCard({ title, value, icon, meta, alert }: any) {
     return (
-        <div className={`bg-white border-4 border-black shadow-neo p-6 transition-transform hover:-translate-y-1 ${alert ? 'bg-red-50' : ''}`}>
-            <div className="flex justify-between items-start mb-4">
-                <div className="bg-black text-white p-3 shadow-neo-sm">{icon}</div>
-                {meta && <span className={`text-xs font-bold px-2 py-1 border-2 border-black ${alert ? 'bg-red-500 text-white' : 'bg-yellow-200'}`}>{meta}</span>}
+        <div className={`bg-white border-4 border-black shadow-neo p-4 sm:p-6 transition-transform hover:-translate-y-1 ${alert ? 'bg-red-50' : ''}`}>
+            <div className="flex justify-between items-start mb-2 sm:mb-4">
+                <div className="bg-black text-white p-2 sm:p-3 shadow-neo-sm">{React.cloneElement(icon, { size: 20 })}</div>
+                {meta && <span className={`text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 border-2 border-black ${alert ? 'bg-red-500 text-white' : 'bg-yellow-200'}`}>{meta}</span>}
             </div>
-            <div className="text-gray-500 font-bold uppercase text-sm tracking-wider">{title}</div>
-            <div className={`text-4xl font-extrabold mt-1 ${alert ? 'text-red-600' : 'text-black'}`}>{value}</div>
+            <div className="text-gray-500 font-bold uppercase text-xs sm:text-sm tracking-wider">{title}</div>
+            <div className={`text-2xl sm:text-4xl font-extrabold mt-1 truncate ${alert ? 'text-red-600' : 'text-black'}`}>{value}</div>
         </div>
     );
 }

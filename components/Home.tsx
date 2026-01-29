@@ -54,72 +54,72 @@ export default function Home({ onStart }: HomeProps) {
             }} />
 
             {/* Hero Section */}
-            <div id="home" className="container mx-auto px-6 py-20 md:py-32 relative overflow-hidden">
+            <div id="home" className="container mx-auto px-4 sm:px-6 py-12 sm:py-20 md:py-32 relative overflow-hidden">
                 <div className="text-center max-w-4xl mx-auto relative z-10">
-                    <h1 className="text-7xl md:text-9xl font-extrabold text-black leading-none mb-8 tracking-tight">
-                        {t.hero.titlePart1} {text}<span className="inline-block w-2 md:w-4 h-12 md:h-20 bg-primary ml-1 animate-blink align-middle"></span><br />{t.hero.titlePart2}
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-extrabold text-black leading-none mb-6 sm:mb-8 tracking-tight break-words">
+                        {t.hero.titlePart1} {text}<span className="inline-block w-1 sm:w-2 md:w-4 h-8 sm:h-12 md:h-20 bg-primary ml-1 animate-blink align-middle"></span><br />{t.hero.titlePart2}
                     </h1>
-                    <p className="text-xl md:text-2xl font-medium text-gray-700 mb-12 max-w-2xl mx-auto leading-relaxed">
+                    <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-700 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed px-2">
                         {t.hero.subtitle}
                     </p>
                     <button
                         onClick={onStart}
-                        className="bg-primary text-white text-xl font-bold px-10 py-5 border-4 border-black shadow-neo hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all uppercase tracking-wider"
+                        className="bg-primary text-white text-base sm:text-lg md:text-xl font-bold px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 border-4 border-black shadow-neo hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all uppercase tracking-wider w-full sm:w-auto max-w-xs sm:max-w-none"
                     >
                         {t.hero.button}
                     </button>
                 </div>
 
                 {/* Features Section */}
-                <div id="features" className="mt-40 text-center scroll-mt-24">
-                    <h2 className="text-4xl md:text-6xl font-extrabold text-primary mb-20 uppercase tracking-tight">{t.features.title}</h2>
-                    <div className="grid md:grid-cols-4 gap-10 max-w-7xl mx-auto">
+                <div id="features" className="mt-20 sm:mt-32 md:mt-40 text-center scroll-mt-24">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary mb-12 sm:mb-16 md:mb-20 uppercase tracking-tight px-2">{t.features.title}</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 md:gap-10 max-w-7xl mx-auto">
                         {/* Feature 1 */}
-                        <div className="bg-white border-4 border-black shadow-neo p-10 flex flex-col items-center h-full hover:-translate-y-2 transition-transform duration-300">
-                            <div className="w-20 h-20 bg-primary border-4 border-black mb-6 flex items-center justify-center shadow-neo-sm">
-                                <FileText className="w-10 h-10 text-white" />
+                        <div className="bg-white border-4 border-black shadow-neo p-6 sm:p-8 md:p-10 flex flex-col items-center h-full hover:-translate-y-2 transition-transform duration-300">
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary border-4 border-black mb-4 sm:mb-6 flex items-center justify-center shadow-neo-sm">
+                                <FileText className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                             </div>
                             <h3 className="text-2xl font-bold mb-4">{t.features.ats.title}</h3>
                             <p className="text-gray-700 font-medium">{t.features.ats.desc}</p>
                         </div>
 
                         {/* Feature 2 - AI Analysis */}
-                        <div className="bg-white border-4 border-black shadow-neo p-10 flex flex-col items-center h-full hover:-translate-y-2 transition-transform duration-300">
-                            <div className="w-20 h-20 bg-purple-500 border-4 border-black mb-6 flex items-center justify-center shadow-neo-sm">
-                                <Sparkles className="w-10 h-10 text-white" />
+                        <div className="bg-white border-4 border-black shadow-neo p-6 sm:p-8 md:p-10 flex flex-col items-center h-full hover:-translate-y-2 transition-transform duration-300">
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-purple-500 border-4 border-black mb-4 sm:mb-6 flex items-center justify-center shadow-neo-sm">
+                                <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                             </div>
-                            <h3 className="text-2xl font-bold mb-4">{t.features.ai.title}</h3>
-                            <p className="text-gray-700 font-medium">{t.features.ai.desc}</p>
+                            <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">{t.features.ai.title}</h3>
+                            <p className="text-sm sm:text-base text-gray-700 font-medium">{t.features.ai.desc}</p>
                         </div>
 
                         {/* Feature 3 */}
-                        <div className="bg-white border-4 border-black shadow-neo p-10 flex flex-col items-center h-full hover:-translate-y-2 transition-transform duration-300">
-                            <div className="w-20 h-20 bg-yellow-400 border-4 border-black mb-6 flex items-center justify-center shadow-neo-sm">
-                                <Zap className="w-10 h-10 text-black" />
+                        <div className="bg-white border-4 border-black shadow-neo p-6 sm:p-8 md:p-10 flex flex-col items-center h-full hover:-translate-y-2 transition-transform duration-300">
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-yellow-400 border-4 border-black mb-4 sm:mb-6 flex items-center justify-center shadow-neo-sm">
+                                <Zap className="w-8 h-8 sm:w-10 sm:h-10 text-black" />
                             </div>
-                            <h3 className="text-2xl font-bold mb-4">{t.features.preview.title}</h3>
-                            <p className="text-gray-700 font-medium">{t.features.preview.desc}</p>
+                            <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">{t.features.preview.title}</h3>
+                            <p className="text-sm sm:text-base text-gray-700 font-medium">{t.features.preview.desc}</p>
                         </div>
 
                         {/* Feature 4 */}
-                        <div className="bg-white border-4 border-black shadow-neo p-10 flex flex-col items-center h-full hover:-translate-y-2 transition-transform duration-300">
-                            <div className="w-20 h-20 bg-green-500 border-4 border-black mb-6 flex items-center justify-center shadow-neo-sm">
-                                <Download className="w-10 h-10 text-white" />
+                        <div className="bg-white border-4 border-black shadow-neo p-6 sm:p-8 md:p-10 flex flex-col items-center h-full hover:-translate-y-2 transition-transform duration-300">
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-500 border-4 border-black mb-4 sm:mb-6 flex items-center justify-center shadow-neo-sm">
+                                <Download className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                             </div>
-                            <h3 className="text-2xl font-bold mb-4">{t.features.export.title}</h3>
-                            <p className="text-gray-700 font-medium">{t.features.export.desc}</p>
+                            <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">{t.features.export.title}</h3>
+                            <p className="text-sm sm:text-base text-gray-700 font-medium">{t.features.export.desc}</p>
                         </div>
                     </div>
                 </div>
                 {/* Pricing Section */}
-                <div id="pricing" className="mt-40 text-center scroll-mt-24">
-                    <h2 className="text-4xl md:text-6xl font-extrabold text-black mb-20 uppercase tracking-tight">{t.pricing.title}</h2>
-                    <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto px-4">
+                <div id="pricing" className="mt-20 sm:mt-32 md:mt-40 text-center scroll-mt-24">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-black mb-12 sm:mb-16 md:mb-20 uppercase tracking-tight px-2">{t.pricing.title}</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12 max-w-5xl mx-auto px-2 sm:px-4">
                         {/* Free Plan */}
-                        <div className="bg-white border-4 border-black shadow-neo p-8 text-left relative">
-                            <div className="absolute top-0 right-0 bg-black text-white px-4 py-1 font-bold text-sm border-l-4 border-b-4 border-white">{t.pricing.popular}</div>
-                            <h3 className="text-3xl font-bold mb-2">{t.pricing.free.title}</h3>
-                            <div className="text-5xl font-extrabold mb-6">{t.pricing.free.price}<span className="text-xl font-medium text-gray-500">{t.pricing.perMonth}</span></div>
+                        <div className="bg-white border-4 border-black shadow-neo p-6 sm:p-8 text-left relative">
+                            <div className="absolute top-0 right-0 bg-black text-white px-3 sm:px-4 py-1 font-bold text-xs sm:text-sm border-l-4 border-b-4 border-white">{t.pricing.popular}</div>
+                            <h3 className="text-2xl sm:text-3xl font-bold mb-2">{t.pricing.free.title}</h3>
+                            <div className="text-4xl sm:text-5xl font-extrabold mb-6">{t.pricing.free.price}<span className="text-lg sm:text-xl font-medium text-gray-500">{t.pricing.perMonth}</span></div>
                             <ul className="space-y-4 mb-8">
                                 <li className="flex items-center gap-3 font-bold">
                                     <Check className="w-6 h-6 text-green-600 border-2 border-black p-0.5" />
@@ -144,10 +144,10 @@ export default function Home({ onStart }: HomeProps) {
                         </div>
 
                         {/* Pro Plan */}
-                        <div className="bg-primary text-white border-4 border-black shadow-neo p-8 text-left relative transform md:-translate-y-4">
-                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-6 py-2 border-4 border-black font-extrabold shadow-neo-sm transform rotate-2">{t.pricing.bestValue}</div>
-                            <h3 className="text-3xl font-bold mb-2">{t.pricing.pro.title}</h3>
-                            <div className="text-5xl font-extrabold mb-6">{t.pricing.pro.price}<span className="text-xl font-medium text-blue-100">{t.pricing.perMonth}</span></div>
+                        <div className="bg-primary text-white border-4 border-black shadow-neo p-6 sm:p-8 text-left relative transform md:-translate-y-4">
+                            <div className="absolute -top-5 sm:-top-6 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-4 sm:px-6 py-2 border-4 border-black font-extrabold text-sm sm:text-base shadow-neo-sm transform rotate-2 whitespace-nowrap">{t.pricing.bestValue}</div>
+                            <h3 className="text-2xl sm:text-3xl font-bold mb-2 mt-4 sm:mt-0">{t.pricing.pro.title}</h3>
+                            <div className="text-4xl sm:text-5xl font-extrabold mb-6">{t.pricing.pro.price}<span className="text-lg sm:text-xl font-medium text-blue-100">{t.pricing.perMonth}</span></div>
                             <ul className="space-y-4 mb-8">
                                 <li className="flex items-center gap-3 font-bold">
                                     <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-black" /></div>
@@ -204,8 +204,8 @@ export default function Home({ onStart }: HomeProps) {
                 </div>
 
                 {/* FAQ Section */}
-                <div id="faq" className="mt-40 mb-20 max-w-4xl mx-auto px-6 scroll-mt-24">
-                    <h2 className="text-4xl md:text-6xl font-extrabold text-black mb-16 text-center uppercase tracking-tight">{t.faq.title}</h2>
+                <div id="faq" className="mt-20 sm:mt-32 md:mt-40 mb-12 sm:mb-16 md:mb-20 max-w-4xl mx-auto px-4 sm:px-6 scroll-mt-24">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-black mb-10 sm:mb-14 md:mb-16 text-center uppercase tracking-tight px-2">{t.faq.title}</h2>
                     <div className="space-y-6">
                         {[
                             t.faq.q1,
@@ -256,7 +256,6 @@ export default function Home({ onStart }: HomeProps) {
                         window.location.href = '/login';
                     }
                 }}
-                title="Notice"
                 message={alertMessage}
             />
         </div>

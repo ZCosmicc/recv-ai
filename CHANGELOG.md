@@ -12,13 +12,29 @@
   - **ChooseTemplate**: Page title, "Clear Data" button, "LOCKED" status, "Upgrade to Pro" button
   - **ClearDataModal**: Full translation including privacy notice
   - **Privacy & Terms Pages**: Page titles, navigation buttons, "Last updated" text
+- **Mobile Responsiveness**:
+  - **Core App**: Full responsive support down to 280px screen width for all pages (Home, Login, Dashboard, Privacy, Terms)
+  - **CV Builder**:
+    - **Sections**: Stacked layout for mobile, responsive container heights, scaled preview
+    - **Fill**: "Forms First" ordering (forms above preview), responsive padding, auto-resizing containers
+    - **Preview**: Responsive typography and padding for all CV templates (Minimal, Modern, Corporate, Creative, Executive)
+    - **Review**: Stacked layout for scores and summaries, responsive button groups
+    - **Choose Template**: Grid changes to single column on mobile, visible selection borders
+  - **Admin Panel**: Optimized grid layout (1 column), scrollable user tables, responsive stat cards
+  - **Modals**: Flexible width and padding for Limit, Alert, Confirm, and ClearData modals
+  - **Navbar**: Hamburger menu implementation for mobile navigation
 
 ### 🛠 Improvements
+- **Pakasir Payment Flow Enhancements**:
+  - Fixed payment button error handling across all pages (LimitModal, Home pricing section)
+  - Replaced browser `alert()` popups with professional styled `AlertModal` component
+  - Added specific 401 Unauthorized detection: Now prompts "Please log in first to upgrade to Pro" and redirects to `/login`
+  - Display actual API error messages instead of generic "Failed to create payment"
+  - Consistent error handling in both LimitModal and Home page "Go Pro" buttons
 - **Better UX for Payment Flow**:
-  - Replaced browser `alert()` with styled `AlertModal` in LimitModal
-  - Replaced browser `alert()` with styled `AlertModal` in Home page pricing section
-  - Better error messages: Now shows specific error from API instead of generic message
-  - 401 Unauthorized handling: Prompts user to log in and redirects to `/login`
+  - All payment errors now show in beautiful neobrutalist-style modals
+  - Auto-redirect to login page when user needs authentication
+  - Clear, actionable error messages for better user guidance
 - **Consistent Design**: All notifications now use neobrutalist-style modal instead of ugly browser alerts
 - **Translation Infrastructure**:
   - Created `LanguageContext` for global language state management

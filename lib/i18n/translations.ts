@@ -129,6 +129,12 @@ export interface Translations {
         lastUpdated: string;
     };
 
+    // Alert Modal
+    alertModal: {
+        notice: string;
+        gotIt: string;
+    };
+
     // Dashboard
     dashboard: {
         title: string;
@@ -295,6 +301,10 @@ export const translations: Record<Language, Translations> = {
             backButton: 'Back to Home',
             lastUpdated: 'Last updated',
         },
+        alertModal: {
+            notice: 'Notice',
+            gotIt: 'Got it',
+        },
         dashboard: {
             title: 'My Dashboard',
             subtitle: 'Manage your resumes',
@@ -455,6 +465,10 @@ export const translations: Record<Language, Translations> = {
             title: 'Ketentuan Layanan',
             backButton: 'Kembali ke Beranda',
             lastUpdated: 'Terakhir diperbarui',
+        },
+        alertModal: {
+            notice: 'Pemberitahuan',
+            gotIt: 'Mengerti',
         },
         dashboard: {
             title: 'Dasbor Saya',

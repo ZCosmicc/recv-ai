@@ -70,8 +70,8 @@ export default function Sections({
                 <div className="max-w-7xl mx-auto p-4 md:p-8 relative z-10">
                     <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
-                            <h1 className="text-4xl md:text-5xl font-bold text-primary mb-2">Sections</h1>
-                            <p className="text-black font-medium">Create and reorder sections here</p>
+                            <h1 className="text-3xl md:text-5xl font-bold text-primary mb-2">Sections</h1>
+                            <p className="text-black font-medium text-sm md:text-base">Create and reorder sections here</p>
                         </div>
                         <div className="flex flex-wrap gap-3 items-center">
                             {/* AI Credits Card */}
@@ -102,8 +102,8 @@ export default function Sections({
                         </div>
                     </div>
 
-                    <div className="flex flex-col-reverse md:grid md:grid-cols-2 gap-8">
-                        <div className="bg-white border-4 border-black shadow-neo p-6 h-[500px] md:h-[800px] overflow-y-auto">
+                    <div className="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-8">
+                        <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6 h-auto md:h-[800px] overflow-y-auto">
                             <h2 className="text-xl text-gray-900 font-semibold mb-4">Sections</h2>
 
                             <div className="space-y-2 mb-6">
@@ -114,10 +114,10 @@ export default function Sections({
                                         onDragStart={() => setDraggedSection(index)}
                                         onDragOver={(e) => e.preventDefault()}
                                         onDrop={() => handleDrop(index)}
-                                        className="flex items-center gap-3 p-3 bg-white border-b-2 border-gray-100 last:border-0 hover:bg-gray-50 cursor-move"
+                                        className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-white border-b-2 border-gray-100 last:border-0 hover:bg-gray-50 cursor-move"
                                     >
                                         <div className="text-gray-400">≡</div>
-                                        <span className="flex-1 font-medium text-lg text-black">{section.name}</span>
+                                        <span className="flex-1 font-medium text-base md:text-lg text-black">{section.name}</span>
                                         {!section.required && (
                                             <button
                                                 onClick={() => {
@@ -180,7 +180,7 @@ export default function Sections({
                             </button>
                         </div>
 
-                        <div className="bg-white border-4 border-black shadow-neo p-6 h-[800px] overflow-hidden">
+                        <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6 h-auto md:h-[800px] overflow-hidden">
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-xl text-black font-semibold">Live Preview</h2>
                                 <select
@@ -195,7 +195,7 @@ export default function Sections({
                                     ))}
                                 </select>
                             </div>
-                            <div className="border border-gray-200 rounded bg-white overflow-hidden" style={{ height: '600px', overflowY: 'auto' }}>
+                            <div className="border border-gray-200 rounded bg-white overflow-hidden h-[400px] md:h-[600px] overflow-y-auto">
                                 <CVPreview cvData={cvData} sections={sections} selectedTemplate={selectedTemplate} />
                             </div>
                         </div>

@@ -54,51 +54,53 @@ export default function LoginPage() {
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <Navbar />
             <div className="flex-1 flex items-center justify-center p-4">
-                <div className="bg-white border-4 border-black shadow-neo-lg w-full max-w-md p-8 animate-in fade-in zoom-in duration-300">
-                    <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
-                        <p className="text-gray-600">Sign in to manage your CVs</p>
+                <div className="bg-white border-4 border-black shadow-neo-lg w-full max-w-md p-4 sm:p-8 animate-in fade-in zoom-in duration-300 mx-2 sm:mx-0">
+                    <div className="text-center mb-6 sm:mb-8">
+                        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Welcome Back</h1>
+                        <p className="text-gray-600 text-sm sm:text-base">Sign in to manage your CVs</p>
                     </div>
 
                     {message && (
-                        <div className={`p-4 mb-6 border-2 border-black ${message.type === 'success' ? 'bg-green-100' : 'bg-red-100'}`}>
+                        <div className={`p-3 sm:p-4 mb-6 border-2 border-black text-sm sm:text-base ${message.type === 'success' ? 'bg-green-100' : 'bg-red-100'}`}>
                             {message.text}
                         </div>
                     )}
 
                     <form onSubmit={handleLogin} className="space-y-6">
                         <div>
-                            <label className="block font-bold mb-2">Email Address</label>
+                            <label className="block font-bold mb-2 text-sm sm:text-base">Email Address</label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full p-3 border-2 border-black rounded-none focus:outline-none focus:ring-2 focus:ring-primary shadow-neo-sm"
+                                className="w-full p-3 border-2 border-black rounded-none focus:outline-none focus:ring-2 focus:ring-primary shadow-neo-sm text-sm sm:text-base"
                                 placeholder="you@example.com"
                                 required
                             />
                         </div>
 
-                        <div className="flex justify-center">
-                            <Turnstile
-                                ref={turnstileRef}
-                                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-                                onSuccess={(token) => setCaptchaToken(token)}
-                                onError={() => setCaptchaToken(null)}
-                                onExpire={() => setCaptchaToken(null)}
-                            />
+                        <div className="flex justify-center w-full overflow-hidden">
+                            <div className="transform scale-[0.80] min-[320px]:scale-100 origin-center">
+                                <Turnstile
+                                    ref={turnstileRef}
+                                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                                    onSuccess={(token) => setCaptchaToken(token)}
+                                    onError={() => setCaptchaToken(null)}
+                                    onExpire={() => setCaptchaToken(null)}
+                                />
+                            </div>
                         </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-4 bg-primary text-white font-bold text-lg border-2 border-black shadow-neo transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full py-3 sm:py-4 bg-primary text-white font-bold text-base sm:text-lg border-2 border-black shadow-neo transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {loading ? 'Sending Magic Link...' : 'Send Magic Link'}
                         </button>
                     </form>
 
-                    <div className="mt-6 text-center text-sm text-gray-500">
+                    <div className="mt-6 text-center text-xs sm:text-sm text-gray-500">
                         <p>We use Magic Links. No passwords to remember!</p>
                     </div>
                 </div>

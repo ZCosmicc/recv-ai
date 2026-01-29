@@ -278,8 +278,8 @@ export default function Fill({
                 <div className="max-w-7xl mx-auto p-4 md:p-8 relative z-10">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                         <div>
-                            <h1 className="text-4xl md:text-5xl font-bold text-primary mb-2">Fill Your CV</h1>
-                            <p className="text-black font-medium">Complete each section below</p>
+                            <h1 className="text-3xl md:text-5xl font-bold text-primary mb-2">Fill Your CV</h1>
+                            <p className="text-black font-medium text-sm md:text-base">Complete each section below</p>
                         </div>
                         <div className="flex flex-wrap items-center gap-3">
                             {/* AI Credits Card */}
@@ -310,8 +310,8 @@ export default function Fill({
                         </div>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-8">
-                        <div className="order-2 md:order-1 space-y-6">
+                    <div className="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-8">
+                        <div className="order-1 space-y-6">
                             <button
                                 onClick={() => onNavigate('sections')}
                                 className="flex items-center gap-2 text-primary hover:text-blue-700 font-bold mb-4"
@@ -321,7 +321,7 @@ export default function Fill({
                             </button>
 
                             {sections.find(s => s.id === 'personal' && s.enabled) && (
-                                <div className="bg-white border-4 border-black shadow-neo p-6">
+                                <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <div className="flex items-center gap-2 mb-4">
                                         <h2 className="text-xl text-black font-bold">Personal Info</h2>
                                         <Tooltip id="personal-info" text="Your contact information. Use professional details that employers can use to reach you." />
@@ -440,7 +440,7 @@ export default function Fill({
                             )}
 
                             {sections.find(s => s.id === 'summary' && s.enabled) && (
-                                <div className="bg-white border-4 border-black shadow-neo p-6">
+                                <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <div className="flex items-center justify-between mb-4">
                                         <div className="flex items-center gap-2">
                                             <h2 className="text-xl text-black font-bold">Summary</h2>
@@ -465,7 +465,7 @@ export default function Fill({
                             )}
 
                             {sections.find(s => s.id === 'experience' && s.enabled) && (
-                                <div className="bg-white border-4 border-black shadow-neo p-6">
+                                <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <div className="flex items-center gap-2 mb-4">
                                         <h2 className="text-xl text-gray-900 font-semibold">Experience</h2>
                                         <Tooltip id="exp-tip" text="List work experience in reverse chronological order. Use bullet points and quantify achievements." />
@@ -585,7 +585,7 @@ export default function Fill({
                             )}
 
                             {sections.find(s => s.id === 'education' && s.enabled) && (
-                                <div className="bg-white border-4 border-black shadow-neo p-6">
+                                <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Education</h2>
                                     <div className="space-y-4">
                                         {cvData.education.map((edu, idx) => (
@@ -683,7 +683,7 @@ export default function Fill({
                             )}
 
                             {sections.find(s => s.id === 'skills' && s.enabled) && (
-                                <div className="bg-white border-4 border-black shadow-neo p-6">
+                                <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Skills</h2>
                                     <div className="space-y-3">
                                         {cvData.skills.map((skill, idx) => (
@@ -738,7 +738,7 @@ export default function Fill({
                             )}
 
                             {sections.find(s => s.id === 'certification' && s.enabled) && (
-                                <div className="bg-white border-4 border-black shadow-neo p-6">
+                                <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl font-semibold mb-4">Certifications</h2>
                                     <div className="space-y-3">
                                         {cvData.certification.map((cert, idx) => (
@@ -793,7 +793,7 @@ export default function Fill({
                             )}
 
                             {sections.find(s => s.id === 'language' && s.enabled) && (
-                                <div className="bg-white border-4 border-black shadow-neo p-6">
+                                <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl font-semibold mb-4">Languages</h2>
                                     <div className="space-y-3">
                                         {cvData.language.map((lang, idx) => (
@@ -847,7 +847,7 @@ export default function Fill({
                                 </div>
                             )}
 
-                            <div className="bg-white border-4 border-black shadow-neo p-6">
+                            <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                 <div className="space-y-3">
                                     <button
                                         onClick={() => onNavigate('review')}
@@ -867,8 +867,8 @@ export default function Fill({
                             </div>
                         </div>
 
-                        <div className="order-1 md:order-2 md:sticky md:top-8 md:h-fit">
-                            <div className="bg-white border-4 border-black shadow-neo p-6">
+                        <div className="order-2 md:sticky md:top-8 md:h-fit">
+                            <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                 <div className="flex items-center justify-between mb-4">
                                     <h2 className="text-xl text-black font-semibold">Live Preview</h2>
                                     <select
@@ -884,7 +884,7 @@ export default function Fill({
                                     </select>
                                 </div>
 
-                                <div className="border-2 border-black bg-white overflow-auto" style={{ height: '700px' }}>
+                                <div className="border-2 border-black bg-white overflow-auto h-[400px] md:h-[700px]">
                                     <div id="cv-preview-for-pdf">
                                         <CVPreview cvData={cvData} sections={sections} selectedTemplate={selectedTemplate} />
                                     </div>

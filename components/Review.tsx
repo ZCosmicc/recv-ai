@@ -199,7 +199,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
 
     if (!result) {
         return (
-            <div className="bg-white border-4 border-black shadow-neo p-8 max-w-2xl mx-auto text-center mt-10">
+            <div className="bg-white border-4 border-black shadow-neo p-4 md:p-8 max-w-2xl mx-auto text-center mt-6 md:mt-10">
                 <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-black">
                     <Star className="w-10 h-10 text-primary" />
                 </div>
@@ -215,7 +215,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                     </div>
                 )}
 
-                <div className="flex gap-4 justify-center">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <button
                         onClick={() => onNavigate('fill')}
                         className="px-6 py-3 font-bold border-2 border-black hover:bg-gray-100 transition-all"
@@ -244,7 +244,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
     return (
         <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header / Score */}
-            <div className="bg-white border-4 border-black shadow-neo mb-8 p-8 flex flex-col md:flex-row gap-8 items-center">
+            <div className="bg-white border-4 border-black shadow-neo mb-6 md:mb-8 p-4 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center">
                 <div className="relative w-40 h-40 flex-shrink-0">
                     <svg className="w-full h-full transform -rotate-90">
                         <circle
@@ -407,7 +407,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                         </div>
                         Strengths
                     </h3>
-                    <div className="bg-white border-2 border-black p-6 shadow-neo-sm">
+                    <div className="bg-white border-2 border-black p-4 md:p-6 shadow-neo-sm">
                         <ul className="space-y-4">
                             {result.strengths.map((str, idx) => (
                                 <li key={idx} className="flex items-start gap-3">
@@ -421,17 +421,17 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
             </div>
 
             {/* Navigation Footer */}
-            <div className="mt-12 flex justify-center border-t-4 border-black pt-8 gap-4">
+            <div className="mt-8 md:mt-12 flex flex-col sm:flex-row justify-center border-t-4 border-black pt-6 md:pt-8 gap-4 px-4 sm:px-0">
                 <button
                     onClick={() => downloadPDF(cvData)}
-                    className="px-8 py-3 font-bold text-white bg-green-600 border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-2"
+                    className="w-full sm:w-auto px-8 py-3 font-bold text-white bg-green-600 border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-2"
                 >
                     <Download className="w-5 h-5" />
                     Download PDF
                 </button>
                 <button
                     onClick={() => onNavigate('fill')}
-                    className="px-8 py-3 font-bold text-white bg-black border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-2"
+                    className="w-full sm:w-auto px-8 py-3 font-bold text-white bg-black border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-2"
                 >
                     <ChevronRight className="w-5 h-5 rotate-180" />
                     Back to Editor

@@ -22,19 +22,19 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
 
     return (
         <>
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                <div className="bg-white border-4 border-black shadow-neo-lg w-full max-w-md animate-in fade-in zoom-in duration-200">
-                    <div className="flex justify-between items-center p-4 border-b-4 border-black bg-yellow-100">
-                        <h2 className="text-xl font-bold flex items-center gap-2">
-                            {isGuest ? <Lock className="w-6 h-6" /> : <Crown className="w-6 h-6" />}
-                            {mode === 'ai' ? t.limitModal.dailyLimit : mode === 'premium_template' ? t.limitModal.premiumTemplate : (isGuest ? t.limitModal.unlockMore : t.limitModal.limitReached)}
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 sm:p-4">
+                <div className="bg-white border-4 border-black shadow-neo-lg w-full max-w-md animate-in fade-in zoom-in duration-200 mx-2 sm:mx-0">
+                    <div className="flex justify-between items-center p-3 sm:p-4 border-b-4 border-black bg-yellow-100">
+                        <h2 className="text-base sm:text-lg md:text-xl font-bold flex items-center gap-1 sm:gap-2 text-yellow-600 pr-2">
+                            {isGuest ? <Lock className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" /> : <Crown className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />}
+                            <span className="line-clamp-2">{mode === 'ai' ? t.limitModal.dailyLimit : mode === 'premium_template' ? t.limitModal.premiumTemplate : (isGuest ? t.limitModal.unlockMore : t.limitModal.limitReached)}</span>
                         </h2>
-                        <button onClick={onClose} className="hover:bg-yellow-200 p-1 rounded transition-colors">
-                            <X className="w-6 h-6" />
+                        <button onClick={onClose} className="hover:bg-yellow-200 p-1 rounded transition-colors flex-shrink-0">
+                            <X className="w-5 h-5 sm:w-6 sm:h-6" />
                         </button>
                     </div>
 
-                    <div className="p-6 space-y-4">
+                    <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                         {mode === 'ai' ? (
                             <>
                                 <p className="font-medium text-lg">
@@ -137,7 +137,6 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                         window.location.href = '/login';
                     }
                 }}
-                title="Notice"
                 message={alertMessage}
             />
         </>

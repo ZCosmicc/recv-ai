@@ -19,10 +19,10 @@ export const templates = [
 
 export default function CVPreview({ cvData, sections, selectedTemplate }: CVPreviewProps) {
     const renderMinimal = () => (
-        <div className="p-8 bg-white text-sm">
+        <div className="p-5 sm:p-8 bg-white text-sm">
             {cvData.personal.name && (
                 <div className="text-center mb-6 border-b-2 border-black pb-4">
-                    <h1 className="text-3xl font-bold uppercase tracking-wide text-gray-900">{cvData.personal.name}</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold uppercase tracking-wide text-gray-900">{cvData.personal.name}</h1>
                     <div className="text-gray-800 mt-2 space-x-3 text-xs">
                         {cvData.personal.email && <span>{cvData.personal.email}</span>}
                         {cvData.personal.phone && <span>• {cvData.personal.phone}</span>}
@@ -124,10 +124,10 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
     );
 
     const renderModern = () => (
-        <div className="p-8 bg-white text-sm">
+        <div className="p-5 sm:p-8 bg-white text-sm">
             {cvData.personal.name && (
                 <div className="mb-6">
-                    <h1 className="text-4xl font-bold text-blue-600 mb-2">{cvData.personal.name}</h1>
+                    <h1 className="text-3xl sm:text-4xl font-bold text-blue-600 mb-2">{cvData.personal.name}</h1>
                     <div className="flex flex-wrap gap-3 text-gray-600 text-xs">
                         {cvData.personal.email && <span className="flex items-center gap-1">📧 {cvData.personal.email}</span>}
                         {cvData.personal.phone && <span className="flex items-center gap-1">📞 {cvData.personal.phone}</span>}
@@ -244,8 +244,8 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
     );
 
     const renderCreative = () => (
-        <div className="flex bg-white text-sm">
-            <div className="w-1/3 bg-gradient-to-b from-purple-600 to-purple-800 text-white p-6">
+        <div className="flex flex-col sm:flex-row bg-white text-sm">
+            <div className="w-full sm:w-1/3 bg-gradient-to-b from-purple-600 to-purple-800 text-white p-5 sm:p-6">
                 {cvData.personal.name && (
                     <div className="mb-6">
                         <h1 className="text-2xl font-bold mb-3">{cvData.personal.name}</h1>
@@ -298,7 +298,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                 )}
             </div>
 
-            <div className="w-2/3 p-8">
+            <div className="w-full sm:w-2/3 p-5 sm:p-8">
                 {sections.filter(s => s.enabled).map(section => {
                     if (section.id === 'personal' || section.id === 'skills' || section.id === 'language' || section.id === 'certification') return null;
 
@@ -355,10 +355,10 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
     );
 
     const renderCorporate = () => (
-        <div className="p-8 bg-white text-sm font-serif">
+        <div className="p-5 sm:p-8 bg-white text-sm font-serif">
             {cvData.personal.name && (
                 <div className="text-center mb-6 pb-4 border-b-4 border-gray-800">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">{cvData.personal.name}</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{cvData.personal.name}</h1>
                     <div className="text-gray-600 space-x-2 text-xs">
                         {cvData.personal.email && <span>{cvData.personal.email}</span>}
                         {cvData.personal.phone && <span>| {cvData.personal.phone}</span>}
@@ -472,9 +472,9 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
     );
 
     const renderExecutive = () => (
-        <div className="flex bg-white text-sm font-sans h-full min-h-[800px]">
+        <div className="flex flex-col sm:flex-row bg-white text-sm font-sans h-full min-h-0 sm:min-h-[800px]">
             {/* Sidebar */}
-            <div className="w-1/3 bg-gray-900 text-white p-8 border-r-4 border-yellow-500">
+            <div className="w-full sm:w-1/3 bg-gray-900 text-white p-5 sm:p-8 border-b-4 sm:border-b-0 sm:border-r-4 border-yellow-500">
                 {cvData.personal.name && (
                     <div className="mb-10 text-center">
                         <div className="w-16 h-1 w-full bg-yellow-500 mb-4"></div>
@@ -521,7 +521,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
             </div>
 
             {/* Main Content */}
-            <div className="w-2/3 p-8 bg-gray-50">
+            <div className="w-full sm:w-2/3 p-5 sm:p-8 bg-gray-50">
                 {sections.filter(s => s.enabled).map(section => {
                     if (section.id === 'personal' || section.id === 'skills' || section.id === 'language') return null;
 

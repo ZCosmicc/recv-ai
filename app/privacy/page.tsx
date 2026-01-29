@@ -12,13 +12,13 @@ export default function PrivacyPolicy() {
         <div className="min-h-screen bg-white">
             {/* Header */}
             <nav className="border-b-4 border-black bg-white sticky top-0 z-50">
-                <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+                <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
                     <Link href="/" className="flex items-center gap-2">
                         <Image src="/LogoPrimaryReCV.png" alt="ReCV Logo" width={100} height={34} className="object-contain" />
                     </Link>
                     <Link
                         href="/"
-                        className="px-4 py-2 border-2 border-black bg-white hover:bg-gray-50 font-bold shadow-neo-sm hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                        className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-black bg-white hover:bg-gray-50 font-bold shadow-neo-sm hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all text-sm sm:text-base"
                     >
                         {t.privacy.backButton}
                     </Link>
@@ -26,24 +26,24 @@ export default function PrivacyPolicy() {
             </nav>
 
             {/* Content */}
-            <div className="container mx-auto px-6 py-16 max-w-4xl">
-                <h1 className="text-5xl font-extrabold text-black mb-6">{t.privacy.title}</h1>
+            <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-16 max-w-4xl">
+                <h1 className="text-3xl sm:text-5xl font-extrabold text-black mb-4 sm:mb-6">{t.privacy.title}</h1>
                 <p className="text-gray-600 mb-8">{t.privacy.lastUpdated}: January 29, 2026</p>
 
                 <div className="space-y-8 text-gray-800">
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Introduction</h2>
-                        <p className="leading-relaxed">
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Introduction</h2>
+                        <p className="leading-relaxed text-sm sm:text-base">
                             Welcome to ReCV ("we," "our," or "us"). We respect your privacy and are committed to protecting your personal data.
                             This privacy policy explains how we collect, use, and safeguard your information when you use our CV builder service.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Information We Collect</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Information We Collect</h2>
                         <div className="space-y-4">
                             <div>
-                                <h3 className="text-xl font-semibold mb-2">Account Information</h3>
+                                <h3 className="text-lg sm:text-xl font-semibold mb-2">Account Information</h3>
                                 <ul className="list-disc list-inside space-y-2 ml-4">
                                     <li>Email address (for authentication)</li>
                                     <li>User ID (automatically generated)</li>
@@ -69,7 +69,7 @@ export default function PrivacyPolicy() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">How We Use Your Information</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">How We Use Your Information</h2>
                         <ul className="list-disc list-inside space-y-2 ml-4">
                             <li>To provide and maintain our CV builder service</li>
                             <li>To authenticate your account</li>
@@ -81,7 +81,7 @@ export default function PrivacyPolicy() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Data Storage</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Data Storage</h2>
                         <div className="space-y-4">
                             <div>
                                 <h3 className="text-xl font-semibold mb-2">Guest Users</h3>
@@ -101,7 +101,7 @@ export default function PrivacyPolicy() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Data Security</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Data Security</h2>
                         <p className="leading-relaxed">
                             We implement appropriate technical and organizational security measures to protect your personal information.
                             However, no method of transmission over the Internet or electronic storage is 100% secure.
@@ -110,7 +110,7 @@ export default function PrivacyPolicy() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Your Rights</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Your Rights</h2>
                         <p className="mb-4">You have the right to:</p>
                         <ul className="list-disc list-inside space-y-2 ml-4">
                             <li><strong>Access:</strong> Request a copy of your personal data</li>
@@ -124,7 +124,7 @@ export default function PrivacyPolicy() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Third-Party Services</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Third-Party Services</h2>
                         <p className="mb-4">We use the following third-party services:</p>
                         <ul className="list-disc list-inside space-y-2 ml-4">
                             <li><strong>Supabase:</strong> For database and authentication</li>
@@ -137,7 +137,7 @@ export default function PrivacyPolicy() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Data Retention</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Data Retention</h2>
                         <p className="leading-relaxed">
                             We retain your personal data for as long as your account is active. If you delete your account,
                             we will delete all your personal information and CV data within 30 days, except where we are required
@@ -146,7 +146,7 @@ export default function PrivacyPolicy() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">We Do NOT</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">We Do NOT</h2>
                         <ul className="list-disc list-inside space-y-2 ml-4">
                             <li>Sell your personal information to third parties</li>
                             <li>Share your CV content with anyone without your permission</li>
@@ -156,7 +156,7 @@ export default function PrivacyPolicy() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Changes to This Policy</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Changes to This Policy</h2>
                         <p className="leading-relaxed">
                             We may update this privacy policy from time to time. We will notify you of any significant changes
                             by posting the new policy on this page and updating the "Last updated" date.
@@ -164,7 +164,7 @@ export default function PrivacyPolicy() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Contact Us</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Contact Us</h2>
                         <p className="leading-relaxed">
                             If you have any questions about this Privacy Policy, please contact us:
                         </p>
@@ -188,7 +188,7 @@ export default function PrivacyPolicy() {
 
             {/* Footer */}
             <footer className="border-t-4 border-black bg-gray-50 py-8 mt-20">
-                <div className="container mx-auto px-6 text-center">
+                <div className="container mx-auto px-4 sm:px-6 text-center">
                     <p className="text-gray-600 flex items-center justify-center gap-2">
                         © 2026 ReCV. Made with <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by ZCo Studio.
                     </p>

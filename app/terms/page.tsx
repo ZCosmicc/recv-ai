@@ -12,13 +12,13 @@ export default function TermsOfService() {
         <div className="min-h-screen bg-white">
             {/* Header */}
             <nav className="border-b-4 border-black bg-white sticky top-0 z-50">
-                <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+                <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
                     <Link href="/" className="flex items-center gap-2">
                         <Image src="/LogoPrimaryReCV.png" alt="ReCV Logo" width={100} height={34} className="object-contain" />
                     </Link>
                     <Link
                         href="/"
-                        className="px-4 py-2 border-2 border-black bg-white hover:bg-gray-50 font-bold shadow-neo-sm hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                        className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-black bg-white hover:bg-gray-50 font-bold shadow-neo-sm hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all text-sm sm:text-base"
                     >
                         {t.terms.backButton}
                     </Link>
@@ -26,29 +26,29 @@ export default function TermsOfService() {
             </nav>
 
             {/* Content */}
-            <div className="container mx-auto px-6 py-16 max-w-4xl">
-                <h1 className="text-5xl font-extrabold text-black mb-6">{t.terms.title}</h1>
+            <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-16 max-w-4xl">
+                <h1 className="text-3xl sm:text-5xl font-extrabold text-black mb-4 sm:mb-6">{t.terms.title}</h1>
                 <p className="text-gray-600 mb-8">{t.terms.lastUpdated}: January 29, 2026</p>
 
                 <div className="space-y-8 text-gray-800">
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Agreement to Terms</h2>
-                        <p className="leading-relaxed">
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Agreement to Terms</h2>
+                        <p className="leading-relaxed text-sm sm:text-base">
                             By accessing and using ReCV ("the Service"), you agree to be bound by these Terms of Service.
                             If you do not agree to these terms, please do not use our service.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Description of Service</h2>
-                        <p className="leading-relaxed mb-4">
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Description of Service</h2>
+                        <p className="leading-relaxed mb-3 sm:mb-4 text-sm sm:text-base">
                             ReCV is an online CV (Curriculum Vitae) builder that allows users to create, edit, and export professional resumes.
                             We offer both free and premium subscription tiers with different features and limitations.
                         </p>
                         <div className="space-y-4">
                             <div>
-                                <h3 className="text-xl font-semibold mb-2">Free Tier</h3>
-                                <ul className="list-disc list-inside space-y-2 ml-4">
+                                <h3 className="text-lg sm:text-xl font-semibold mb-2">Free Tier</h3>
+                                <ul className="list-disc list-inside space-y-2 ml-4 text-sm sm:text-base">
                                     <li>1 saved CV maximum</li>
                                     <li>Basic templates</li>
                                     <li>PDF export with watermark</li>
@@ -56,7 +56,7 @@ export default function TermsOfService() {
                                 </ul>
                             </div>
                             <div>
-                                <h3 className="text-xl font-semibold mb-2">Pro Tier (Rp.15,000/month)</h3>
+                                <h3 className="text-lg sm:text-xl font-semibold mb-2">Pro Tier (Rp.15,000/month)</h3>
                                 <ul className="list-disc list-inside space-y-2 ml-4">
                                     <li>Up to 4 saved CVs</li>
                                     <li>All premium templates</li>
@@ -69,7 +69,7 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">User Accounts</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">User Accounts</h2>
                         <ul className="list-disc list-inside space-y-2 ml-4">
                             <li>You may use ReCV as a guest (data stored locally in browser)</li>
                             <li>Creating an account requires a valid email address</li>
@@ -80,7 +80,7 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Acceptable Use</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Acceptable Use</h2>
                         <p className="mb-4 leading-relaxed">You agree NOT to:</p>
                         <ul className="list-disc list-inside space-y-2 ml-4">
                             <li>Use the service for any illegal purposes</li>
@@ -93,7 +93,7 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Payment and Billing</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Payment and Billing</h2>
                         <div className="space-y-4">
                             <p className="leading-relaxed">
                                 Pro subscriptions are billed monthly at Rp.15,000 per month through our payment processor, Pakasir.
@@ -107,10 +107,10 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Intellectual Property</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Intellectual Property</h2>
                         <div className="space-y-4">
                             <div>
-                                <h3 className="text-xl font-semibold mb-2">Your Content</h3>
+                                <h3 className="text-lg sm:text-xl font-semibold mb-2">Your Content</h3>
                                 <p className="leading-relaxed">
                                     You retain all rights to the CV content you create. We do not claim ownership of your resumes,
                                     work experience, or any other information you input into our service.
@@ -127,7 +127,7 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Service Availability</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Service Availability</h2>
                         <p className="leading-relaxed">
                             We strive to provide 99.9% uptime, but we do not guarantee uninterrupted access to the service.
                             We may perform maintenance, updates, or experience technical issues that temporarily affect availability.
@@ -135,7 +135,7 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Limitation of Liability</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Limitation of Liability</h2>
                         <p className="leading-relaxed mb-4">
                             <strong>IMPORTANT:</strong> ReCV is provided "as is" without warranties of any kind. We are not responsible for:
                         </p>
@@ -151,7 +151,7 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">AI Features Disclaimer</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">AI Features Disclaimer</h2>
                         <p className="leading-relaxed">
                             Our AI-powered CV analysis and suggestions are generated by artificial intelligence and should be used as guidance only.
                             We do not guarantee the accuracy, relevance, or effectiveness of AI-generated suggestions.
@@ -160,7 +160,7 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Termination</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Termination</h2>
                         <p className="leading-relaxed mb-4">
                             We reserve the right to suspend or terminate your account if you violate these Terms of Service.
                             Reasons for termination include, but are not limited to:
@@ -176,7 +176,7 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Changes to Terms</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Changes to Terms</h2>
                         <p className="leading-relaxed">
                             We may update these Terms of Service from time to time. Significant changes will be communicated via email
                             or a notice on our website. Continued use of the service after changes constitutes acceptance of the new terms.
@@ -184,14 +184,14 @@ export default function TermsOfService() {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Governing Law</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Governing Law</h2>
                         <p className="leading-relaxed">
                             These Terms of Service are governed by the laws of Indonesia. Any disputes will be resolved in Indonesian courts.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-bold mb-4">Contact Information</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Contact Information</h2>
                         <p className="leading-relaxed mb-4">
                             If you have any questions about these Terms of Service, please contact us:
                         </p>
@@ -212,7 +212,7 @@ export default function TermsOfService() {
                     </section>
 
                     <section className="bg-blue-50 border-2 border-blue-200 p-6 rounded-lg">
-                        <h2 className="text-2xl font-bold mb-4">Agreement</h2>
+                        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Agreement</h2>
                         <p className="leading-relaxed">
                             By using ReCV, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service
                             and our Privacy Policy.
@@ -223,7 +223,7 @@ export default function TermsOfService() {
 
             {/* Footer */}
             <footer className="border-t-4 border-black bg-gray-50 py-8 mt-20">
-                <div className="container mx-auto px-6 text-center">
+                <div className="container mx-auto px-4 sm:px-6 text-center">
                     <p className="text-gray-600 flex items-center justify-center gap-2">
                         © 2026 ReCV. Made with <Heart className="w-4 h-4 text-red-500 fill-red-500" /> by ZCo Studio.
                     </p>
