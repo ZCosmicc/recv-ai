@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://recv.ai';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://recv-ai.vercel.app';
 
 export default function robots(): MetadataRoute.Robots {
     return {
