@@ -58,26 +58,26 @@ export async function POST(req: Request) {
 
         // 7. Find user by ID prefix
 
-        // Fetch all profiles (small dataset) and filter by ID prefix
-        const { data: allProfiles, error: profileError } = await supabase
+        // 7. Find user by ID prefix using efficient DB query
+        // We look for profiles where ID starts with the prefix. 
+        // Note: ID is uuid, so we cast to text if needed, but Supabase/Postgres 
+        // supports text-like comparison on UUIDs automatically in some contexts, 
+        // or we use a range query if 'like' fails on UUID type directly without casting.
+        // Easiest is to use .like() with implicit cast or just text match.
+
+        const { data: matchingProfiles, error: profileError } = await supabase
             .from('profiles')
-            .select('id, email, tier');
+            .select('id, email, tier')
+            .like('id', `${userIdPrefix}%`)
+            .limit(1);
 
         if (profileError) {
             console.error('❌ Error fetching profiles:', profileError);
             return NextResponse.json({ error: 'Failed to fetch profiles' }, { status: 500 });
         }
 
-        if (!allProfiles || allProfiles.length === 0) {
-            console.error('❌ No profiles found in database');
-            return NextResponse.json({ error: 'No users in database' }, { status: 404 });
-        }
-
-        // Filter by ID prefix (convert UUID to string for comparison)
-        const matchingProfiles = allProfiles.filter(p => p.id.toString().startsWith(userIdPrefix));
-
-        if (matchingProfiles.length === 0) {
-            console.error('❌ User not found');
+        if (!matchingProfiles || matchingProfiles.length === 0) {
+            console.error('❌ User not found with prefix:', userIdPrefix);
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 

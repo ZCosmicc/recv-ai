@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import {
-    ChevronLeft, Trash2, Info, GripVertical, X, Plus, Sparkles, Download, Menu, Crown, Lock
+    ChevronLeft, Trash2, Info, GripVertical, X, Plus, Sparkles, Download, Menu, Crown, Lock, Loader2, Check
 } from 'lucide-react';
 import LimitModal from './LimitModal';
 import { CVData, Section } from '../types';
@@ -292,13 +292,19 @@ export default function Fill({
                             <PlanCard tier={tier} />
 
                             {isCloud && (
-                                <button
-                                    onClick={onSave}
-                                    disabled={isSaving}
-                                    className="px-6 py-2 text-white bg-green-600 font-bold border-4 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50"
-                                >
-                                    {isSaving ? 'Saving...' : 'Save'}
-                                </button>
+                                <div className="bg-white border-4 border-black shadow-neo px-4 py-2 font-bold text-sm flex items-center gap-2">
+                                    {isSaving ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
+                                            <span className="text-gray-500">Saving...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Check className="w-4 h-4 text-green-600" />
+                                            <span className="text-green-600">Saved</span>
+                                        </>
+                                    )}
+                                </div>
                             )}
                             <button
                                 onClick={onClearData}

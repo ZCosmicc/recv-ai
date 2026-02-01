@@ -2,6 +2,30 @@
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-02-01
+
+### ✨ New Features - Auto-Save System
+- **Real-time Auto-save**:
+  - **CV Builder**: Automatically saves changes 2 seconds after typing stops for "Fill" and "Sections" pages.
+  - **Cover Letter**: Added auto-save draft functionality to the Wizard, persisting inputs across sessions.
+  - **Status Indicator**: Replaced manual "Save" button with a dynamic "Saving..." / "Saved" validation card in the top bar.
+- **Cross-Platform Safety**:
+  - **Cloud Sync**: Saves to Supabase for authenticated aint users.
+  - **Local Backup**: Simultaneously saves to `localStorage` as a fallback for Guest users.
+
+### 🛠 Improvements
+- **Database Schema**: Added missing `updated_at` column to `cover_letters` table to properly track last edited times.
+- **UI UX**:
+  - Added "Info" toast notification type (Blue) for non-critical status updates like "Saving draft...".
+  - Improved error logging for API routes to catch silent validation failures.
+- **Developer Experience**: Added `useDebounce` hook for performance optimization.
+
+### 🛡️ Security & Infrastructure
+- **DDoS Protection**: Implemented robust Rate Limiting middleware (Upstash) to prevent abuse on all API routes.
+- **Critical Security Patch**: Fixed a major Row Level Security (RLS) vulnerability that allowed improper data access.
+  - Locked down `public` schema access.
+  - Added strict policy verification script `scripts/verify_rls.ts` to ensure data isolation.
+
 ## [1.2.1] - 2026-02-01
 
 ### 🐛 Bug Fixes & Reliability

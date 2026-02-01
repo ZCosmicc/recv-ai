@@ -13,6 +13,7 @@ import Review from '../components/Review'; // Import Review Component
 import { createClient } from '@/utils/supabase/client';
 import { Loader2 } from 'lucide-react';
 import Toast, { ToastType } from '../components/Toast';
+import { useDebounce } from '@/hooks/useDebounce';
 
 function BuilderContent() {
   const searchParams = useSearchParams();
@@ -192,7 +193,7 @@ function BuilderContent() {
     }
   }, [searchParams]);
 
-  // Save Logic
+  // Save Logic (LocalStorage - Backup)
   useEffect(() => {
     if (!isLoaded) return;
 
@@ -209,19 +210,39 @@ function BuilderContent() {
     }
   }, [step, selectedTemplate, sections, cvData, aiCredits, cvId, isLoaded]);
 
-  const handleSaveToCloud = async () => {
+  // Auto-Save Logic (Cloud)
+  // Debounce the STRINGIFIED data to avoid object reference loops
+  // We exclude aiCredits from this check as it changes independently of content
+  const dataString = JSON.stringify({ cvData, sections, selectedTemplate });
+  const debouncedDataString = useDebounce(dataString, 2000);
+  const lastSavedData = React.useRef(dataString); // Track last saved to prevent duplicates
+  const isFirstRender = React.useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    // Only auto-save if:
+    // 1. We have a cvId (Cloud mode)
+    // 2. Data is loaded
+    // 3. Data actually changed from last save
+    if (cvId && isLoaded && debouncedDataString !== lastSavedData.current) {
+      handleSaveToCloud(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedDataString]);
+
+  const handleSaveToCloud = async (isAutoSave = false) => {
     if (!cvId) return;
     setIsSaving(true);
 
-    // Update the `data` column with current cvData. 
-    // Ideally we should also save `sections` and `selectedTemplate` to DB?
-    // My DB schema `data` column is jsonb. I can put everything there.
+    // If explicit save or user wants alerts for auto-save
+    if (isAutoSave) setToast({ message: 'Saving changes...', type: 'info' });
 
     const fullPayload = {
       ...cvData,
-      // We might want to store sections/template config separately or nested? 
-      // For MVP, if I only update `cvData`, I lose section order.
-      // Let's assume `data` column stores EVERYTHING needed to reconstruct the CV.
       sections,
       selectedTemplate
     };
@@ -239,7 +260,8 @@ function BuilderContent() {
     if (error) {
       setToast({ message: 'Error saving CV', type: 'error' });
     } else {
-      setToast({ message: 'CV saved successfully!', type: 'success' });
+      lastSavedData.current = JSON.stringify({ cvData, sections, selectedTemplate }); // Update ref on success
+      setToast({ message: 'Changes saved!', type: 'success' });
     }
   };
 

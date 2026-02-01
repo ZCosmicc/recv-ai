@@ -7,7 +7,8 @@ import { Loader2, ChevronRight, ChevronLeft, Sparkles, CheckCircle, FileText, Co
 import { useLanguage } from '@/contexts/LanguageContext';
 import { jsPDF } from 'jspdf';
 import Toast, { ToastType } from './Toast';
-import PlanCard from './PlanCard'; // Added import
+import PlanCard from './PlanCard';
+import { useDebounce } from '@/hooks/useDebounce';
 
 interface CV {
     id: string;
@@ -138,7 +139,105 @@ export default function CoverLetterWizard() {
             fetchCoverLetter();
         }
         fetchInitialData();
+        fetchInitialData();
     }, [coverLetterId]);
+
+    // Auto-Save Logic
+    const draftData = {
+        title,
+        jobTitle,
+        companyName,
+        jobDescription,
+        keySkills,
+        tone,
+        language,
+        cvId: selectedCvId
+    };
+
+    const debouncedDraft = useDebounce(JSON.stringify(draftData), 2000);
+    const lastSavedDraft = React.useRef(JSON.stringify(draftData));
+    const isFirstRender = React.useRef(true);
+
+    // Track ID separately as it might change from null -> string
+    const currentLetterId = generatedLetter?.id || null;
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        // Must have at least a CV selected to save
+        if (!selectedCvId) return;
+
+        // Check if data changed
+        if (debouncedDraft !== lastSavedDraft.current) {
+            handleSaveDraft();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [debouncedDraft]);
+
+    const handleSaveDraft = async () => {
+        // Don't save if on existing letter to avoid overwriting unless content changed?
+        // Actually we want to save drafts.
+
+        setToast({ message: 'Saving draft...', type: 'info' });
+
+        try {
+            const parsed = JSON.parse(debouncedDraft);
+            const res = await fetch('/api/cover-letter/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: currentLetterId || undefined, // Send undefined to skip key if null
+                    ...parsed
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                // Try to parse JSON error, fall back to status text
+                let errorData;
+                try {
+                    errorData = data;
+                } catch (e) {
+                    errorData = { error: res.statusText };
+                }
+
+                if (res.status === 403) {
+                    setToast({ message: 'Auto-save failed: Limit reached', type: 'error' });
+                } else {
+                    console.error(`Auto-save error: Status ${res.status} ${res.statusText}. Data: ${JSON.stringify(errorData)}`);
+                }
+                return;
+            }
+
+            // Success
+            lastSavedDraft.current = debouncedDraft;
+            setToast({ message: 'Draft saved!', type: 'success' });
+
+            // If it was a new letter, update state with ID so future saves update it
+            if (!currentLetterId && data.id) {
+                setGeneratedLetter(prev => prev ? { ...prev, id: data.id } : {
+                    id: data.id,
+                    content: '',
+                    job_title: parsed.jobTitle,
+                    company_name: parsed.companyName,
+                    tone: parsed.tone,
+                    created_at: new Date().toISOString(),
+                    title: parsed.title
+                });
+
+                // Update URL without reload
+                const newUrl = `/cover-letter/create?id=${data.id}`;
+                window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
+            }
+
+        } catch (e) {
+            console.error('Auto-save exception', e);
+        }
+    };
 
     const handleGenerate = async () => {
         if (!selectedCvId || !jobTitle || !companyName || !jobDescription) {
