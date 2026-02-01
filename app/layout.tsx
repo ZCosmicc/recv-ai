@@ -9,8 +9,43 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "ReCV - ReWrites Your CV",
-  description: "Enhance your CV tailored to your needs.",
+  title: {
+    default: "Recv. AI - Free ATS-Friendly CV Builder & Cover Letter Generator",
+    template: "%s | Recv. AI"
+  },
+  description: "Create professional, ATS-optimized resumes and AI-tailored cover letters in minutes. Free to use, multiple templates, and instant PDF download.",
+  keywords: ["CV Builder", "Resume Builder", "AI Cover Letter", "ATS Friendly", "Free Resume Templates", "Job Application Tool", "CV Maker", "Review CV"],
+  authors: [{ name: "Recv. AI Team" }],
+  creator: "Recv. AI",
+  publisher: "Recv. AI",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    title: "Recv. AI - Free ATS-Friendly CV Builder",
+    description: "Build your professional CV and generate tailored cover letters with AI. Free, fast, and ATS-optimized.",
+    type: "website",
+    locale: "en_US",
+    siteName: "Recv. AI",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Recv. AI - Free ATS-Friendly CV Builder",
+    description: "Build your professional CV and generate tailored cover letters with AI.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 import { LanguageProvider } from '@/contexts/LanguageContext';

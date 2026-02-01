@@ -17,7 +17,9 @@ export default function CreateCoverLetterPage() {
                     <p className="text-gray-600">{t.coverLetter.createDesc}</p>
                 </div>
 
-                <CoverLetterWizard />
+                <React.Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
+                    <CoverLetterWizard />
+                </React.Suspense>
             </div>
         </div>
     );
