@@ -3,9 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function PaymentSuccess() {
     const router = useRouter();
+    const { t } = useLanguage();
     const [status, setStatus] = useState<'processing' | 'success' | 'failed'>('processing');
     const [countdown, setCountdown] = useState(5);
 
@@ -42,12 +44,12 @@ export default function PaymentSuccess() {
                 {status === 'processing' && (
                     <>
                         <Loader2 className="w-16 h-16 mx-auto mb-4 animate-spin text-blue-600" />
-                        <h1 className="text-2xl font-bold mb-2">Memproses Pembayaran...</h1>
+                        <h1 className="text-2xl font-bold mb-2">{t.paymentSuccess.processingTitle}</h1>
                         <p className="text-gray-600 mb-4">
-                            Terima kasih! Kami sedang memverifikasi pembayaran Anda.
+                            {t.paymentSuccess.processingDesc}
                         </p>
                         <p className="text-sm text-gray-500">
-                            Dialihkan dalam {countdown} detik...
+                            {t.paymentSuccess.redirecting.replace('{seconds}', countdown.toString())}
                         </p>
                     </>
                 )}
@@ -55,26 +57,26 @@ export default function PaymentSuccess() {
                 {status === 'success' && (
                     <>
                         <CheckCircle2 className="w-16 h-16 mx-auto mb-4 text-green-600" />
-                        <h1 className="text-2xl font-bold mb-2">Pembayaran Berhasil!</h1>
+                        <h1 className="text-2xl font-bold mb-2">{t.paymentSuccess.successTitle}</h1>
                         <p className="text-gray-600 mb-8 text-center max-w-md">
-                            Your payment is being processed. Your account will be upgraded to Pro shortly.
+                            {t.paymentSuccess.successDesc}
                         </p>
 
                         {/* Instructions */}
                         <div className="bg-blue-50 border-2 border-blue-200 p-4 rounded-lg mb-6">
-                            <h3 className="font-bold text-blue-900 mb-2">What's Next?</h3>
+                            <h3 className="font-bold text-blue-900 mb-2">{t.paymentSuccess.whatsNext}</h3>
                             <ul className="text-sm text-blue-800 space-y-2">
-                                <li>✓ We're processing your payment with Pakasir</li>
-                                <li>✓ Your tier will update automatically in a few moments</li>
-                                <li>✓ Try refreshing this page if it doesn't update within 30 seconds</li>
+                                <li>{t.paymentSuccess.step1}</li>
+                                <li>{t.paymentSuccess.step2}</li>
+                                <li>{t.paymentSuccess.step3}</li>
                             </ul>
                         </div>
 
                         {/* Support Info */}
                         <div className="bg-yellow-50 border-2 border-yellow-200 p-4 rounded-lg mb-6">
-                            <h3 className="font-bold text-yellow-900 mb-2">Having Issues?</h3>
+                            <h3 className="font-bold text-yellow-900 mb-2">{t.paymentSuccess.issuesTitle}</h3>
                             <p className="text-sm text-yellow-800 mb-2">
-                                If your tier doesn't update after refreshing, please contact support:
+                                {t.paymentSuccess.issuesDesc}
                             </p>
                             <a
                                 href="mailto:farizfadillah612@gmail.com"
@@ -89,9 +91,9 @@ export default function PaymentSuccess() {
                 {status === 'failed' && (
                     <>
                         <XCircle className="w-16 h-16 mx-auto mb-4 text-red-600" />
-                        <h1 className="text-2xl font-bold mb-2">Pembayaran Gagal</h1>
+                        <h1 className="text-2xl font-bold mb-2">{t.paymentSuccess.failedTitle}</h1>
                         <p className="text-gray-600 mb-4">
-                            Terjadi kesalahan. Silakan coba lagi.
+                            {t.paymentSuccess.failedDesc}
                         </p>
                     </>
                 )}

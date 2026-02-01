@@ -98,7 +98,7 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
 
                                             if (res.status === 401) {
                                                 // User not logged in - show styled alert
-                                                setAlertMessage('Please log in first to upgrade to Pro.');
+                                                setAlertMessage(t.errors.loginRequired);
                                                 setShowAlert(true);
                                                 return;
                                             }
@@ -108,13 +108,13 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                                                 window.location.href = data.paymentUrl;
                                             } else {
                                                 // Show specific error from API if available
-                                                const errorMsg = data.error || 'Failed to create payment. Please try again.';
+                                                const errorMsg = data.error || t.errors.paymentFailed;
                                                 setAlertMessage(errorMsg);
                                                 setShowAlert(true);
                                             }
                                         } catch (error) {
                                             console.error('Payment error:', error);
-                                            setAlertMessage('Payment error. Please try again.');
+                                            setAlertMessage(t.errors.generic);
                                             setShowAlert(true);
                                         }
                                     }}

@@ -129,12 +129,12 @@ export default function Home({ onStart }: HomeProps) {
                                     <Check className="w-6 h-6 text-green-600 border-2 border-black p-0.5" />
                                     {t.pricing.free.features.watermark}
                                 </li>
-                                <li className="flex items-center gap-3 font-bold text-gray-400">
-                                    <X className="w-6 h-6 text-red-500 border-2 border-gray-400 p-0.5" />
+                                <li className="flex items-center gap-3 font-bold text-gray-500">
+                                    <Check className="w-6 h-6 text-green-600 border-2 border-black p-0.5" />
                                     {t.pricing.free.features.aiLimit}
                                 </li>
-                                <li className="flex items-center gap-3 font-bold text-gray-400">
-                                    <X className="w-6 h-6 text-red-500 border-2 border-gray-400 p-0.5" />
+                                <li className="flex items-center gap-3 font-bold text-gray-500">
+                                    <Check className="w-6 h-6 text-green-600 border-2 border-black p-0.5" />
                                     {t.pricing.free.features.coverLetter}
                                 </li>
                             </ul>
@@ -150,19 +150,23 @@ export default function Home({ onStart }: HomeProps) {
                             <div className="text-4xl sm:text-5xl font-extrabold mb-6">{t.pricing.pro.price}<span className="text-lg sm:text-xl font-medium text-blue-100">{t.pricing.perMonth}</span></div>
                             <ul className="space-y-4 mb-8">
                                 <li className="flex items-center gap-3 font-bold">
-                                    <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-black" /></div>
+                                    <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-green-600" /></div>
                                     {t.pricing.pro.features.premium}
                                 </li>
                                 <li className="flex items-center gap-3 font-bold">
-                                    <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-black" /></div>
+                                    <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-green-600" /></div>
                                     {t.pricing.pro.features.noWatermark}
                                 </li>
                                 <li className="flex items-center gap-3 font-bold">
-                                    <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-black" /></div>
+                                    <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-green-600" /></div>
                                     {t.pricing.pro.features.aiLimit}
                                 </li>
                                 <li className="flex items-center gap-3 font-bold">
-                                    <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-black" /></div>
+                                    <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-green-600" /></div>
+                                    {t.pricing.pro.features.coverLetter}
+                                </li>
+                                <li className="flex items-center gap-3 font-bold">
+                                    <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-green-600" /></div>
                                     {t.pricing.pro.features.support}
                                 </li>
                             </ul>

@@ -82,7 +82,7 @@ function BuilderContent() {
         // Fetch Profile for Credits
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
-          .select('tier, daily_credits_used')
+          .select('tier, daily_credits_used, last_credit_reset')
           .eq('id', user.id)
           .single();
 
@@ -93,10 +93,23 @@ function BuilderContent() {
           setTier(userTier);
           setDailyUsage(profile.daily_credits_used || 0);
 
-          // Calculate Remaining
+          // Calculate Remaining with client-side reset check
           const limit = userTier === 'pro' ? 50 : 1;
-          setAiCredits(Math.max(0, limit - (profile.daily_credits_used || 0)));
-          console.log('✅ Tier set to:', userTier, 'Credits:', limit - (profile.daily_credits_used || 0));
+          let currentUsage = profile.daily_credits_used || 0;
+
+          // Check if reset is due (24h)
+          if (profile.last_credit_reset) {
+            const lastReset = new Date(profile.last_credit_reset);
+            const now = new Date();
+            const hoursSinceReset = Math.abs(now.getTime() - lastReset.getTime()) / 36e5;
+
+            if (hoursSinceReset >= 24) {
+              currentUsage = 0; // Visual reset
+            }
+          }
+
+          setAiCredits(Math.max(0, limit - currentUsage));
+          console.log('✅ Tier set to:', userTier, 'Credits:', Math.max(0, limit - currentUsage));
         } else {
           // Logged in but no profile? treat as free instead of guest
           console.warn('⚠️ No profile found for user, defaulting to free');

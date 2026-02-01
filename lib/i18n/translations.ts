@@ -13,6 +13,53 @@ export interface Translations {
         dashboard: string;
     };
 
+    // Payment Success
+    paymentSuccess: {
+        processingTitle: string;
+        processingDesc: string;
+        redirecting: string;
+        successTitle: string;
+        successDesc: string;
+        whatsNext: string;
+        step1: string;
+        step2: string;
+        step3: string;
+        issuesTitle: string;
+        issuesDesc: string;
+        failedTitle: string;
+        failedDesc: string;
+    };
+
+    // Cover Letter
+    coverLetter: {
+        createTitle: string;
+        createDesc: string;
+        newButton: string; // Added
+        deleteTitle: string; // Added
+        deleteMessage: string; // Added
+        cancel: string; // Added
+        confirmDelete: string; // Added
+        selectCv: string;
+        backToDashboard: string;
+        noCvs: string;
+        nextStep: string;
+        jobDetails: string;
+        docTitle: string;
+        jobTitle: string;
+        companyName: string;
+        jobDesc: string;
+        keySkills: string;
+        tone: string;
+        language: string;
+        back: string;
+        generate: string;
+        generating: string;
+        previewHandler: string;
+        copy: string;
+        download: string;
+        startOver: string;
+    };
+
     // Hero Section
     hero: {
         titlePart1: string; // "Re"
@@ -54,6 +101,7 @@ export interface Translations {
                 premium: string;
                 noWatermark: string;
                 aiLimit: string;
+                coverLetter: string;
                 support: string;
             };
             button: string;
@@ -165,6 +213,13 @@ export interface Translations {
         saved: string;
         deleted: string;
     };
+
+    // Generic Errors
+    errors: {
+        loginRequired: string;
+        paymentFailed: string;
+        generic: string;
+    };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -178,6 +233,49 @@ export const translations: Record<Language, Translations> = {
             logout: 'Logout',
             admin: 'Admin',
             dashboard: 'Dashboard',
+        },
+        paymentSuccess: {
+            processingTitle: 'Processing Payment...',
+            processingDesc: 'Thank you! We are verifying your payment.',
+            redirecting: 'Redirecting in {seconds} seconds...',
+            successTitle: 'Payment Successful!',
+            successDesc: 'Your payment is being processed. Your account will be upgraded to Pro shortly.',
+            whatsNext: "What's Next?",
+            step1: "✓ We're processing your payment with Pakasir",
+            step2: "✓ Your tier will update automatically in a few moments",
+            step3: "✓ Try refreshing this page if it doesn't update within 30 seconds",
+            issuesTitle: "Having Issues?",
+            issuesDesc: "If your tier doesn't update after refreshing, please contact support:",
+            failedTitle: "Payment Failed",
+            failedDesc: "Something went wrong. Please try again.",
+        },
+        coverLetter: {
+            createTitle: 'Create Cover Letter',
+            createDesc: 'Generate a tailored cover letter using AI and your existing CV.',
+            newButton: 'New Cover Letter',
+            deleteTitle: 'Delete Cover Letter?',
+            deleteMessage: 'Are you sure you want to delete this cover letter? This action cannot be undone.',
+            cancel: 'Cancel',
+            confirmDelete: 'Delete',
+            selectCv: 'Select Source CV',
+            backToDashboard: 'Back to Dashboard',
+            noCvs: 'No CVs found. Please create a CV first.',
+            nextStep: 'Next Step',
+            jobDetails: 'Job Details & Tone',
+            docTitle: 'Document Title',
+            jobTitle: 'Job Title',
+            companyName: 'Company Name',
+            jobDesc: 'Job Description',
+            keySkills: 'Key Skills to Highlight (Optional)',
+            tone: 'Tone & Style',
+            language: 'Language',
+            back: 'Back',
+            generate: 'Generate Letter',
+            generating: 'Generating...',
+            previewHandler: 'Cover Letter Ready!',
+            copy: 'Copy Text',
+            download: 'Download PDF',
+            startOver: 'Start Over with New Details'
         },
         hero: {
             titlePart1: 'Re',
@@ -215,8 +313,8 @@ export const translations: Record<Language, Translations> = {
                 features: {
                     basic: 'Basic Templates',
                     watermark: 'PDF Export (Watermarked)',
-                    aiLimit: '1 AI Analysis per day',
-                    coverLetter: 'Cover Letter Builder'
+                    aiLimit: '1 AI Credit per day',
+                    coverLetter: 'Basic Cover Letter (Use Credit)'
                 },
                 button: 'Start for Free'
             },
@@ -226,7 +324,8 @@ export const translations: Record<Language, Translations> = {
                 features: {
                     premium: 'All Premium Templates',
                     noWatermark: 'Unlimited PDF Exports (No Watermark)',
-                    aiLimit: '50 AI Analyses per day',
+                    aiLimit: '50 AI Credits per day',
+                    coverLetter: 'AI Cover Letter Generator',
                     support: 'Priority Support'
                 },
                 button: 'Go Pro'
@@ -332,6 +431,11 @@ export const translations: Record<Language, Translations> = {
             saved: 'Saved successfully',
             deleted: 'Deleted successfully',
         },
+        errors: {
+            loginRequired: 'Please log in first to upgrade to Pro.',
+            paymentFailed: 'Failed to create payment. Please try again.',
+            generic: 'Payment error. Please try again.',
+        },
     },
     id: {
         nav: {
@@ -343,6 +447,49 @@ export const translations: Record<Language, Translations> = {
             logout: 'Keluar',
             admin: 'Admin',
             dashboard: 'Dasbor',
+        },
+        paymentSuccess: {
+            processingTitle: 'Memproses Pembayaran...',
+            processingDesc: 'Terima kasih! Kami sedang memverifikasi pembayaran Anda.',
+            redirecting: 'Dialihkan dalam {seconds} detik...',
+            successTitle: 'Pembayaran Berhasil!',
+            successDesc: 'Pembayaran Anda sedang diproses. Akun Anda akan segera ditingkatkan ke Pro.',
+            whatsNext: "Apa Selanjutnya?",
+            step1: "✓ Kami sedang memproses pembayaran Anda dengan Pakasir",
+            step2: "✓ Tingkat akun Anda akan diperbarui secara otomatis dalam beberapa saat",
+            step3: "✓ Coba muat ulang halaman ini jika tidak berubah dalam 30 detik",
+            issuesTitle: "Ada Masalah?",
+            issuesDesc: "Jika tingkat akun Anda tidak berubah setelah memuat ulang, silakan hubungi dukungan:",
+            failedTitle: "Pembayaran Gagal",
+            failedDesc: "Terjadi kesalahan. Silakan coba lagi.",
+        },
+        coverLetter: {
+            createTitle: 'Buat Surat Lamaran',
+            createDesc: 'Buat surat lamaran yang disesuaikan menggunakan AI dan CV Anda yang ada.',
+            newButton: 'Surat Lamaran Baru',
+            deleteTitle: 'Hapus Surat Lamaran?',
+            deleteMessage: 'Apakah Anda yakin ingin menghapus surat lamaran ini? Tindakan ini tidak dapat dibatalkan.',
+            cancel: 'Batal',
+            confirmDelete: 'Hapus',
+            selectCv: 'Pilih CV Sumber',
+            backToDashboard: 'Kembali ke Dasbor',
+            noCvs: 'Tidak ada CV ditemukan. Silakan buat CV terlebih dahulu.',
+            nextStep: 'Langkah Berikutnya',
+            jobDetails: 'Detail Pekerjaan & Nada',
+            docTitle: 'Judul Dokumen',
+            jobTitle: 'Judul Pekerjaan',
+            companyName: 'Nama Perusahaan',
+            jobDesc: 'Deskripsi Pekerjaan',
+            keySkills: 'Keterampilan Utama (Opsional)',
+            tone: 'Nada & Gaya',
+            language: 'Bahasa',
+            back: 'Kembali',
+            generate: 'Buat Surat',
+            generating: 'Sedang Membuat...',
+            previewHandler: 'Surat Lamaran Siap!',
+            copy: 'Salin Teks',
+            download: 'Unduh PDF',
+            startOver: 'Mulai Ulang'
         },
         hero: {
             titlePart1: 'Re',
@@ -380,8 +527,8 @@ export const translations: Record<Language, Translations> = {
                 features: {
                     basic: 'Template Dasar',
                     watermark: 'Ekspor PDF (Watermark)',
-                    aiLimit: '1 Analisis AI per hari',
-                    coverLetter: 'Pembuat Surat Lamaran'
+                    aiLimit: '1 Kredit AI per hari',
+                    coverLetter: 'Surat Lamaran Dasar (Gunakan Kredit)'
                 },
                 button: 'Mulai Gratis'
             },
@@ -391,7 +538,8 @@ export const translations: Record<Language, Translations> = {
                 features: {
                     premium: 'Semua Template Premium',
                     noWatermark: 'Ekspor PDF Tanpa Batas (Tanpa Watermark)',
-                    aiLimit: '50 Analisis AI per hari',
+                    aiLimit: '50 Kredit AI per hari',
+                    coverLetter: 'Pembuat Surat Lamaran AI',
                     support: 'Dukungan Prioritas'
                 },
                 button: 'Jadi Pro'
@@ -496,6 +644,11 @@ export const translations: Record<Language, Translations> = {
             error: 'Terjadi kesalahan',
             saved: 'Berhasil disimpan',
             deleted: 'Berhasil dihapus',
+        },
+        errors: {
+            loginRequired: 'Silakan masuk terlebih dahulu untuk upgrade ke Pro.',
+            paymentFailed: 'Gagal membuat pembayaran. Silakan coba lagi.',
+            generic: 'Kesalahan pembayaran. Silakan coba lagi.',
         },
     },
 };

@@ -1,6 +1,19 @@
 # Changelog
 
-## [Unreleased] - 2026-01-30
+## [Unreleased]
+
+## [1.2.1] - 2026-02-01
+
+### 🐛 Bug Fixes & Reliability
+- **Cover Letter Logic**:
+  - **Duplicate Prevention**: Fixed a critical issue where "Starting Over" on an existing letter created a duplicate entry.
+  - **Update Mechanism**: Removed invalid database column reference that caused save failures during updates.
+  - **Data Safety**: Implemented a "Safe Mode" fallback that delivers generated content to the user even if the database connection fails.
+- **Limit Enforcement**:
+  - **Strict Storage Limits**: Server-side enforcement of cover letter caps (1 for Free, 4 for Pro).
+  - **Smart Checks**: API now checks limits *before* generation to save AI credits.
+
+## [1.2.0] - 2026-01-30
 
 ### ✨ New Features - Translation System (EN/ID)
 - **Language Switcher**: Added EN/ID toggle button in navbar for instant language switching without page reload
@@ -52,8 +65,19 @@
   - `ClearDataModal.tsx` - Full translation
   - `ChooseTemplate.tsx` - Translated UI elements
   - `app/dashboard/page.tsx` - Full translation
+- **Pages Updated**:
   - `app/privacy/page.tsx` - Translated header/navigation
   - `app/terms/page.tsx` - Translated header/navigation
+
+### 💎 Polish & Refinements
+- **Cover Letter Wizard**:
+  - **Saved Letters**: Now possible to open and edit previously generated cover letters from the dashboard.
+  - **Mobile Experience**: Optimized button layouts to prevent cramping on smaller screens.
+  - **Live Credit Updates**: AI credit counter now updates instantly after generating a letter.
+  - **UI/UX**: Improved "Download PDF" button style and "Start Over" hover effects.
+- **Pricing & Landing Page**:
+  - Updated Pricing section to clearly list "AI Cover Letter" features for Free and Pro plans.
+  - Corrected feature icons and descriptions in the Pricing table.
 
 ---
 
