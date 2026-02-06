@@ -70,15 +70,12 @@ export async function POST(req: Request) {
 
         // 7. Find user by ID prefix using efficient DB query
         // We look for profiles where ID starts with the prefix. 
-        // Note: ID is uuid, so we cast to text if needed, but Supabase/Postgres 
-        // supports text-like comparison on UUIDs automatically in some contexts, 
-        // or we use a range query if 'like' fails on UUID type directly without casting.
-        // Easiest is to use .like() with implicit cast or just text match.
+        // Note: ID is uuid, we MUST cast to text for 'like' to work reliably.
 
         const { data: matchingProfiles, error: profileError } = await supabase
             .from('profiles')
             .select('id, email, tier')
-            .like('id', `${userIdPrefix}%`)
+            .filter('id::text', 'like', `${userIdPrefix}%`)
             .limit(1);
 
         if (profileError) {
