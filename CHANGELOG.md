@@ -2,7 +2,7 @@
 
 ## [Released]
 
-## [1.2.2] - 2026-02-01
+## [1.2.2] - 2026-02-06
 
 ### 🛡️ Security & Cleanup (Feb 6, 2026)
 - **Hardening**: Implemented strict Zod input validation for all API routes (CV Analysis, Cover Letter Gen, Webhooks).
