@@ -74,7 +74,7 @@ export const refineRequestSchema = z.object({
  * Validation schema for /api/webhook/pakasir
  */
 export const pakasirWebhookSchema = z.object({
-    amount: z.number().int().positive(),
+    amount: z.union([z.number(), z.string().transform((val) => Number(val))]),
     order_id: z.string().min(10).max(100),
     status: z.string(),
     payment_method: z.string().optional(),
