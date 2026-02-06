@@ -1,8 +1,14 @@
 # Changelog
 
-## [Unreleased]
+## [Released]
 
 ## [1.2.2] - 2026-02-01
+
+### 🛡️ Security & Cleanup (Feb 6, 2026)
+- **Hardening**: Implemented strict Zod input validation for all API routes (CV Analysis, Cover Letter Gen, Webhooks).
+- **Rate Limiting**: Confirmed active Rate Limiting via Upstash Redis.
+- **Cleanup**: Removed unused SQL migration files (`supabase_*.sql`) from repository.
+- **Debounce**: Verified actively used in Auto-Save features to optimize API usage.
 
 ### ✨ New Features - Auto-Save System
 - **Real-time Auto-save**:
@@ -10,7 +16,7 @@
   - **Cover Letter**: Added auto-save draft functionality to the Wizard, persisting inputs across sessions.
   - **Status Indicator**: Replaced manual "Save" button with a dynamic "Saving..." / "Saved" validation card in the top bar.
 - **Cross-Platform Safety**:
-  - **Cloud Sync**: Saves to Supabase for authenticated aint users.
+  - **Cloud Sync**: Saves to S2upabase for authenticated aint users.
   - **Local Backup**: Simultaneously saves to `localStorage` as a fallback for Guest users.
 
 ### 🛠 Improvements

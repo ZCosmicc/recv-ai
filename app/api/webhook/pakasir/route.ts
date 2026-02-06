@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
+import { pakasirWebhookSchema } from '@/lib/validation';
+
 export async function POST(req: Request) {
     try {
         console.log('🔔 Pakasir webhook received!');
@@ -8,9 +10,17 @@ export async function POST(req: Request) {
         // 1. Parse webhook payload from Pakasir
         const body = await req.json();
 
-        const { amount, order_id, status, payment_method, completed_at } = body;
+        // VALIDATION
+        const validation = pakasirWebhookSchema.safeParse(body);
+        if (!validation.success) {
+            console.error('❌ Invalid payload:', validation.error);
+            return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
+        }
+
+        const { amount, order_id, status, payment_method, completed_at } = validation.data;
 
         // 2. Verify it's from Pakasir (basic validation)
+        // (Redundant check kept for logic flow if needed, but schema handles existence)
         if (!order_id || !amount) {
             console.error('❌ Missing order_id or amount');
             return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });

@@ -6,11 +6,11 @@ import { z } from 'zod';
 const generateSchema = z.object({
     id: z.string().uuid().optional(), // Optional ID for updating
     cvId: z.string().uuid(),
-    title: z.string().min(1).default('Untitled Cover Letter'),
-    jobTitle: z.string().min(1),
-    companyName: z.string().min(1),
-    jobDescription: z.string().min(10), // Ensure meaningful description
-    keySkills: z.string().optional(),
+    title: z.string().min(1).max(100).default('Untitled Cover Letter'),
+    jobTitle: z.string().min(1).max(100),
+    companyName: z.string().min(1).max(100),
+    jobDescription: z.string().min(10).max(10000), // Max 10k chars
+    keySkills: z.string().max(1000).optional(),
     tone: z.enum(['Professional', 'Enthusiastic', 'Confident', 'Creative']),
     language: z.enum(['en', 'id']).default('en'),
 });
