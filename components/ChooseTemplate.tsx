@@ -16,6 +16,7 @@ const DUMMY_SECTIONS: Section[] = [
     { id: 'experience', name: 'Experience', required: true, enabled: true },
     { id: 'education', name: 'Education', required: true, enabled: true },
     { id: 'skills', name: 'Skills', required: false, enabled: true },
+    { id: 'projects', name: 'Projects', required: false, enabled: true },
 ];
 
 const DUMMY_CV_DATA: CVData = {
@@ -71,6 +72,20 @@ const DUMMY_CV_DATA: CVData = {
         }
     ],
     skills: ['Figma', 'Adobe XD', 'Photoshop', 'Illustrator', 'React', 'HTML/CSS', 'Tailwind CSS', 'Project Management', 'User Research'],
+    projects: [
+        {
+            title: 'E-Commerce Redesign',
+            description: 'Led the UI/UX redesign of a major e-commerce platform, improving conversion rates by 15%.',
+            technologies: 'Figma, React, Tailwind CSS',
+            link: 'https://example.com/project1'
+        },
+        {
+            title: 'Mobile Banking App',
+            description: 'Designed a secure and intuitive mobile banking experience for a fintech startup.',
+            technologies: 'Adobe XD, Flutter',
+            link: 'https://example.com/project2'
+        }
+    ],
     certification: ['Google UX Design Professional Certificate', 'Certified ScrumMaster (CSM)'],
     language: ['English (Native)', 'Spanish (Professional)', 'French (Basic)']
 };
