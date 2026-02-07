@@ -156,7 +156,7 @@ export default function Sections({
                                                 <Plus className="w-4 h-4" />
                                                 {section.name}
                                             </button>
-                                            {!['personal', 'summary', 'experience', 'education', 'skills', 'certification', 'language'].includes(section.id) && (
+                                            {!['personal', 'summary', 'experience', 'education', 'skills', 'projects', 'certification', 'language'].includes(section.id) && (
                                                 <button
                                                     onClick={() => {
                                                         if (confirm(`Delete ${section.name} permanently?`)) {

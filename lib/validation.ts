@@ -41,6 +41,13 @@ const educationSchema = z.object({
     year: cleanString(50).optional().or(z.literal(''))
 });
 
+const projectSchema = z.object({
+    title: cleanString(200).optional().or(z.literal('')),
+    description: textString.optional().or(z.literal('')),
+    technologies: cleanString(500).optional().or(z.literal('')),
+    link: z.string().url().optional().or(z.literal(''))
+});
+
 // --- Main Schemas ---
 
 /**
@@ -54,6 +61,7 @@ export const analyzeRequestSchema = z.object({
         experience: z.array(experienceSchema).optional(),
         education: z.array(educationSchema).optional(),
         skills: z.array(cleanString(100)).optional(),
+        projects: z.array(projectSchema).optional(),
         certification: z.array(cleanString(200)).optional(),
         language: z.array(cleanString(100)).optional()
     })

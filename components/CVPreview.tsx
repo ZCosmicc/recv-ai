@@ -87,6 +87,22 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     );
                 }
 
+                if (section.id === 'projects' && cvData.projects?.length > 0) {
+                    return (
+                        <div key={section.id} className="mb-6">
+                            <h2 className="text-sm font-bold uppercase tracking-wider border-b border-black pb-1 mb-3 text-gray-900">Projects</h2>
+                            {cvData.projects.map((project, idx) => (
+                                <div key={idx} className="mb-4">
+                                    {project.title && <h3 className="font-bold text-gray-900">{project.title}</h3>}
+                                    {project.technologies && <p className="text-gray-700 text-xs italic">{project.technologies}</p>}
+                                    {project.description && <p className="text-gray-900 mt-1">{project.description}</p>}
+                                    {project.link && <p className="text-gray-600 text-xs mt-1">Link: {project.link}</p>}
+                                </div>
+                            ))}
+                        </div>
+                    );
+                }
+
                 if (section.id === 'skills' && cvData.skills.length > 0) {
                     return (
                         <div key={section.id} className="mb-6">
@@ -186,6 +202,22 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                     {edu.degree && <h3 className="font-bold text-gray-900">{edu.degree}{edu.major && ` in ${edu.major}`}</h3>}
                                     {edu.institution && <p className="text-blue-600">{edu.institution}</p>}
                                     {edu.year && <p className="text-gray-500 text-xs">{new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
+                                </div>
+                            ))}
+                        </div>
+                    );
+                }
+
+                if (section.id === 'projects' && cvData.projects?.length > 0) {
+                    return (
+                        <div key={section.id} className="mb-6">
+                            <h2 className="text-lg font-bold text-blue-600 mb-3 pb-2 border-b-2 border-blue-200">Projects</h2>
+                            {cvData.projects.map((project, idx) => (
+                                <div key={idx} className="mb-4 pl-4 border-l-2 border-blue-300">
+                                    {project.title && <h3 className="font-bold text-gray-900">{project.title}</h3>}
+                                    {project.technologies && <p className="text-blue-600 font-medium text-xs">{project.technologies}</p>}
+                                    {project.description && <p className="text-gray-700 mt-1">{project.description}</p>}
+                                    {project.link && <p className="text-gray-500 text-xs mt-1">🔗 {project.link}</p>}
                                 </div>
                             ))}
                         </div>
@@ -348,6 +380,22 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                         );
                     }
 
+                    if (section.id === 'projects' && cvData.projects?.length > 0) {
+                        return (
+                            <div key={section.id} className="mb-6">
+                                <h2 className="text-xl font-bold text-purple-700 mb-4">Projects</h2>
+                                {cvData.projects.map((project, idx) => (
+                                    <div key={idx} className="mb-4">
+                                        {project.title && <h3 className="font-bold text-gray-900">{project.title}</h3>}
+                                        {project.technologies && <p className="text-purple-600 font-medium text-sm">{project.technologies}</p>}
+                                        {project.description && <p className="text-gray-700 mt-1">{project.description}</p>}
+                                        {project.link && <p className="text-gray-500 text-xs mt-1">🔗 {project.link}</p>}
+                                    </div>
+                                ))}
+                            </div>
+                        );
+                    }
+
                     return null;
                 })}
             </div>
@@ -428,6 +476,24 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                             </div>
                                             {edu.year && <p className="text-gray-600 text-xs">{new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
                                         </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                }
+
+                if (section.id === 'projects' && cvData.projects?.length > 0) {
+                    return (
+                        <div key={section.id} className="mb-6">
+                            <h2 className="text-base font-bold text-gray-900 mb-2 uppercase bg-gray-200 px-3 py-1">Projects</h2>
+                            <div className="px-3 space-y-3">
+                                {cvData.projects.map((project, idx) => (
+                                    <div key={idx}>
+                                        {project.title && <h3 className="font-bold text-gray-900">{project.title}</h3>}
+                                        {project.technologies && <p className="text-gray-700 italic text-xs">{project.technologies}</p>}
+                                        {project.description && <p className="text-gray-800 mt-1">{project.description}</p>}
+                                        {project.link && <p className="text-gray-600 text-xs mt-1">{project.link}</p>}
                                     </div>
                                 ))}
                             </div>
@@ -580,6 +646,26 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                                 <span>{edu.institution}</span>
                                                 {edu.year && <span>{new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric' })}</span>}
                                             </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'projects' && cvData.projects?.length > 0) {
+                        return (
+                            <div key={section.id} className="mb-8">
+                                <h2 className="text-xl font-serif font-bold text-gray-900 mb-6 uppercase tracking-wider flex items-center gap-2">
+                                    <span className="w-8 h-1 bg-gray-900"></span> Projects
+                                </h2>
+                                <div className="space-y-4">
+                                    {cvData.projects.map((project, idx) => (
+                                        <div key={idx} className="bg-white p-4 shadow-sm border-l-4 border-yellow-500">
+                                            {project.title && <h3 className="font-bold text-gray-900 text-lg">{project.title}</h3>}
+                                            {project.technologies && <p className="text-gray-600 text-sm italic">{project.technologies}</p>}
+                                            {project.description && <p className="text-gray-700 text-sm mt-2">{project.description}</p>}
+                                            {project.link && <p className="text-gray-500 text-xs mt-2">🔗 {project.link}</p>}
                                         </div>
                                     ))}
                                 </div>

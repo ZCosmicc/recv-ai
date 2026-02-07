@@ -2,6 +2,34 @@
 
 ## [Released]
 
+## [1.2.3] - 2026-02-07
+
+### ✨ New Features - Projects Section
+- **Projects Section for CVs**:
+  - Added dedicated "Projects" section to showcase personal/professional projects
+  - **Form Fields**: Title, Description, Technologies, and Link (optional)
+  - **Drag & Drop**: Reorder projects with drag-and-drop functionality
+  - **All Templates**: Projects render beautifully in all 5 CV templates (Minimal, Modern, Corporate, Creative, Executive)
+  - **Smart Layout**: In Creative template, Projects appear in the main content area for better readability
+
+### 🛠 Improvements
+- **Database Migration**:
+  - Added SQL migration script to add empty `projects` array to existing CV records
+  - Implemented automatic section merging when loading old CVs to include new sections
+- **Data Safety**:
+  - Added optional chaining to prevent errors when loading CVs without the projects field
+  - Implemented backward compatibility for all existing CVs
+- **Type Safety**: Added `Project` interface and updated `CVData` type with full validation schema
+
+### 🔧 Technical Details
+- **Files Modified**:
+  - `types/index.ts` - Added Project interface
+  - `components/Fill.tsx` - Added projects form with drag-and-drop
+  - `components/CVPreview.tsx` - Added projects rendering for all templates
+  - `app/page.tsx` - Added section merging logic for backward compatibility
+  - `lib/validation.ts` - Added project validation schema
+- **Database**: Created `sql script` for migrating existing records
+
 ## [1.2.2] - 2026-02-06
 
 ### 🛡️ Security & Cleanup (Feb 6, 2026)

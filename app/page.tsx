@@ -32,6 +32,7 @@ function BuilderContent() {
     { id: 'experience', name: 'Experience', required: true, enabled: true },
     { id: 'education', name: 'Education', required: true, enabled: true },
     { id: 'skills', name: 'Skills', required: true, enabled: true },
+    { id: 'projects', name: 'Projects', required: false, enabled: false },
     { id: 'certification', name: 'Certification', required: false, enabled: false },
     { id: 'language', name: 'Language', required: false, enabled: false }
   ]);
@@ -41,6 +42,7 @@ function BuilderContent() {
     experience: [],
     education: [],
     skills: [],
+    projects: [],
     certification: [],
     language: []
   });
@@ -129,7 +131,43 @@ function BuilderContent() {
         if (data) {
           const loadedData = data.data as any;
           setCvData(loadedData as CVData);
-          if (loadedData.sections) setSections(loadedData.sections);
+
+          // Merge loaded sections with default sections to add any new sections
+          if (loadedData.sections) {
+            const defaultSections = [
+              { id: 'personal', name: 'Personal Info', required: true, enabled: true },
+              { id: 'summary', name: 'Summary', required: true, enabled: true },
+              { id: 'experience', name: 'Experience', required: true, enabled: true },
+              { id: 'education', name: 'Education', required: true, enabled: true },
+              { id: 'skills', name: 'Skills', required: true, enabled: true },
+              { id: 'projects', name: 'Projects', required: false, enabled: false },
+              { id: 'certification', name: 'Certification', required: false, enabled: false },
+              { id: 'language', name: 'Language', required: false, enabled: false }
+            ];
+
+            const loadedSections = loadedData.sections;
+            const mergedSections = defaultSections.map(defaultSection => {
+              // Check if this section exists in loaded sections
+              const existingSection = loadedSections.find((s: Section) => s.id === defaultSection.id);
+              // If it exists, use the loaded version; otherwise, use the default
+              return existingSection || defaultSection;
+            });
+
+            setSections(mergedSections);
+          } else {
+            // If no sections saved, use defaults
+            setSections([
+              { id: 'personal', name: 'Personal Info', required: true, enabled: true },
+              { id: 'summary', name: 'Summary', required: true, enabled: true },
+              { id: 'experience', name: 'Experience', required: true, enabled: true },
+              { id: 'education', name: 'Education', required: true, enabled: true },
+              { id: 'skills', name: 'Skills', required: true, enabled: true },
+              { id: 'projects', name: 'Projects', required: false, enabled: false },
+              { id: 'certification', name: 'Certification', required: false, enabled: false },
+              { id: 'language', name: 'Language', required: false, enabled: false }
+            ]);
+          }
+
           if (loadedData.selectedTemplate) setSelectedTemplate(loadedData.selectedTemplate);
           setStep('sections');
         } else {
@@ -143,7 +181,26 @@ function BuilderContent() {
             const parsed: SavedData = JSON.parse(saved);
             setStep(parsed.step);
             setSelectedTemplate(parsed.selectedTemplate);
-            setSections(parsed.sections);
+
+            // Merge loaded sections with default sections
+            const defaultSections = [
+              { id: 'personal', name: 'Personal Info', required: true, enabled: true },
+              { id: 'summary', name: 'Summary', required: true, enabled: true },
+              { id: 'experience', name: 'Experience', required: true, enabled: true },
+              { id: 'education', name: 'Education', required: true, enabled: true },
+              { id: 'skills', name: 'Skills', required: true, enabled: true },
+              { id: 'projects', name: 'Projects', required: false, enabled: false },
+              { id: 'certification', name: 'Certification', required: false, enabled: false },
+              { id: 'language', name: 'Language', required: false, enabled: false }
+            ];
+
+            const loadedSections = parsed.sections;
+            const mergedSections = defaultSections.map(defaultSection => {
+              const existingSection = loadedSections.find(s => s.id === defaultSection.id);
+              return existingSection || defaultSection;
+            });
+
+            setSections(mergedSections);
             setCvData(parsed.cvData);
             // setAiCredits(parsed.aiCredits); 
           }
@@ -326,6 +383,7 @@ function BuilderContent() {
                 experience: [],
                 education: [],
                 skills: [],
+                projects: [],
                 certification: [],
                 language: []
               }

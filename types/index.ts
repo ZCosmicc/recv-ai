@@ -27,6 +27,13 @@ export interface Education {
     year: string;
 }
 
+export interface Project {
+    title: string;
+    description: string;
+    technologies: string;
+    link: string;
+}
+
 export interface Section {
     id: string;
     name: string;
@@ -40,6 +47,7 @@ export interface CVData {
     experience: Experience[];
     education: Education[];
     skills: string[];
+    projects: Project[];
     certification: string[];
     language: string[];
 }

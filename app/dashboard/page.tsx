@@ -101,6 +101,7 @@ export default function Dashboard() {
                         experience: [],
                         education: [],
                         skills: [],
+                        projects: [],
                         certification: [],
                         language: []
                     }

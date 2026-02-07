@@ -743,6 +743,98 @@ export default function Fill({
                                 </div>
                             )}
 
+                            {sections.find(s => s.id === 'projects' && s.enabled) && (
+                                <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
+                                    <h2 className="text-xl text-gray-900 font-semibold mb-4">Projects</h2>
+                                    <div className="space-y-4">
+                                        {(cvData.projects || []).map((project, idx) => (
+                                            <div
+                                                key={idx}
+                                                draggable
+                                                onDragStart={() => {
+                                                    setDraggedItem(idx);
+                                                    setDraggedItemType('projects');
+                                                }}
+                                                onDragOver={(e) => e.preventDefault()}
+                                                onDrop={() => {
+                                                    if (draggedItem === null || draggedItemType !== 'projects') return;
+                                                    const newProjects = [...cvData.projects];
+                                                    const [removed] = newProjects.splice(draggedItem, 1);
+                                                    newProjects.splice(idx, 0, removed);
+                                                    setCvData({ ...cvData, projects: newProjects });
+                                                    setDraggedItem(null);
+                                                    setDraggedItemType(null);
+                                                }}
+                                                className="p-4 border-2 border-black space-y-3 cursor-move hover:shadow-neo-sm transition-all"
+                                            >
+                                                <div className="flex gap-2">
+                                                    <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0" />
+                                                    <div className="flex-1 space-y-3">
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Project Title"
+                                                            value={project.title}
+                                                            onChange={(e) => {
+                                                                const newProjects = [...cvData.projects];
+                                                                newProjects[idx].title = e.target.value;
+                                                                setCvData({ ...cvData, projects: newProjects });
+                                                            }}
+                                                            className="w-full px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
+                                                        />
+                                                        <textarea
+                                                            placeholder="Description..."
+                                                            value={project.description}
+                                                            onChange={(e) => {
+                                                                const newProjects = [...cvData.projects];
+                                                                newProjects[idx].description = e.target.value;
+                                                                setCvData({ ...cvData, projects: newProjects });
+                                                            }}
+                                                            rows={3}
+                                                            className="w-full px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Technologies (e.g., React, Node.js, MongoDB)"
+                                                            value={project.technologies}
+                                                            onChange={(e) => {
+                                                                const newProjects = [...cvData.projects];
+                                                                newProjects[idx].technologies = e.target.value;
+                                                                setCvData({ ...cvData, projects: newProjects });
+                                                            }}
+                                                            className="w-full px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
+                                                        />
+                                                        <input
+                                                            type="url"
+                                                            placeholder="Link (optional)"
+                                                            value={project.link}
+                                                            onChange={(e) => {
+                                                                const newProjects = [...cvData.projects];
+                                                                newProjects[idx].link = e.target.value;
+                                                                setCvData({ ...cvData, projects: newProjects });
+                                                            }}
+                                                            className="w-full px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        onClick={() => setCvData({ ...cvData, projects: cvData.projects.filter((f, i) => i !== idx) })}
+                                                        className="text-red-500"
+                                                    >
+                                                        <X className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        <button
+                                            onClick={() => setCvData({ ...cvData, projects: [...cvData.projects, { title: '', description: '', technologies: '', link: '' }] })}
+                                            className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white hover:border-solid hover:shadow-neo-sm transition-all font-bold text-black"
+                                        >
+                                            <Plus className="w-4 h-4 inline mr-2" />
+                                            Add Project
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
                             {sections.find(s => s.id === 'certification' && s.enabled) && (
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl font-semibold mb-4">Certifications</h2>
