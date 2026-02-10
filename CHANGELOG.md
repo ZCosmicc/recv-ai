@@ -1,6 +1,34 @@
 # Changelog
 
-## [Released]
+All notable changes to this project will be documented in this file.
+
+## [1.2.5] - 2026-02-11
+
+### Added
+- Google OAuth authentication as alternative login method
+- "Continue with Google" button on login page with official Google branding
+- Support for dual authentication: Magic Links and Google OAuth
+
+### Fixed
+- Investigated and documented magic link email sending issue (Resend testing mode restriction)
+- Added comprehensive error handling for OAuth authentication flow
+
+### Changed
+- Enhanced login page UI with OAuth divider and improved user experience
+
+---
+
+## [1.2.4] - 2026-02-09
+
+### 🐛 Bug Fixes
+- **Authentication**:
+  - Fixed a 404 error during email verification redirects by creating a dedicated `auth-code-error` page.
+  - Improved error handling for failed magic link callbacks.
+
+### 📧 Infrastructure
+- **Email Reliability**:
+  - Documented and implemented Custom SMTP configuration (Resend) to resolve Supabase's default email rate limits.
+  - Added clear instructions in `README.md` for setting up production-ready email delivery.
 
 ## [1.2.3] - 2026-02-07
 
@@ -17,6 +45,8 @@
   - Added SQL migration script to add empty `projects` array to existing CV records
   - Implemented automatic section merging when loading old CVs to include new sections
 - **Data Safety**:
+
+
   - Added optional chaining to prevent errors when loading CVs without the projects field
   - Implemented backward compatibility for all existing CVs
 - **Type Safety**: Added `Project` interface and updated `CVData` type with full validation schema

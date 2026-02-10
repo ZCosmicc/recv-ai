@@ -40,6 +40,27 @@ A modern, AI-powered platform designed to help job seekers create ATS-friendly C
 - **PDF Generation**: `jspdf`
 - **Design System**: Neo-Brutalism (Bold borders, high contrast)
 
+## 📧 Email Configuration (Rate Limits)
+
+By default, Supabase has a strict limit of ~3 emails per hour. To increase this, you must configure a custom SMTP provider. We recommend **Resend** (Free tier: 3000 emails/mo).
+
+### Setup Instructions:
+1.  Sign up at [Resend.com](https://resend.com/).
+2.  Create an API Key.
+3.  Go to your **Supabase Dashboard** -> **Project Settings** -> **Authentication** -> **SMTP Settings**.
+4.  Enable **Custom SMTP**.
+5.  Enter the following:
+    -   **Host**: `smtp.resend.com`
+    -   **Port**: `465`
+    -   **User**: `resend`
+    -   **Password**: `YOUR_RESEND_API_KEY`
+    -   **Sender Email**: `onboarding@resend.dev` (You **MUST** use this unless you verify your own domain in Resend)
+    -   **Sender Name**: `Recv. AI` (This can be anything)
+6.  Save. The rate limit is now determined by Resend (100 emails/day on free tier).
+
+> [!IMPORTANT]
+> To use a custom email like `noreply@yourdomain.com`, you must **verify your domain** in the Resend dashboard by adding DNS records. Until then, you are restricted to `onboarding@resend.dev`.
+
 ## 🛠️ Getting Started
 
 First, run the development server:
