@@ -21,7 +21,7 @@ export async function POST(req: Request) {
         const slug = process.env.PAKASIR_PROJECT_SLUG || 'recv';
 
         // 5. Get domain for redirect URL
-        const domain = process.env.NEXT_PUBLIC_SITE_URL || 'https://recv-ai.vercel.app';
+        const domain = process.env.NEXT_PUBLIC_SITE_URL || 'https://recv-ai.me';
         // FIXED: Redirect directly to dashboard with success flag
         const redirectUrl = `${domain}/?payment=success`;
 
