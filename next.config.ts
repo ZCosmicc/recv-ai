@@ -4,9 +4,9 @@ const nextConfig: NextConfig = {
   /* config options here */
   async redirects() {
     return [
-      // Redirect old Vercel domain to custom domain
+      // Redirect old Vercel domain to custom domain (EXCLUDE API routes and Next.js internals)
       {
-        source: '/:path*',
+        source: '/((?!api|_next|static|favicon.ico).*)',
         has: [
           {
             type: 'host',
@@ -16,9 +16,9 @@ const nextConfig: NextConfig = {
         destination: 'https://recv-ai.me/:path*',
         permanent: true,
       },
-      // Handle www subdomain redirect (already handled by Vercel DNS, but as backup)
+      // Handle www subdomain redirect (EXCLUDE API routes and Next.js internals)
       {
-        source: '/:path*',
+        source: '/((?!api|_next|static|favicon.ico).*)',
         has: [
           {
             type: 'host',
@@ -33,4 +33,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
