@@ -32,7 +32,7 @@ export const downloadPDF = (cvData: CVData, elementId: string = 'cv-preview-for-
             color-adjust: exact;
           }
           @page { 
-            margin: 5mm 0;
+            margin: 0;
             size: A4;
           }
           * {
@@ -57,17 +57,6 @@ export const downloadPDF = (cvData: CVData, elementId: string = 'cv-preview-for-
           .mb-6, .mb-8, .mb-4, .space-y-4 > div, .space-y-6 > div {
             page-break-inside: avoid;
             break-inside: avoid;
-          }
-          
-          /* Add top padding to section headings for breathing room */
-          .text-xl, .text-2xl {
-            padding-top: 1.5rem !important;
-          }
-          
-          /* First section on page shouldn't have extra padding */
-          body > div:first-of-type .text-xl:first-of-type,
-          body > div:first-of-type .text-2xl:first-of-type {
-            padding-top: 0 !important;
           }
           
           .watermark {
