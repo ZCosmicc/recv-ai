@@ -103,12 +103,19 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                                                 return;
                                             }
 
+                                            if (res.status === 400 && data.error === 'ALREADY_PRO') {
+                                                // User is already Pro
+                                                setAlertMessage(data.message || "You're already a Pro member!");
+                                                setShowAlert(true);
+                                                return;
+                                            }
+
                                             if (data.paymentUrl) {
                                                 // Redirect to Pakasir payment page
                                                 window.location.href = data.paymentUrl;
                                             } else {
                                                 // Show specific error from API if available
-                                                const errorMsg = data.error || t.errors.paymentFailed;
+                                                const errorMsg = data.message || data.error || t.errors.paymentFailed;
                                                 setAlertMessage(errorMsg);
                                                 setShowAlert(true);
                                             }

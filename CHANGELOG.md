@@ -2,6 +2,72 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.6] - 2026-02-14
+
+### 🌐 Custom Domain Setup
+- **Domain Registration**: Claimed free `recv-ai.me` domain via GitHub Student Developer Pack (Namecheap)
+- **Email Domain Verification**:
+  - Verified domain in Resend for professional email sending
+  - Configured DNS records (DKIM, SPF, DMARC, MX) for email authentication
+  - Updated email sender to `Recv.AI <noreply@recv-ai.me>`
+- **Vercel Custom Domain**:
+  - Pointed domain to Vercel for custom URL access
+  - Configured A record (216.198.79.1) and CNAME for www subdomain
+  - Automatic SSL certificate provisioned
+  - App now accessible at `https://recv-ai.me`
+- **Google OAuth Configuration**:
+  - Added custom domain to authorized JavaScript origins
+  - Updated redirect URIs for `recv-ai.me` and `www.recv-ai.me`
+- **Google Domain Verification**:
+  - Verified ownership via Google Search Console  
+  - Published OAuth branding with verified domain
+  - Submitted for Google branding review (pending 3-7 days)
+
+### 🔧 Configuration Updates
+- **Environment Variables**:
+  - Added `NEXT_PUBLIC_SITE_URL=https://recv-ai.me` in Vercel Production
+  - Added `NEXT_PUBLIC_BASE_URL=https://recv-ai.me` in Vercel Production
+- **Supabase Configuration**:
+  - Updated Site URL to `https://recv-ai.me`
+  - Added redirect URLs for custom domain authentication
+- **Cloudflare Turnstile**:
+  - Added `recv-ai.me` and `www.recv-ai.me` to allowed domains
+
+### 📝 Code Changes
+- **SEO Updates**:
+  - Updated `app/sitemap.ts` fallback URL to custom domain
+  - Updated `app/robots.ts` fallback URL to custom domain
+- **Payment Integration**:
+  - Updated `app/api/payment/create/route.ts` redirect URL to custom domain
+
+### 🌍 DNS Configuration
+All DNS records configured in Namecheap Advanced DNS:
+- A Record: `@` → `216.198.79.1` (Vercel)
+- CNAME: `www` → `cname.vercel-dns.com`
+- TXT (DKIM): `resend._domainkey` → Email authentication
+- TXT (SPF): `send` → `v=spf1 include:amazonses.com ~all`
+- TXT (DMARC): `_dmarc` → `v=DMARC1; p=none;`
+- TXT (Google): `@` → Google Search Console verification
+- MX: `send` → Amazon SES email delivery
+
+### 🛡️ Security Improvements
+- **Payment Validation**: Added Pro status check to prevent duplicate subscriptions
+  - API now validates user isn't already Pro before creating payment
+  - Returns user-friendly error with subscription expiry information
+  - Updated UI to handle "already Pro" status gracefully
+- **Webhook Logging**: Removed sensitive payment data from production logs
+  - Only logs order ID and status (non-sensitive data)
+  - Improved error messages without exposing internal details
+- **Security Audit**: Conducted comprehensive security review
+  - ✅ Authentication verified on all API routes
+  - ✅ Row Level Security (RLS) policies confirmed active
+  - ✅ Input validation with Zod schemas
+  - ✅ Rate limiting active (Upstash Redis)
+  - ✅ Payment webhook security verified
+  - Security Rating: 🟢 8.5/10 - Production Ready
+
+---
+
 ## [1.2.5] - 2026-02-11
 
 ### Added

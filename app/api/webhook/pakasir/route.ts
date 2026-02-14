@@ -13,16 +13,19 @@ export async function POST(req: Request) {
         // VALIDATION
         const validation = pakasirWebhookSchema.safeParse(body);
         if (!validation.success) {
-            console.error('❌ Invalid payload:', validation.error);
+            console.error('❌ Webhook validation failed');
             return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
         }
 
         const { amount, order_id, status, payment_method, completed_at } = validation.data;
 
+        // Log only non-sensitive webhook info
+        console.log('🔔 Webhook received - Order:', order_id, 'Status:', status);
+
         // 2. Verify it's from Pakasir (basic validation)
         // (Redundant check kept for logic flow if needed, but schema handles existence)
         if (!order_id || !amount) {
-            console.error('❌ Missing order_id or amount');
+            console.error('❌ Missing required fields');
             return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
         }
 
@@ -76,14 +79,14 @@ export async function POST(req: Request) {
             .select('id, email, tier');
 
         if (profileError || !allProfiles) {
-            console.error('❌ Error fetching profiles:', profileError);
+            console.error('❌ Error fetching profiles');
             return NextResponse.json({ error: 'Failed to fetch profiles' }, { status: 500 });
         }
 
         const profile = allProfiles.find(p => p.id.startsWith(userIdPrefix));
 
         if (!profile) {
-            console.error('❌ User not found with prefix:', userIdPrefix);
+            console.error('❌ User not found');
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 

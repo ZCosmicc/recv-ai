@@ -186,10 +186,17 @@ export default function Home({ onStart }: HomeProps) {
                                             return;
                                         }
 
+                                        if (res.status === 400 && data.error === 'ALREADY_PRO') {
+                                            // User is already Pro
+                                            setAlertMessage(data.message || "You're already a Pro member!");
+                                            setShowAlert(true);
+                                            return;
+                                        }
+
                                         if (data.paymentUrl) {
                                             window.location.href = data.paymentUrl;
                                         } else {
-                                            const errorMsg = data.error || 'Failed to create payment. Please try again.';
+                                            const errorMsg = data.message || data.error || 'Failed to create payment. Please try again.';
                                             setAlertMessage(errorMsg);
                                             setShowAlert(true);
                                         }

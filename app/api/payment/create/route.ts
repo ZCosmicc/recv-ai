@@ -11,7 +11,34 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized. Please log in.' }, { status: 401 });
         }
 
-        // 2. Generate unique order ID with ReCV branding
+        // 2. Check if user is already Pro
+        const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('tier, pro_expires_at')
+            .eq('id', user.id)
+            .single();
+
+        if (profileError) {
+            return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 });
+        }
+
+        // Check if user is Pro and subscription hasn't expired
+        if (profile?.tier === 'pro' && profile?.pro_expires_at) {
+            const expiryDate = new Date(profile.pro_expires_at);
+            const now = new Date();
+
+            if (expiryDate > now) {
+                // User is already Pro
+                const daysRemaining = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+                return NextResponse.json({
+                    error: 'ALREADY_PRO',
+                    message: `You're already a Pro member! Your subscription expires in ${daysRemaining} days.`,
+                    expiresAt: profile.pro_expires_at
+                }, { status: 400 });
+            }
+        }
+
+        // 3. Generate unique order ID with ReCV branding
         const orderId = `ReCV-PRO-${user.id.slice(0, 8)}-${Date.now()}`;
 
         // 3. Price: Rp.15,000 (Indonesian Rupiah)
