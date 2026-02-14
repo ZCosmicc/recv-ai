@@ -32,8 +32,8 @@ export const downloadPDF = (cvData: CVData, elementId: string = 'cv-preview-for-
             color-adjust: exact;
           }
           @page { 
-            margin: 0;
-            size: auto;
+            margin: 15mm 10mm;
+            size: A4;
           }
           * {
             -webkit-print-color-adjust: exact !important;
@@ -57,6 +57,11 @@ export const downloadPDF = (cvData: CVData, elementId: string = 'cv-preview-for-
           .mb-6, .mb-8, .mb-4, .space-y-4 > div, .space-y-6 > div {
             page-break-inside: avoid;
             break-inside: avoid;
+          }
+          
+          /* Add spacing before major sections to prevent cramming at top of new pages */
+          .mb-6, .mb-8 {
+            margin-top: 1.5rem;
           }
           
           .watermark {
