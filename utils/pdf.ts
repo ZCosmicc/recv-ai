@@ -1,21 +1,21 @@
 import { CVData } from '../types';
 
-export const downloadPDF = (cvData: CVData, elementId: string = 'cv-preview-for-pdf') => {
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) {
-        alert('Please allow popups to download PDF');
-        return;
-    }
+export const downloadPDF = (cvData: CVData, elementId: string = 'cv-preview-for-pdf', tier?: 'guest' | 'free' | 'pro') => {
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    alert('Please allow popups to download PDF');
+    return;
+  }
 
-    const element = document.getElementById(elementId);
-    if (!element) {
-        alert('Preview not found');
-        return;
-    }
+  const element = document.getElementById(elementId);
+  if (!element) {
+    alert('Preview not found');
+    return;
+  }
 
-    const content = element.innerHTML;
+  const content = element.innerHTML;
 
-    printWindow.document.write(`
+  printWindow.document.write(`
   <!DOCTYPE html>
   <html>
     <head>
@@ -40,6 +40,25 @@ export const downloadPDF = (cvData: CVData, elementId: string = 'cv-preview-for-
             print-color-adjust: exact !important;
             color-adjust: exact !important;
           }
+          
+          /* Page break handling to prevent content cuts */
+          h1, h2, h3, h4, h5, h6 {
+            page-break-after: avoid;
+            break-after: avoid;
+          }
+          
+          /* Avoid breaks inside these elements */
+          div, section, article, .experience-item, .education-item, .project-item {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+          
+          /* Specifically for common CV section patterns */
+          .mb-6, .mb-8, .mb-4, .space-y-4 > div, .space-y-6 > div {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+          
           .watermark {
             position: fixed;
             bottom: 10mm;
@@ -151,11 +170,13 @@ export const downloadPDF = (cvData: CVData, elementId: string = 'cv-preview-for-
         ${content}
       </div>
 
-      <!-- Watermark -->
+      ${tier !== 'pro' ? `
+      <!-- Watermark (only for non-Pro users) -->
       <div class="watermark">
         <div class="watermark-text">Created by</div>
         <img src="/LogoPrimaryReCV.png" alt="Logo" class="watermark-logo" />
       </div>
+      ` : ''}
 
       <script>
         window.onload = () => {
@@ -174,5 +195,5 @@ export const downloadPDF = (cvData: CVData, elementId: string = 'cv-preview-for-
   </html>
 `);
 
-    printWindow.document.close();
+  printWindow.document.close();
 };

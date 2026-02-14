@@ -423,7 +423,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
             {/* Navigation Footer */}
             <div className="mt-8 md:mt-12 flex flex-col sm:flex-row justify-center border-t-4 border-black pt-6 md:pt-8 gap-4 px-4 sm:px-0">
                 <button
-                    onClick={() => downloadPDF(cvData)}
+                    onClick={() => downloadPDF(cvData, 'cv-preview-for-pdf', tier)}
                     className="w-full sm:w-auto px-8 py-3 font-bold text-white bg-green-600 border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-2"
                 >
                     <Download className="w-5 h-5" />
