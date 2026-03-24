@@ -374,15 +374,78 @@ export default function Fill({
                                                             />
                                                             Currently working here
                                                         </label>
+                                                        {/* Bullet point toolbar */}
+                                                        {(() => {
+                                                            const BULLETS = [
+                                                                { label: 'None', char: '' },
+                                                                { label: '•', char: '•' },
+                                                                { label: '–', char: '–' },
+                                                                { label: '▸', char: '▸' },
+                                                                { label: '✓', char: '✓' },
+                                                            ];
+                                                            // Detect current bullet from first non-empty line
+                                                            const firstLine = exp.description.split('\n').find(l => l.trim());
+                                                            const activeBullet = BULLETS.find(b => b.char && firstLine?.trimStart().startsWith(b.char))?.char ?? '';
+
+                                                            const applyBullet = (char: string) => {
+                                                                const lines = exp.description.split('\n');
+                                                                const newLines = lines.map(line => {
+                                                                    const stripped = line.trimStart().replace(/^[•–▸✓]\s*/, '');
+                                                                    return stripped ? (char ? `${char} ${stripped}` : stripped) : '';
+                                                                });
+                                                                const newExp = [...cvData.experience];
+                                                                newExp[idx].description = newLines.join('\n');
+                                                                setCvData({ ...cvData, experience: newExp });
+                                                            };
+
+                                                            return (
+                                                                <div className="flex items-center gap-1 mb-1">
+                                                                    <span className="text-xs text-gray-500 mr-1">Bullet:</span>
+                                                                    {BULLETS.map(b => (
+                                                                        <button
+                                                                            key={b.label}
+                                                                            type="button"
+                                                                            onClick={() => applyBullet(b.char)}
+                                                                            title={b.char ? `Use ${b.label} bullets` : 'No bullets'}
+                                                                            className={`px-2 py-0.5 text-xs border font-mono transition-all ${activeBullet === b.char ? 'border-black bg-black text-white font-bold' : 'border-gray-300 bg-white text-gray-700 hover:border-black'}`}
+                                                                        >
+                                                                            {b.label}
+                                                                        </button>
+                                                                    ))}
+                                                                </div>
+                                                            );
+                                                        })()}
                                                         <textarea
-                                                            placeholder="Description..."
+                                                            placeholder="Description... (press Enter for new line, bullet auto-added)"
                                                             value={exp.description}
                                                             onChange={(e) => {
                                                                 const newExp = [...cvData.experience];
                                                                 newExp[idx].description = e.target.value;
                                                                 setCvData({ ...cvData, experience: newExp });
                                                             }}
-                                                            rows={3}
+                                                            onKeyDown={(e) => {
+                                                                if (e.key !== 'Enter') return;
+                                                                // Detect active bullet from first non-empty line
+                                                                const BULLET_CHARS = ['•', '–', '▸', '✓'];
+                                                                const firstLine = exp.description.split('\n').find(l => l.trim());
+                                                                const activeBullet = BULLET_CHARS.find(b => firstLine?.trimStart().startsWith(b));
+                                                                if (!activeBullet) return; // no auto-insert needed
+                                                                e.preventDefault();
+                                                                const ta = e.currentTarget;
+                                                                const start = ta.selectionStart;
+                                                                const end = ta.selectionEnd;
+                                                                const val = ta.value;
+                                                                const insertion = `\n${activeBullet} `;
+                                                                const newVal = val.slice(0, start) + insertion + val.slice(end);
+                                                                const newExp = [...cvData.experience];
+                                                                newExp[idx].description = newVal;
+                                                                setCvData({ ...cvData, experience: newExp });
+                                                                // Restore cursor after state update
+                                                                requestAnimationFrame(() => {
+                                                                    ta.selectionStart = ta.selectionEnd = start + insertion.length;
+                                                                });
+                                                            }}
+                                                            rows={4}
                                                             className="w-full px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
                                                         />
                                                     </div>

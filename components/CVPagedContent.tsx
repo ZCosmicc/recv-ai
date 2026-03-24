@@ -46,6 +46,35 @@ function fmt(d: string) {
     catch { return d; }
 }
 
+// Renders description text with proper bullet handling.
+// If lines start with • – ▸ ✓ or -, renders as a list with hanging indent.
+// Otherwise renders as plain pre-wrapped text.
+const BULLET_RE = /^([•\-–▸✓])\s*/;
+function DescriptionText({ text, className = '' }: { text: string; className?: string }) {
+    if (!text) return null;
+    const lines = text.split('\n').filter(l => l.trim());
+    const hasBullets = lines.some(l => BULLET_RE.test(l.trim()));
+    if (!hasBullets) {
+        return <p className={`text-xs leading-relaxed ${className}`} style={{ whiteSpace: 'pre-wrap' }}>{text}</p>;
+    }
+    return (
+        <div className={`space-y-0.5 text-xs leading-relaxed ${className}`}>
+            {lines.map((line, i) => {
+                const trimmed = line.trim();
+                const match = trimmed.match(BULLET_RE);
+                const bullet = match ? match[1] : '';
+                const content = match ? trimmed.slice(match[0].length) : trimmed;
+                return (
+                    <div key={i} className="flex items-start gap-1">
+                        <span className="flex-shrink-0 w-3 text-center mt-px">{bullet || '•'}</span>
+                        <span className="flex-1">{content}</span>
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
+
 // ─── Section renderers ─────────────────────────────────────────────────────
 
 function SectionSummary({ cvData, template }: { cvData: CVData; template: TemplateName }) {
@@ -96,7 +125,7 @@ function SectionExperience({ cvData, template }: { cvData: CVData; template: Tem
                     {(exp.startDate || exp.endDate || exp.current) && (
                         <p className="text-gray-700 text-xs">{fmt(exp.startDate)} – {exp.current ? 'Present' : fmt(exp.endDate)}</p>
                     )}
-                    {exp.description && <p className="text-gray-900 mt-1 whitespace-pre-line text-xs">{exp.description}</p>}
+                    {exp.description && <DescriptionText text={exp.description} className="text-gray-900 mt-1" />}
                 </div>
             ))}
         </div>
@@ -116,7 +145,7 @@ function SectionExperience({ cvData, template }: { cvData: CVData; template: Tem
                                 <p className="text-gray-600 text-xs">{fmt(exp.startDate)} – {exp.current ? 'Present' : fmt(exp.endDate)}</p>
                             )}
                         </div>
-                        {exp.description && <p className="text-gray-800 mt-1 whitespace-pre-line text-xs">{exp.description}</p>}
+                        {exp.description && <DescriptionText text={exp.description} className="text-gray-800 mt-1" />}
                     </div>
                 ))}
             </div>
@@ -132,7 +161,7 @@ function SectionExperience({ cvData, template }: { cvData: CVData; template: Tem
                     {(exp.startDate || exp.endDate || exp.current) && (
                         <p className="text-gray-500 text-xs">{fmt(exp.startDate)} – {exp.current ? 'Present' : fmt(exp.endDate)}</p>
                     )}
-                    {exp.description && <p className="text-gray-700 whitespace-pre-line text-xs mt-1">{exp.description}</p>}
+                    {exp.description && <DescriptionText text={exp.description} className="text-gray-700 mt-1" />}
                 </div>
             ))}
         </div>
@@ -153,7 +182,7 @@ function SectionExperience({ cvData, template }: { cvData: CVData; template: Tem
                             )}
                         </div>
                         {exp.company && <p className="text-gray-600 font-serif italic text-xs mb-1">{exp.company}</p>}
-                        {exp.description && <p className="text-gray-700 text-xs whitespace-pre-line leading-relaxed">{exp.description}</p>}
+                        {exp.description && <DescriptionText text={exp.description} className="text-gray-700" />}
                     </div>
                 ))}
             </div>
@@ -169,7 +198,7 @@ function SectionExperience({ cvData, template }: { cvData: CVData; template: Tem
                     {(exp.startDate || exp.endDate || exp.current) && (
                         <p className="text-gray-500 text-xs">{fmt(exp.startDate)} – {exp.current ? 'Present' : fmt(exp.endDate)}</p>
                     )}
-                    {exp.description && <p className="text-gray-700 mt-1 whitespace-pre-line text-xs">{exp.description}</p>}
+                    {exp.description && <DescriptionText text={exp.description} className="text-gray-700 mt-1" />}
                 </div>
             ))}
         </div>
