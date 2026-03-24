@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Trash2, X, Plus, Sparkles, Crown, Lock, Loader2, Check } from 'lucide-react';
 import LimitModal from './LimitModal';
-import CVPreview, { templates } from './CVPreview';
+import CVPreviewPane from './CVPreviewPane';
+import { templates } from './CVPreview';
 import { Section, CVData } from '../types';
 import Navbar from './Navbar';
 import PlanCard from './PlanCard';
@@ -186,7 +187,7 @@ export default function Sections({
                             </button>
                         </div>
 
-                        <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6 h-auto md:h-[800px] overflow-hidden">
+                        <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-xl text-black font-semibold">Live Preview</h2>
                                 <select
@@ -201,9 +202,13 @@ export default function Sections({
                                     ))}
                                 </select>
                             </div>
-                            <div className="border border-gray-200 rounded bg-white overflow-hidden h-[400px] md:h-[600px] overflow-y-auto">
-                                <CVPreview cvData={cvData} sections={sections} selectedTemplate={selectedTemplate} />
-                            </div>
+                            <CVPreviewPane
+                                cvData={cvData}
+                                sections={sections}
+                                selectedTemplate={selectedTemplate}
+                                tier={tier}
+                                pageIdPrefix="sections-preview-page"
+                            />
                         </div>
                     </div>
                 </div>

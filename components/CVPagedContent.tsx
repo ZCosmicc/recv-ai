@@ -3,12 +3,32 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { CVData, Section } from '../types';
 
-// A4 at 96dpi: 794 × 1123px
+// A4 at 96dpi
 export const A4_WIDTH_PX = 794;
 export const A4_HEIGHT_PX = 1123;
-export const PAGE_PADDING_X = 48; // px, left/right
-export const PAGE_PADDING_Y = 40; // px, top/bottom
-export const USABLE_HEIGHT = A4_HEIGHT_PX - PAGE_PADDING_Y * 2;
+
+// Actual content area widths (page width minus padding)
+// non-sidebar: p-10 = 40px each side → 794 - 80 = 714px
+// creative sidebar: sidebar w-56(224px) + content p-8(32px x2) → 794-224-64 = 506px
+// executive sidebar: sidebar w-64(256px) + content p-8(32px x2) → 794-256-64 = 474px
+const CONTENT_WIDTHS: Record<string, number> = {
+    minimal: 714,
+    modern: 714,
+    corporate: 714,
+    creative: 506,
+    executive: 474,
+};
+
+// Max usable height per page (A4 height minus vertical padding)
+// non-sidebar p-10: 40px top + 40px bottom = 1123-80 = 1043px
+// sidebar p-8: 32px top + 32px bottom = 1123-64 = 1059px
+const MAX_HEIGHTS: Record<string, number> = {
+    minimal: 1043,
+    modern: 1043,
+    corporate: 1043,
+    creative: 1059,
+    executive: 1059,
+};
 
 export type TemplateName = 'minimal' | 'modern' | 'creative' | 'corporate' | 'executive';
 
@@ -17,19 +37,16 @@ interface CVPagedContentProps {
     sections: Section[];
     selectedTemplate: string | null;
     tier?: 'guest' | 'free' | 'pro';
-    /** id prefix for page containers used by pdf.ts */
     pageIdPrefix?: string;
 }
 
-// ─── Helper: format date ───────────────────────────────────────────────────
 function fmt(d: string) {
     if (!d) return '';
-    return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+    try { return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }); }
+    catch { return d; }
 }
 
 // ─── Section renderers ─────────────────────────────────────────────────────
-// Each returns a JSX element for a single CV section.
-// These are used both in the hidden measurer and in the real pages.
 
 function SectionSummary({ cvData, template }: { cvData: CVData; template: TemplateName }) {
     if (!cvData.summary) return null;
@@ -59,7 +76,6 @@ function SectionSummary({ cvData, template }: { cvData: CVData; template: Templa
             <p className="text-gray-700 leading-relaxed text-justify text-xs">{cvData.summary}</p>
         </div>
     );
-    // modern
     return (
         <div className="mb-5">
             <h2 className="text-sm font-bold text-blue-600 mb-2 pb-1 border-b-2 border-blue-200">Summary</h2>
@@ -143,7 +159,6 @@ function SectionExperience({ cvData, template }: { cvData: CVData; template: Tem
             </div>
         </div>
     );
-    // modern
     return (
         <div className="mb-5">
             <h2 className="text-sm font-bold text-blue-600 mb-2 pb-1 border-b-2 border-blue-200">Experience</h2>
@@ -222,7 +237,6 @@ function SectionEducation({ cvData, template }: { cvData: CVData; template: Temp
             </div>
         </div>
     );
-    // modern
     return (
         <div className="mb-5">
             <h2 className="text-sm font-bold text-blue-600 mb-2 pb-1 border-b-2 border-blue-200">Education</h2>
@@ -240,13 +254,20 @@ function SectionEducation({ cvData, template }: { cvData: CVData; template: Temp
 function SectionSkills({ cvData, template }: { cvData: CVData; template: TemplateName }) {
     const skills = cvData.skills.filter(s => s.trim());
     if (!skills.length) return null;
-    if (template === 'minimal' || template === 'corporate') return (
+    if (template === 'creative' || template === 'executive') return null;
+    if (template === 'minimal') return (
         <div className="mb-5">
-            <h2 className={`text-xs font-bold uppercase ${template === 'corporate' ? 'bg-gray-200 px-2 py-1 mb-2' : 'border-b border-black pb-1 mb-2'} tracking-wider text-gray-900`}>Skills</h2>
-            <p className="text-gray-900 text-xs">{skills.join(template === 'corporate' ? ', ' : ' • ')}</p>
+            <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Skills</h2>
+            <p className="text-gray-900 text-xs">{skills.join(' • ')}</p>
         </div>
     );
-    if (template === 'modern') return (
+    if (template === 'corporate') return (
+        <div className="mb-5">
+            <h2 className="text-xs font-bold text-gray-900 mb-2 uppercase bg-gray-200 px-2 py-1">Skills</h2>
+            <p className="text-gray-800 px-2 text-xs">{skills.join(', ')}</p>
+        </div>
+    );
+    return (
         <div className="mb-5">
             <h2 className="text-sm font-bold text-blue-600 mb-2 pb-1 border-b-2 border-blue-200">Skills</h2>
             <div className="flex flex-wrap gap-1">
@@ -254,8 +275,6 @@ function SectionSkills({ cvData, template }: { cvData: CVData; template: Templat
             </div>
         </div>
     );
-    // creative/executive — skills go in sidebar, not main content
-    return null;
 }
 
 function SectionProjects({ cvData, template }: { cvData: CVData; template: TemplateName }) {
@@ -316,7 +335,6 @@ function SectionProjects({ cvData, template }: { cvData: CVData; template: Templ
             </div>
         </div>
     );
-    // modern
     return (
         <div className="mb-5">
             <h2 className="text-sm font-bold text-blue-600 mb-2 pb-1 border-b-2 border-blue-200">Projects</h2>
@@ -334,6 +352,7 @@ function SectionProjects({ cvData, template }: { cvData: CVData; template: Templ
 function SectionCertification({ cvData, template }: { cvData: CVData; template: TemplateName }) {
     const certs = cvData.certification.filter(c => c.trim());
     if (!certs.length) return null;
+    if (template === 'creative') return null;
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Certifications</h2>
@@ -356,11 +375,6 @@ function SectionCertification({ cvData, template }: { cvData: CVData; template: 
             </div>
         </div>
     );
-    if (template === 'creative') return (
-        // creative certs go in sidebar — render null in main
-        null
-    );
-    // modern
     return (
         <div className="mb-5">
             <h2 className="text-sm font-bold text-blue-600 mb-2 pb-1 border-b-2 border-blue-200">Certifications</h2>
@@ -372,7 +386,7 @@ function SectionCertification({ cvData, template }: { cvData: CVData; template: 
 function SectionLanguage({ cvData, template }: { cvData: CVData; template: TemplateName }) {
     const langs = cvData.language.filter(l => l.trim());
     if (!langs.length) return null;
-    if (template === 'creative' || template === 'executive') return null; // sidebar only
+    if (template === 'creative' || template === 'executive') return null;
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Languages</h2>
@@ -385,7 +399,6 @@ function SectionLanguage({ cvData, template }: { cvData: CVData; template: Templ
             <p className="text-gray-800 px-2 text-xs">{langs.join(', ')}</p>
         </div>
     );
-    // modern
     return (
         <div className="mb-5">
             <h2 className="text-sm font-bold text-blue-600 mb-2 pb-1 border-b-2 border-blue-200">Languages</h2>
@@ -394,9 +407,7 @@ function SectionLanguage({ cvData, template }: { cvData: CVData; template: Templ
     );
 }
 
-// ─── Map section id → renderer ─────────────────────────────────────────────
 type SectionRenderer = (cvData: CVData, template: TemplateName) => React.ReactNode;
-
 const SECTION_RENDERERS: Record<string, SectionRenderer> = {
     summary: (d, t) => <SectionSummary cvData={d} template={t} />,
     experience: (d, t) => <SectionExperience cvData={d} template={t} />,
@@ -407,7 +418,8 @@ const SECTION_RENDERERS: Record<string, SectionRenderer> = {
     language: (d, t) => <SectionLanguage cvData={d} template={t} />,
 };
 
-// ─── Sidebar for sidebar-based templates ───────────────────────────────────
+// ─── Sidebar ───────────────────────────────────────────────────────────────
+
 function Sidebar({ cvData, template }: { cvData: CVData; template: 'creative' | 'executive' }) {
     if (template === 'executive') return (
         <div className="w-64 flex-shrink-0 bg-gray-900 text-white p-6 border-r-4 border-yellow-500 self-stretch">
@@ -453,8 +465,6 @@ function Sidebar({ cvData, template }: { cvData: CVData; template: 'creative' | 
             )}
         </div>
     );
-
-    // creative
     return (
         <div className="w-56 flex-shrink-0 bg-gradient-to-b from-purple-600 to-purple-800 text-white p-5 self-stretch">
             {cvData.personal.name && (
@@ -490,11 +500,11 @@ function Sidebar({ cvData, template }: { cvData: CVData; template: 'creative' | 
     );
 }
 
-// ─── Personal header renderers ─────────────────────────────────────────────
+// ─── Personal header ───────────────────────────────────────────────────────
+
 function PersonalHeader({ cvData, template }: { cvData: CVData; template: TemplateName }) {
     const p = cvData.personal;
     if (!p.name) return null;
-
     if (template === 'minimal') return (
         <div className="text-center mb-5 border-b-2 border-black pb-3">
             <h1 className="text-2xl font-bold uppercase tracking-wide text-gray-900">{p.name}</h1>
@@ -506,7 +516,6 @@ function PersonalHeader({ cvData, template }: { cvData: CVData; template: Templa
             {p.customFields.map((f, i) => f.label && f.value && <div key={i} className="text-gray-800 text-xs mt-0.5">{f.label}: {f.value}</div>)}
         </div>
     );
-
     if (template === 'modern') return (
         <div className="mb-5">
             <h1 className="text-3xl font-bold text-blue-600 mb-1">{p.name}</h1>
@@ -518,7 +527,6 @@ function PersonalHeader({ cvData, template }: { cvData: CVData; template: Templa
             {p.customFields.map((f, i) => f.label && f.value && <div key={i} className="text-gray-600 text-xs mt-0.5">🔗 {f.label}: {f.value}</div>)}
         </div>
     );
-
     if (template === 'corporate') return (
         <div className="text-center mb-5 pb-3 border-b-4 border-gray-800">
             <h1 className="text-2xl font-bold text-gray-900 mb-1 font-serif">{p.name}</h1>
@@ -530,34 +538,26 @@ function PersonalHeader({ cvData, template }: { cvData: CVData; template: Templa
             {p.customFields.map((f, i) => f.label && f.value && <div key={i} className="text-gray-600 text-xs mt-0.5">{f.label}: {f.value}</div>)}
         </div>
     );
-
-    // creative & executive — personal info lives in sidebar, return null for main
-    return null;
+    return null; // sidebar templates: personal info in Sidebar
 }
 
-// ─── Page background/layout per template ──────────────────────────────────
-function PageLayout({
-    template, children, isFirstPage, cvData,
-}: {
-    template: TemplateName;
-    children: React.ReactNode;
-    isFirstPage: boolean;
-    cvData: CVData;
+// ─── Page container layout ─────────────────────────────────────────────────
+
+function PageLayout({ template, children, isFirstPage, cvData }: {
+    template: TemplateName; children: React.ReactNode; isFirstPage: boolean; cvData: CVData;
 }) {
     const isSidebar = template === 'creative' || template === 'executive';
-
     if (isSidebar) return (
         <div className="flex h-full">
-            {isFirstPage && <Sidebar cvData={cvData} template={template as 'creative' | 'executive'} />}
-            {!isFirstPage && (
-                <div className={`flex-shrink-0 ${template === 'executive' ? 'w-64 bg-gray-900 border-r-4 border-yellow-500' : 'w-56 bg-gradient-to-b from-purple-600 to-purple-800'}`} />
-            )}
+            {isFirstPage
+                ? <Sidebar cvData={cvData} template={template as 'creative' | 'executive'} />
+                : <div className={`flex-shrink-0 ${template === 'executive' ? 'w-64 bg-gray-900 border-r-4 border-yellow-500' : 'w-56 bg-gradient-to-b from-purple-600 to-purple-800'}`} />
+            }
             <div className={`flex-1 p-8 overflow-hidden ${template === 'executive' ? 'bg-gray-50' : 'bg-white'}`}>
                 {children}
             </div>
         </div>
     );
-
     return (
         <div className={`h-full p-10 ${template === 'corporate' ? 'bg-white font-serif' : 'bg-white'}`}>
             {children}
@@ -566,123 +566,100 @@ function PageLayout({
 }
 
 // ─── Main component ────────────────────────────────────────────────────────
+
 export default function CVPagedContent({
-    cvData,
-    sections,
-    selectedTemplate,
-    tier = 'free',
-    pageIdPrefix = 'pdf-page',
+    cvData, sections, selectedTemplate, tier = 'free', pageIdPrefix = 'pdf-page',
 }: CVPagedContentProps) {
     const template: TemplateName = (selectedTemplate as TemplateName) || 'minimal';
     const isSidebar = template === 'creative' || template === 'executive';
 
-    // IDs for each section to measure
+    const contentWidth = CONTENT_WIDTHS[template] ?? 714;
+    const maxH = MAX_HEIGHTS[template] ?? 1043;
+
     const enabledSections = sections
         .filter(s => s.enabled && s.id !== 'personal')
-        .filter(s => {
-            // sidebar templates: skills/language/certification go in sidebar
-            if (isSidebar && ['skills', 'language', 'certification'].includes(s.id)) return false;
-            return true;
-        });
+        .filter(s => isSidebar && ['skills', 'language', 'certification'].includes(s.id) ? false : true);
 
-    // Ref to hidden measurer container
     const measurerRef = useRef<HTMLDivElement>(null);
     const [pages, setPages] = useState<string[][]>([[]]);
 
     const measureAndPaginate = useCallback(() => {
         if (!measurerRef.current) return;
-
         const measurer = measurerRef.current;
-        const sectionEls = measurer.querySelectorAll<HTMLDivElement>('[data-section-id]');
-        
-        // Available content height per page (px)
-        // For sidebar templates, sidebar eats some width but not height
-        const maxH = isSidebar ? A4_HEIGHT_PX - 64 : A4_HEIGHT_PX - 80; // account for padding
-
         const newPages: string[][] = [[]];
         let currentHeight = 0;
 
-        // Include personal header on page 1 for non-sidebar templates
+        // Account for personal header on page 1
         if (!isSidebar) {
-            const headerEl = measurer.querySelector<HTMLDivElement>('[data-section-id="personal"]');
-            if (headerEl) {
-                currentHeight += headerEl.offsetHeight + 16; // +16 for margin
-            }
+            const headerEl = measurer.querySelector<HTMLDivElement>('[data-measure-id="personal"]');
+            if (headerEl) currentHeight += headerEl.offsetHeight + 12;
         }
 
-        sectionEls.forEach(el => {
-            const sectionId = el.getAttribute('data-section-id')!;
-            if (sectionId === 'personal') return;
-            const h = el.offsetHeight + 16; // +16 for margin between sections
+        enabledSections.forEach(section => {
+            const el = measurer.querySelector<HTMLDivElement>(`[data-measure-id="${section.id}"]`);
+            if (!el) return;
+            const h = el.offsetHeight + 12; // +12 for bottom margin
+            if (h <= 0) return; // skip unmeasured
 
             if (currentHeight + h > maxH && newPages[newPages.length - 1].length > 0) {
-                newPages.push([sectionId]);
+                newPages.push([section.id]);
                 currentHeight = h;
             } else {
-                newPages[newPages.length - 1].push(sectionId);
+                newPages[newPages.length - 1].push(section.id);
                 currentHeight += h;
             }
         });
 
-        setPages(newPages);
-    }, [isSidebar]);
+        // Only update if pages actually changed (avoid infinite loop)
+        setPages(prev => {
+            const prevStr = JSON.stringify(prev);
+            const nextStr = JSON.stringify(newPages);
+            return prevStr === nextStr ? prev : newPages;
+        });
+    }, [enabledSections, isSidebar, maxH]);
 
-    // Re-paginate when data changes
     useEffect(() => {
-        // Small delay to let DOM render the hidden measurer
-        const t = setTimeout(measureAndPaginate, 50);
+        // Two-pass: wait for measurer to fully render, then measure
+        const t = setTimeout(measureAndPaginate, 150);
         return () => clearTimeout(t);
     }, [cvData, sections, selectedTemplate, measureAndPaginate]);
 
     return (
         <>
-            {/* Hidden measurer — renders all sections at A4 width to measure heights */}
+            {/* Hidden measurer at ACTUAL content width */}
             <div
                 ref={measurerRef}
+                aria-hidden="true"
                 style={{
-                    position: 'absolute',
+                    position: 'fixed',
                     left: '-9999px',
                     top: 0,
-                    width: `${A4_WIDTH_PX}px`,
+                    width: `${contentWidth}px`,
                     visibility: 'hidden',
                     pointerEvents: 'none',
+                    zIndex: -1,
                 }}
-                aria-hidden="true"
             >
-                {/* Personal header */}
-                <div data-section-id="personal">
+                <div data-measure-id="personal">
                     <PersonalHeader cvData={cvData} template={template} />
                 </div>
-
-                {/* All content sections */}
                 {enabledSections.map(section => (
-                    <div key={section.id} data-section-id={section.id}>
+                    <div key={section.id} data-measure-id={section.id}>
                         {SECTION_RENDERERS[section.id]?.(cvData, template)}
                     </div>
                 ))}
             </div>
 
-            {/* Real pages */}
+            {/* Rendered A4 pages */}
             {pages.map((pageSectionIds, pageIndex) => (
                 <div
                     key={pageIndex}
                     id={`${pageIdPrefix}-${pageIndex}`}
-                    data-pdf-page="true"
-                    style={{
-                        width: `${A4_WIDTH_PX}px`,
-                        height: `${A4_HEIGHT_PX}px`,
-                        position: 'relative',
-                        overflow: 'hidden',
-                        flexShrink: 0,
-                    }}
+                    data-pdf-page={pageIdPrefix}
+                    style={{ width: `${A4_WIDTH_PX}px`, height: `${A4_HEIGHT_PX}px`, position: 'relative', overflow: 'hidden', flexShrink: 0 }}
                 >
                     <PageLayout template={template} isFirstPage={pageIndex === 0} cvData={cvData}>
-                        {/* Personal header only on page 1 for non-sidebar templates */}
-                        {pageIndex === 0 && !isSidebar && (
-                            <PersonalHeader cvData={cvData} template={template} />
-                        )}
-
-                        {/* Sections for this page */}
+                        {pageIndex === 0 && !isSidebar && <PersonalHeader cvData={cvData} template={template} />}
                         {pageSectionIds.map(sectionId => (
                             <div key={sectionId}>
                                 {SECTION_RENDERERS[sectionId]?.(cvData, template)}
@@ -690,16 +667,8 @@ export default function CVPagedContent({
                         ))}
                     </PageLayout>
 
-                    {/* Watermark for non-pro users */}
                     {tier !== 'pro' && (
-                        <div style={{
-                            position: 'absolute',
-                            bottom: '10mm',
-                            right: '10mm',
-                            textAlign: 'center',
-                            opacity: 0.6,
-                            zIndex: 10,
-                        }}>
+                        <div style={{ position: 'absolute', bottom: '10mm', right: '10mm', textAlign: 'center', opacity: 0.6, zIndex: 10 }}>
                             <div style={{ fontSize: '10px', color: '#666', marginBottom: '4px', fontWeight: 500 }}>Created by</div>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src="/LogoPrimaryReCV.png" alt="ReCV" style={{ width: '70px', objectFit: 'contain' }} />

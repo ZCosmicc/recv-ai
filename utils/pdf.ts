@@ -17,8 +17,8 @@ export const downloadPDF = (
         return;
     }
 
-    // Collect all paginated page containers
-    const pageEls = document.querySelectorAll<HTMLElement>('[data-pdf-page="true"]');
+    // Collect all paginated page containers — hidden CVPagedContent in Review uses pageIdPrefix="pdf-page"
+    const pageEls = document.querySelectorAll<HTMLElement>('[data-pdf-page="pdf-page"]');
     if (pageEls.length === 0) {
         alert('No CV content found. Please wait a moment and try again.');
         printWindow.close();
