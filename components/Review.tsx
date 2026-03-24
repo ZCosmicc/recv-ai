@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Loader2, AlertCircle, CheckCircle, ChevronRight, Wand2, Star, TrendingUp, Sparkles, Download, XCircle, Trash2 } from 'lucide-react';
 import { CVData, Section } from '../types';
-import CVPreview from './CVPreview';
+import CVPagedContent from './CVPagedContent';
 import { downloadPDF } from '../utils/pdf';
 import Toast, { ToastType } from './Toast';
 import LimitModal from './LimitModal';
@@ -423,7 +423,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
             {/* Navigation Footer */}
             <div className="mt-8 md:mt-12 flex flex-col sm:flex-row justify-center border-t-4 border-black pt-6 md:pt-8 gap-4 px-4 sm:px-0">
                 <button
-                    onClick={() => downloadPDF(cvData, 'cv-preview-for-pdf', tier)}
+                    onClick={() => downloadPDF(cvData, undefined, tier)}
                     className="w-full sm:w-auto px-8 py-3 font-bold text-white bg-green-600 border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-2"
                 >
                     <Download className="w-5 h-5" />
@@ -438,12 +438,14 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                 </button>
             </div>
 
-            {/* Hidden Preview for PDF Generation */}
-            <div id="cv-preview-for-pdf" className="hidden">
-                <CVPreview
+            {/* Hidden paginated pages for PDF generation */}
+            <div className="hidden" aria-hidden="true">
+                <CVPagedContent
                     cvData={cvData}
                     sections={sections}
                     selectedTemplate={selectedTemplate}
+                    tier={tier}
+                    pageIdPrefix="pdf-page"
                 />
             </div>
 

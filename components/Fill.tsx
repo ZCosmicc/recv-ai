@@ -7,7 +7,9 @@ import {
 } from 'lucide-react';
 import LimitModal from './LimitModal';
 import { CVData, Section } from '../types';
-import CVPreview, { templates } from './CVPreview';
+import CVPreviewPane from './CVPreviewPane';
+import { downloadPDF } from '../utils/pdf';
+import { templates } from './CVPreview';
 import Navbar from './Navbar';
 import PlanCard from './PlanCard';
 
@@ -82,193 +84,6 @@ export default function Fill({
     const [draggedItem, setDraggedItem] = useState<number | null>(null);
     const [draggedItemType, setDraggedItemType] = useState<string | null>(null);
 
-    const downloadPDF = () => {
-        const printWindow = window.open('', '_blank');
-        if (!printWindow) {
-            alert('Please allow popups to download PDF');
-            return;
-        }
-
-        const element = document.getElementById('cv-preview-for-pdf');
-        if (!element) {
-            alert('Preview not found');
-            return;
-        }
-
-        const content = element.innerHTML;
-
-        printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>${cvData.personal.name || 'My CV'}</title>
-          <script src="https://cdn.tailwindcss.com"></script>
-          <style>
-            @media print {
-              .print-instructions { display: none !important; }
-              body { 
-                margin: 0; 
-                padding: 0;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-                color-adjust: exact;
-              }
-              @page { 
-                margin: 10mm; 
-                size: A4;
-              }
-              * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                color-adjust: exact !important;
-              }
-              .watermark {
-                position: fixed;
-                bottom: 10mm;
-                right: 10mm;
-                text-align: center;
-                opacity: 0.6;
-              }
-              .watermark-text {
-                font-size: 10px;
-                color: #666;
-                margin-bottom: 6px;
-                font-weight: 500;
-              }
-              .watermark-logo {
-                width: 80px;
-                height: 35px;
-                object-fit: contain;
-              }
-            }
-            @media screen {
-              .watermark {
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                text-align: center;
-                opacity: 0.6;
-                z-index: 1000;
-              }
-              .watermark-text {
-                font-size: 12px;
-                color: #666;
-                margin-bottom: 8px;
-                font-weight: 500;
-              }
-              .watermark-logo {
-                width: 100px;
-                height: 45px;
-                object-fit: contain;
-              }
-              .print-instructions {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: white;
-                color: black;
-                padding: 24px;
-                border: 4px solid black;
-                box-shadow: 6px 6px 0px 0px #000;
-                z-index: 9999;
-                max-width: 320px;
-              }
-              .print-instructions h3 {
-                margin: 0 0 16px 0;
-                font-size: 20px;
-                font-weight: 800;
-                text-transform: uppercase;
-                color: #0079FF;
-              }
-              .print-instructions ol {
-                margin: 16px 0;
-                padding-left: 20px;
-                font-weight: 500;
-              }
-              .print-instructions li {
-                margin: 8px 0;
-                font-size: 14px;
-              }
-              .print-instructions button {
-                width: 100%;
-                padding: 12px;
-                margin-top: 12px;
-                background: #0079FF;
-                color: white;
-                border: 2px solid black;
-                font-weight: bold;
-                cursor: pointer;
-                box-shadow: 2px 2px 0px 0px #000;
-                transition: transform 0.1s, box-shadow 0.1s;
-              }
-              .print-instructions button:hover {
-                transform: translate(2px, 2px);
-                box-shadow: none;
-              }
-              .print-instructions button.cancel-btn {
-                background: #ef4444;
-              }
-            }
-            body { 
-              font-family: system-ui, -apple-system, sans-serif;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="print-instructions">
-            <h3>📥 Download as PDF</h3>
-            <ol>
-              <li>Destination: <strong>Save as PDF</strong></li>
-              <li>Turn OFF "Headers and footers"</li>
-              <li>Turn ON "Background graphics"</li>
-              <li>Click <strong>Save</strong></li>
-            </ol>
-            <button onclick="window.print()">Open Print Dialog</button>
-            <button class="cancel-btn" onclick="window.close()">Cancel</button>
-          </div>
-          
-          <div id="cv-content">
-            ${content}
-          </div>
-
-          ${tier !== 'pro' ? `
-          <!-- Watermark (only for non-Pro users) -->
-          <div class="watermark">
-            <div class="watermark-text">Created by</div>
-            <img src="/LogoPrimaryReCV.png" alt="Logo" class="watermark-logo" />
-          </div>
-          ` : ''}
-
-          <script>
-            window.onload = () => {
-              setTimeout(() => {
-                window.print();
-              }, 500);
-            };
-            document.addEventListener('contextmenu', event => event.preventDefault());
-            document.onkeydown = function(e) {
-              // Disable F12
-              if (event.keyCode == 123) {
-                return false;
-              }
-              // Disable Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C (Chrome, Edge, etc.)
-              if (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) {
-                return false;
-              }
-              // Disable Ctrl+U (View source)
-              if (e.ctrlKey && e.keyCode == 85) {
-                return false;
-              }
-            };
-          </script>
-        </body>
-      </html>
-    `);
-
-        printWindow.document.close();
-    };
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -955,7 +770,7 @@ export default function Fill({
                                         Review & Improve (AI)
                                     </button>
                                     <button
-                                        onClick={downloadPDF}
+                                        onClick={() => downloadPDF(cvData, undefined, tier)}
                                         className="w-full p-4 bg-primary text-white border-2 border-black shadow-neo-sm rounded-none hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold flex items-center justify-center gap-2"
                                     >
                                         <Download className="w-5 h-5" />
@@ -982,11 +797,12 @@ export default function Fill({
                                     </select>
                                 </div>
 
-                                <div className="border-2 border-black bg-white overflow-auto h-[400px] md:h-[700px]">
-                                    <div id="cv-preview-for-pdf">
-                                        <CVPreview cvData={cvData} sections={sections} selectedTemplate={selectedTemplate} />
-                                    </div>
-                                </div>
+                                <CVPreviewPane
+                                    cvData={cvData}
+                                    sections={sections}
+                                    selectedTemplate={selectedTemplate}
+                                    tier={tier}
+                                />
                             </div>
                         </div>
                     </div>
