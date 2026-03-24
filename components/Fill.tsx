@@ -8,6 +8,7 @@ import {
 import LimitModal from './LimitModal';
 import { CVData, Section } from '../types';
 import CVPreviewPane from './CVPreviewPane';
+import CVPagedContent from './CVPagedContent';
 import { downloadPDF } from '../utils/pdf';
 import { templates } from './CVPreview';
 import Navbar from './Navbar';
@@ -807,6 +808,17 @@ export default function Fill({
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Hidden paginated pages for PDF generation */}
+            <div className="hidden" aria-hidden="true">
+                <CVPagedContent
+                    cvData={cvData}
+                    sections={sections}
+                    selectedTemplate={selectedTemplate}
+                    tier={tier}
+                    pageIdPrefix="pdf-page"
+                />
             </div>
 
             <LimitModal
