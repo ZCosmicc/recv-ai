@@ -810,8 +810,18 @@ export default function Fill({
                 </div>
             </div>
 
-            {/* Hidden paginated pages for PDF generation */}
-            <div className="hidden" aria-hidden="true">
+            {/* Off-screen paginated pages for PDF generation — NOT display:none, must stay in layout */}
+            <div
+                aria-hidden="true"
+                style={{
+                    position: 'fixed',
+                    left: '-9999px',
+                    top: 0,
+                    opacity: 0,
+                    pointerEvents: 'none',
+                    zIndex: -1,
+                }}
+            >
                 <CVPagedContent
                     cvData={cvData}
                     sections={sections}
