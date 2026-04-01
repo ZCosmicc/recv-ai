@@ -71,9 +71,20 @@ export async function PATCH(req: Request) {
 
     // Update Target User - use service client to bypass RLS
     const serviceSupabase = getServiceClient();
+
+    // When setting tier to 'pro', also set pro_expires_at to 30 days from now (monthly subscription)
+    const updateData: Record<string, any> = { tier };
+    if (tier === 'pro') {
+        const expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + 30);
+        updateData.pro_expires_at = expiryDate.toISOString();
+    } else if (tier === 'free') {
+        updateData.pro_expires_at = null;
+    }
+
     const { error } = await serviceSupabase
         .from('profiles')
-        .update({ tier })
+        .update(updateData)
         .eq('id', userId);
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });

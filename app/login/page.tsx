@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
 import { createClient } from '@/utils/supabase/client';
@@ -16,6 +16,17 @@ export default function LoginPage() {
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
     const [captchaToken, setCaptchaToken] = useState<string | null>(null);
     const turnstileRef = useRef<TurnstileInstance>(null);
+
+    // Fix 1: Redirect to dashboard if already logged in
+    useEffect(() => {
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                router.push('/dashboard');
+            }
+        };
+        checkSession();
+    }, []);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();

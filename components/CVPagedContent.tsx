@@ -331,6 +331,7 @@ function SectionProjects({ cvData, template }: { cvData: CVData; template: Templ
                         {p.title && <h3 className="font-bold text-gray-900 text-xs">{p.title}</h3>}
                         {p.technologies && <p className="text-gray-700 italic text-xs">{p.technologies}</p>}
                         {p.description && <p className="text-gray-800 mt-1 text-xs">{p.description}</p>}
+                        {p.link && <p className="text-gray-600 text-xs mt-1">Link: {p.link}</p>}
                     </div>
                 ))}
             </div>
@@ -344,6 +345,7 @@ function SectionProjects({ cvData, template }: { cvData: CVData; template: Templ
                     {p.title && <h3 className="font-bold text-gray-900 text-xs">{p.title}</h3>}
                     {p.technologies && <p className="text-purple-600 font-medium text-xs">{p.technologies}</p>}
                     {p.description && <p className="text-gray-700 mt-1 text-xs">{p.description}</p>}
+                    {p.link && <p className="text-purple-500 text-xs mt-1">Link: {p.link}</p>}
                 </div>
             ))}
         </div>
@@ -359,6 +361,7 @@ function SectionProjects({ cvData, template }: { cvData: CVData; template: Templ
                         {p.title && <h3 className="font-bold text-gray-900 text-xs">{p.title}</h3>}
                         {p.technologies && <p className="text-gray-600 text-xs italic">{p.technologies}</p>}
                         {p.description && <p className="text-gray-700 text-xs mt-1">{p.description}</p>}
+                        {p.link && <p className="text-gray-500 text-xs mt-1">Link: {p.link}</p>}
                     </div>
                 ))}
             </div>
@@ -372,6 +375,7 @@ function SectionProjects({ cvData, template }: { cvData: CVData; template: Templ
                     {p.title && <h3 className="font-bold text-gray-900 text-xs">{p.title}</h3>}
                     {p.technologies && <p className="text-blue-600 font-medium text-xs">{p.technologies}</p>}
                     {p.description && <p className="text-gray-700 mt-1 text-xs">{p.description}</p>}
+                    {p.link && <p className="text-blue-500 text-xs mt-1">Link: {p.link}</p>}
                 </div>
             ))}
         </div>
@@ -462,7 +466,7 @@ function Sidebar({ cvData, template }: { cvData: CVData; template: 'creative' | 
                         {cvData.personal.location && <div className="border-b border-gray-700 pb-1">{cvData.personal.location}</div>}
                     </div>
                     {cvData.personal.customFields.map((f, i) => f.label && f.value && (
-                        <div key={i} className="text-gray-400 text-xs mt-1 text-left">
+                        <div key={i} className="text-gray-400 text-xs mt-1">
                             <span className="text-yellow-600 font-bold uppercase">{f.label}:</span> {f.value}
                         </div>
                     ))}

@@ -169,7 +169,7 @@ function BuilderContent() {
           }
 
           if (loadedData.selectedTemplate) setSelectedTemplate(loadedData.selectedTemplate);
-          setStep('sections');
+          setStep('fill');
         } else {
           console.error("CV not found", error);
         }
@@ -214,9 +214,15 @@ function BuilderContent() {
     loadData();
 
     // Listen for auth changes to ensure we catch login state
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      // Always reload if session exists or if we were logged in and now are not
-      loadData(session?.user);
+    let hasLoadedOnce = false;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Only reload on actual sign-in/sign-out events, not on TOKEN_REFRESHED or INITIAL_SESSION
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+        if (!hasLoadedOnce) {
+          hasLoadedOnce = true;
+          loadData(session?.user);
+        }
+      }
     });
 
     return () => {
