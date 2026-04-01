@@ -78,12 +78,12 @@ export default function PaymentSuccess() {
                             <p className="text-sm text-yellow-800 mb-2">
                                 {t.paymentSuccess.issuesDesc}
                             </p>
-                            <a
-                                href="mailto:farizfadillah612@gmail.com"
+                            <button
+                                onClick={() => window.dispatchEvent(new Event('open-support'))}
                                 className="text-sm text-blue-600 hover:underline font-medium"
                             >
-                                farizfadillah612@gmail.com
-                            </a>
+                                Contact Support
+                            </button>
                         </div>
                     </>
                 )}

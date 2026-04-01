@@ -11,7 +11,7 @@ export const metadata = {
 };
 
 export default function ChangelogPage() {
-    const changelogPath = path.join(process.cwd(), 'CHANGELOG.md');
+    const changelogPath = path.join(process.cwd(), 'PublicChangelog.md');
     const content = fs.readFileSync(changelogPath, 'utf-8');
 
     return (

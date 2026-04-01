@@ -316,11 +316,22 @@ export default function AdminPage() {
                                                 <TicketStatusBadge status={ticket.status} />
                                             </td>
                                             <td className="p-3">
-                                                {ticket.screenshot_url ? (
-                                                    <a href={ticket.screenshot_url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold underline hover:text-blue-600">
-                                                        View
-                                                    </a>
-                                                ) : (
+                                                {ticket.screenshot_url ? (() => {
+                                                    try {
+                                                        const urls: string[] = JSON.parse(ticket.screenshot_url);
+                                                        return (
+                                                            <div className="flex flex-col gap-1">
+                                                                {urls.map((url, i) => (
+                                                                    <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold underline hover:text-blue-600">
+                                                                        View {urls.length > 1 ? i + 1 : ''}
+                                                                    </a>
+                                                                ))}
+                                                            </div>
+                                                        );
+                                                    } catch {
+                                                        return <a href={ticket.screenshot_url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold underline hover:text-blue-600">View</a>;
+                                                    }
+                                                })() : (
                                                     <span className="text-xs text-gray-400">—</span>
                                                 )}
                                             </td>

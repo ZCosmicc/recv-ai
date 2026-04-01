@@ -23,7 +23,7 @@ export async function POST(req: Request) {
             );
         }
 
-        const { email, category, subject, description, screenshot_url } = validation.data;
+        const { email, category, subject, description, screenshot_urls } = validation.data;
 
         // Check session (optional — guests allowed)
         const supabase = await createClient();
@@ -48,13 +48,18 @@ export async function POST(req: Request) {
             }
         }
 
+        // Store screenshot URLs as JSON string in the screenshot_url TEXT column
+        const screenshotUrlValue = screenshot_urls && screenshot_urls.length > 0
+            ? JSON.stringify(screenshot_urls)
+            : null;
+
         const { error } = await serviceSupabase.from('support_tickets').insert({
             user_id: user?.id ?? null,
             email,
             category,
             subject,
             description,
-            screenshot_url: screenshot_url || null,
+            screenshot_url: screenshotUrlValue,
         });
 
         if (error) {

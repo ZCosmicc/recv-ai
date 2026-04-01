@@ -1,0 +1,40 @@
+# Changelog
+
+All user-facing updates and improvements to Recv. AI.
+
+## [1.3.0] - 2026-04-01
+### ✨ New Features
+- **In-App Support Tickets:** You can now easily report bugs, suggest features, or get help with your account directly from any page. Just click the "Support" button in the bottom right corner. You can even attach up to 3 screenshots to help us understand the issue faster!
+- **Data Privacy Control:** Added a new "Danger Zone" in your dashboard giving you complete control to permanently delete your account and all associated data safely and securely.
+- **Live Changelog:** We've added this very page so you can always see the latest features, fixes, and improvements to Recv. AI!
+
+## [1.2.7] - 2026-04-01
+### 🐛 Bug Fixes & Improvements
+- Fixed an issue where logged-in users visiting the login page would be asked to log in again instead of being taken to their dashboard.
+- Fixed a frustrating bug where opening a saved CV would sometimes jump you back to the beginning of the form instead of letting you edit immediately.
+- **Template Fixes:** Ensured your project links display correctly in all 5 templates, not just the Minimal template.
+- Visually perfectly centered the custom field alignments in the Executive template to match the rest of the professional layout.
+- Improved the accuracy of Pro plan expiration dates on your account dashboard.
+
+## [1.2.6] - 2026-02-14
+### 🌐 Custom Domain
+- We're officially live on our new custom domain: **recv-ai.me**! All links and emails will now come from this verified, secure domain.
+
+## [1.2.5] - 2026-02-11
+### 🔐 Authentication
+- **Google Login:** You can now sign up and log in securely using your Google account with just one click.
+
+## [1.2.3] - 2026-02-07
+### ✨ New Features
+- **Projects Section:** Added a brand new "Projects" section to the CV builder! You can now easily showcase your personal and professional projects complete with descriptions, technologies used, and live links. These format beautifully across all 5 of our CV templates.
+
+## [1.2.2] - 2026-02-06
+### 🛠 Improvements
+- **Payment Processing:** Improved the speed and reliability of our Pro plan upgrades so that your account updates instantly after a successful checkout.
+
+## [1.2.1] - 2026-02-01
+### ✨ New Features
+- **Cover Letters:** Introduced AI-generated Cover Letters! You can now auto-generate professional cover letters perfectly tailored to your CV and the specific job description you're applying for.
+
+## [1.0.0] - Launch
+- **Initial Release:** Welcome to Recv. AI! The easiest way to build beautiful, ATS-friendly CVs that help you land more interviews.

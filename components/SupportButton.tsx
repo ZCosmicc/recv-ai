@@ -18,6 +18,13 @@ export default function SupportButton() {
         });
     }, []);
 
+    // Listen for open-support custom event (fired by footer Contact button, payment page, etc.)
+    useEffect(() => {
+        const handler = () => setIsOpen(true);
+        window.addEventListener('open-support', handler);
+        return () => window.removeEventListener('open-support', handler);
+    }, []);
+
     return (
         <>
             {/* Floating button */}
