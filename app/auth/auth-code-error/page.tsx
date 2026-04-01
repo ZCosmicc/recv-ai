@@ -22,14 +22,14 @@ function ErrorContent() {
                     <div className="space-y-4">
                         <Link
                             href="/login"
-                            className="block w-full py-3 bg-primary text-white text-center font-bold text-lg border-2 border-black shadow-neo transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
+                            className="block w-full py-3 bg-primary text-white text-center font-bold text-lg border-2 border-black shadow-neo transition-all"
                         >
                             Try Again
                         </Link>
 
                         <Link
                             href="/"
-                            className="block w-full py-3 bg-white text-black text-center font-bold text-lg border-2 border-black shadow-neo-sm transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
+                            className="block w-full py-3 bg-white text-black text-center font-bold text-lg border-2 border-black shadow-neo-sm transition-all"
                         >
                             Go Home
                         </Link>

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { createClient } from '@/utils/supabase/client';
 import Navbar from '@/components/Navbar';
 import ConfirmModal from '@/components/ConfirmModal';
@@ -9,6 +10,7 @@ import LimitModal from '@/components/LimitModal';
 import PlanCard from '@/components/PlanCard';
 import { Plus, FileText, Trash2, Edit2, MoreVertical, Loader2, Check, X, Lock, AlertTriangle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import SlideIn from '@/components/SlideIn';
 
 interface CV {
     id: string;
@@ -302,17 +304,20 @@ export default function Dashboard() {
                     <>
                         {/* CV List */}
                         <div className="flex justify-end mb-4">
-                            <button
+                            <motion.button
                                 onClick={handleCreateCV}
                                 disabled={creating || isProAndLimitReached}
-                                className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 border-2 border-black shadow-neo transition-all font-bold text-sm sm:text-base flex-1 sm:flex-none ${isProAndLimitReached
+                                whileHover={isProAndLimitReached ? {} : { x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                whileTap={isProAndLimitReached ? {} : { scale: 0.98 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 border-2 border-black shadow-neo font-bold text-sm sm:text-base flex-1 sm:flex-none ${isProAndLimitReached
                                     ? 'bg-gray-200 text-gray-500 cursor-not-allowed shadow-none'
-                                    : 'bg-primary text-white hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none'
+                                    : 'bg-primary text-white'
                                     }`}
                             >
                                 {creating ? <Loader2 className="animate-spin w-4 h-4" /> : isLimitReached && !isProAndLimitReached ? <Lock className="w-4 h-4 sm:w-5 sm:h-5" /> : <Plus className="w-4 h-4 sm:w-5 sm:h-5" />}
                                 {isProAndLimitReached ? t.dashboard.limitReached : t.dashboard.createNew}
-                            </button>
+                            </motion.button>
                         </div>
 
                         {cvs.length === 0 ? (
@@ -322,22 +327,27 @@ export default function Dashboard() {
                                 </div>
                                 <h2 className="text-xl sm:text-2xl font-bold mb-2">{t.dashboard.emptyState.title}</h2>
                                 <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 max-w-md mx-auto">{t.dashboard.emptyState.desc}</p>
-                                <button
+                                <motion.button
                                     onClick={handleCreateCV}
-                                    className="bg-primary text-white px-6 sm:px-8 py-2 sm:py-3 border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold text-sm sm:text-base w-full sm:w-auto"
+                                    whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                    whileTap={{ scale: 0.98 }}
+                                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                    className="bg-primary text-white px-6 sm:px-8 py-2 sm:py-3 border-2 border-black shadow-neo font-bold text-sm sm:text-base w-full sm:w-auto"
                                 >
                                     {t.dashboard.emptyState.button}
-                                </button>
+                                </motion.button>
                             </div>
                         ) : (
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {cvs.map(cv => (
-                                    <div
-                                        key={cv.id}
-                                        onClick={() => handleEditCV(cv.id)}
-                                        className="bg-white border-4 border-black p-6 shadow-neo hover:-translate-y-1 transition-transform cursor-pointer group relative"
-                                    >
-                                        <div className="flex justify-between items-start mb-4">
+                                {cvs.map((cv, index) => (
+                                    <SlideIn key={cv.id} delay={index * 0.1}>
+                                        <motion.div
+                                            onClick={() => handleEditCV(cv.id)}
+                                            whileHover={{ y: -4 }}
+                                            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                            className="bg-white border-4 border-black p-6 shadow-neo cursor-pointer group relative h-full flex flex-col"
+                                        >
+                                            <div className="flex justify-between items-start mb-4">
                                             <div className="w-12 h-12 bg-primary/10 flex items-center justify-center border-2 border-black">
                                                 <FileText className="w-6 h-6 text-primary" />
                                             </div>
@@ -366,18 +376,19 @@ export default function Dashboard() {
                                                     className="border-2 border-black px-2 py-1 text-sm w-full font-bold"
                                                     autoFocus
                                                 />
-                                                <button onClick={handleRename} className="bg-green-500 text-white p-1 border-2 border-black shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
+                                                <motion.button onClick={handleRename} whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-green-500 text-white p-1 border-2 border-black shadow-neo-sm">
                                                     <Check className="w-3 h-3" />
-                                                </button>
-                                                <button onClick={cancelRenaming} className="bg-red-500 text-white p-1 border-2 border-black shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
+                                                </motion.button>
+                                                <motion.button onClick={cancelRenaming} whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-red-500 text-white p-1 border-2 border-black shadow-neo-sm">
                                                     <X className="w-3 h-3" />
-                                                </button>
+                                                </motion.button>
                                             </div>
                                         ) : (
                                             <h3 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors truncate">{cv.title}</h3>
                                         )}
                                         <p className="text-sm text-gray-500">{t.dashboard.lastUpdated} {formatDate(cv.updated_at)}</p>
-                                    </div>
+                                    </motion.div>
+                                    </SlideIn>
                                 ))}
                             </div>
                         )}
@@ -386,17 +397,20 @@ export default function Dashboard() {
                     <>
                         {/* Cover Letter List */}
                         <div className="flex justify-end mb-4">
-                            <button
+                            <motion.button
                                 onClick={handleCreateCoverLetter}
                                 disabled={isProAndCLLimitReached}
-                                className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 border-2 border-black shadow-neo transition-all font-bold text-sm sm:text-base flex-1 sm:flex-none ${isProAndCLLimitReached
+                                whileHover={isProAndCLLimitReached ? {} : { x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                whileTap={isProAndCLLimitReached ? {} : { scale: 0.98 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 border-2 border-black shadow-neo font-bold text-sm sm:text-base flex-1 sm:flex-none ${isProAndCLLimitReached
                                     ? 'bg-gray-200 text-gray-500 cursor-not-allowed shadow-none'
-                                    : 'bg-primary text-white hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none'
+                                    : 'bg-primary text-white'
                                     }`}
                             >
                                 {isCLLimitReached && !isProAndCLLimitReached ? <Lock className="w-4 h-4" /> : <Plus className="w-4 h-4 sm:w-5 sm:h-5" />}
                                 {isProAndCLLimitReached ? t.dashboard.limitReached : t.coverLetter.newButton}
-                            </button>
+                            </motion.button>
                         </div>
 
                         {coverLetters.length === 0 ? (
@@ -406,66 +420,72 @@ export default function Dashboard() {
                                 </div>
                                 <h2 className="text-xl sm:text-2xl font-bold mb-2">{t.coverLetter.noCvs}</h2>
                                 <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 max-w-md mx-auto">{t.coverLetter.createDesc}</p>
-                                <button
+                                <motion.button
                                     onClick={handleCreateCoverLetter}
-                                    className="bg-blue-600 text-white px-6 sm:px-8 py-2 sm:py-3 border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold text-sm sm:text-base w-full sm:w-auto"
+                                    whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                    whileTap={{ scale: 0.98 }}
+                                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                    className="bg-blue-600 text-white px-6 sm:px-8 py-2 sm:py-3 border-2 border-black shadow-neo font-bold text-sm sm:text-base w-full sm:w-auto"
                                 >
                                     {t.coverLetter.createTitle}
-                                </button>
+                                </motion.button>
                             </div>
                         ) : (
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {coverLetters.map(cl => (
-                                    <div
-                                        key={cl.id}
-                                        className="bg-white border-4 border-black p-6 shadow-neo hover:-translate-y-1 transition-transform cursor-pointer group relative"
-                                        onClick={() => router.push(`/cover-letter/create?id=${cl.id}`)}
-                                    >
-                                        <div className="flex justify-between items-start mb-4">
-                                            <div className="w-12 h-12 bg-primary/10 flex items-center justify-center border-2 border-black">
-                                                <FileText className="w-6 h-6 text-primary" />
+                                {coverLetters.map((cl, index) => (
+                                    <SlideIn key={cl.id} delay={index * 0.1}>
+                                        <motion.div
+                                            onClick={() => router.push(`/cover-letter/create?id=${cl.id}`)}
+                                            whileHover={{ y: -4 }}
+                                            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                            className="bg-white border-4 border-black p-6 shadow-neo cursor-pointer group relative h-full flex flex-col"
+                                        >
+                                            <div className="flex justify-between items-start mb-4">
+                                                <div className="w-12 h-12 bg-primary/10 flex items-center justify-center border-2 border-black">
+                                                    <FileText className="w-6 h-6 text-primary" />
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={(e) => startRenaming(e, cl, 'cover-letter')}
+                                                        className="text-gray-400 hover:text-black p-2"
+                                                    >
+                                                        <Edit2 className="w-4 h-4" />
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => handleDeleteClick(cl.id, 'cover-letter', e)}
+                                                        className="text-gray-400 hover:text-red-500 p-2"
+                                                    >
+                                                        <Trash2 className="w-5 h-5" />
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={(e) => startRenaming(e, cl, 'cover-letter')}
-                                                    className="text-gray-400 hover:text-black p-2"
-                                                >
-                                                    <Edit2 className="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    onClick={(e) => handleDeleteClick(cl.id, 'cover-letter', e)}
-                                                    className="text-gray-400 hover:text-red-500 p-2"
-                                                >
-                                                    <Trash2 className="w-5 h-5" />
-                                                </button>
-                                            </div>
-                                        </div>
 
-                                        {renamingId === cl.id ? (
-                                            <div className="flex items-center gap-2 mb-1" onClick={e => e.stopPropagation()}>
-                                                <input
-                                                    type="text"
-                                                    value={newTitle}
-                                                    onChange={(e) => setNewTitle(e.target.value)}
-                                                    className="border-2 border-black px-2 py-1 text-sm w-full font-bold"
-                                                    autoFocus
-                                                />
-                                                <button onClick={handleRename} className="bg-green-500 text-white p-1 border-2 border-black shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
-                                                    <Check className="w-3 h-3" />
-                                                </button>
-                                                <button onClick={cancelRenaming} className="bg-red-500 text-white p-1 border-2 border-black shadow-neo-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
-                                                    <X className="w-3 h-3" />
-                                                </button>
+                                            {renamingId === cl.id ? (
+                                                <div className="flex items-center gap-2 mb-1" onClick={e => e.stopPropagation()}>
+                                                    <input
+                                                        type="text"
+                                                        value={newTitle}
+                                                        onChange={(e) => setNewTitle(e.target.value)}
+                                                        className="border-2 border-black px-2 py-1 text-sm w-full font-bold"
+                                                        autoFocus
+                                                    />
+                                                    <motion.button onClick={handleRename} whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-green-500 text-white p-1 border-2 border-black shadow-neo-sm">
+                                                        <Check className="w-3 h-3" />
+                                                    </motion.button>
+                                                    <motion.button onClick={cancelRenaming} whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-red-500 text-white p-1 border-2 border-black shadow-neo-sm">
+                                                        <X className="w-3 h-3" />
+                                                    </motion.button>
+                                                </div>
+                                            ) : (
+                                                <h3 className="text-xl font-bold mb-1 group-hover:text-blue-600 transition-colors truncate">{cl.title || cl.job_title || 'Untitled Position'}</h3>
+                                            )}
+                                            <p className="text-sm font-semibold text-gray-700 mb-2 truncate">{cl.company_name}</p>
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <span className="text-xs font-bold px-2 py-0.5 border border-black rounded bg-primary/10 text-blue-700 border-blue-200">{cl.tone}</span>
                                             </div>
-                                        ) : (
-                                            <h3 className="text-xl font-bold mb-1 group-hover:text-blue-600 transition-colors truncate">{cl.title || cl.job_title || 'Untitled Position'}</h3>
-                                        )}
-                                        <p className="text-sm font-semibold text-gray-700 mb-2 truncate">{cl.company_name}</p>
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <span className="text-xs font-bold px-2 py-0.5 border border-black rounded bg-primary/10 text-blue-700 border-blue-200">{cl.tone}</span>
-                                        </div>
-                                        <p className="text-sm text-gray-500">Created {formatDate(cl.created_at)}</p>
-                                    </div>
+                                            <p className="text-sm text-gray-500 mt-auto">Created {formatDate(cl.created_at)}</p>
+                                        </motion.div>
+                                    </SlideIn>
                                 ))}
                             </div>
                         )}

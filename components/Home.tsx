@@ -3,9 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Menu, FileText, Zap, Download, Check, X, Sparkles } from 'lucide-react';
-import Navbar from './Navbar';
+import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { motion } from 'framer-motion';
+import Navbar from './Navbar';
 import AlertModal from './AlertModal';
+import SlideIn from './SlideIn';
 
 interface HomeProps {
     onStart: () => void;
@@ -54,7 +57,7 @@ export default function Home({ onStart }: HomeProps) {
             }} />
 
             {/* Hero Section */}
-            <div id="home" className="container mx-auto px-4 sm:px-6 py-12 sm:py-20 md:py-32 relative overflow-hidden">
+            <SlideIn delay={0.1} className="container mx-auto px-4 sm:px-6 py-12 sm:py-20 md:py-32 relative overflow-hidden" id="home">
                 <div className="text-center max-w-4xl mx-auto relative z-10">
                     <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-extrabold text-black leading-none mb-6 sm:mb-8 tracking-tight break-words">
                         {t.hero.titlePart1} {text}<span className="inline-block w-1 sm:w-2 md:w-4 h-8 sm:h-12 md:h-20 bg-primary ml-1 animate-blink align-middle"></span><br />{t.hero.titlePart2}
@@ -62,16 +65,20 @@ export default function Home({ onStart }: HomeProps) {
                     <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-700 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed px-2">
                         {t.hero.subtitle}
                     </p>
-                    <button
+                    <motion.button
                         onClick={onStart}
-                        className="bg-primary text-white text-base sm:text-lg md:text-xl font-bold px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 border-4 border-black shadow-neo hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all uppercase tracking-wider w-full sm:w-auto max-w-xs sm:max-w-none"
+                        whileHover={{ x: 4, y: 4, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                        whileTap={{ scale: 0.98 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                        className="bg-primary text-white text-base sm:text-lg md:text-xl font-bold px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 border-4 border-black shadow-neo uppercase tracking-wider w-full sm:w-auto max-w-xs sm:max-w-none"
                     >
                         {t.hero.button}
-                    </button>
+                    </motion.button>
                 </div>
+            </SlideIn>
 
-                {/* Features Section */}
-                <div id="features" className="mt-20 sm:mt-32 md:mt-40 text-center scroll-mt-24">
+            {/* Features Section */}
+            <SlideIn delay={0.2} id="features" className="mt-20 sm:mt-32 md:mt-40 text-center scroll-mt-24">
                     <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary mb-12 sm:mb-16 md:mb-20 uppercase tracking-tight px-2">{t.features.title}</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 md:gap-10 max-w-7xl mx-auto">
                         {/* Feature 1 */}
@@ -110,9 +117,9 @@ export default function Home({ onStart }: HomeProps) {
                             <p className="text-sm sm:text-base text-gray-700 font-medium">{t.features.export.desc}</p>
                         </div>
                     </div>
-                </div>
-                {/* Pricing Section */}
-                <div id="pricing" className="mt-20 sm:mt-32 md:mt-40 text-center scroll-mt-24">
+            </SlideIn>
+            {/* Pricing Section */}
+            <SlideIn delay={0.3} id="pricing" className="mt-20 sm:mt-32 md:mt-40 text-center scroll-mt-24">
                     <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-black mb-12 sm:mb-16 md:mb-20 uppercase tracking-tight px-2">{t.pricing.title}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12 max-w-5xl mx-auto px-2 sm:px-4">
                         {/* Free Plan */}
@@ -138,9 +145,15 @@ export default function Home({ onStart }: HomeProps) {
                                     {t.pricing.free.features.coverLetter}
                                 </li>
                             </ul>
-                            <button onClick={onStart} className="w-full py-4 border-4 border-black bg-white hover:bg-gray-50 font-extrabold text-xl shadow-neo-sm hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
+                            <motion.button 
+                                onClick={onStart} 
+                                whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                className="w-full py-4 border-4 border-black bg-white hover:bg-gray-50 font-extrabold text-xl shadow-neo-sm"
+                            >
                                 {t.pricing.free.button}
-                            </button>
+                            </motion.button>
                         </div>
 
                         {/* Pro Plan */}
@@ -170,7 +183,7 @@ export default function Home({ onStart }: HomeProps) {
                                     {t.pricing.pro.features.support}
                                 </li>
                             </ul>
-                            <button
+                            <motion.button
                                 onClick={async () => {
                                     try {
                                         const res = await fetch('/api/payment/create', {
@@ -206,16 +219,19 @@ export default function Home({ onStart }: HomeProps) {
                                         setShowAlert(true);
                                     }
                                 }}
-                                className="w-full py-4 border-4 border-black bg-yellow-400 text-black font-extrabold text-xl shadow-neo-sm hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                                whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                className="w-full py-4 border-4 border-black bg-yellow-400 text-black font-extrabold text-xl shadow-neo-sm"
                             >
                                 {t.pricing.pro.button}
-                            </button>
+                            </motion.button>
                         </div>
                     </div>
-                </div>
+            </SlideIn>
 
-                {/* FAQ Section */}
-                <div id="faq" className="mt-20 sm:mt-32 md:mt-40 mb-12 sm:mb-16 md:mb-20 max-w-4xl mx-auto px-4 sm:px-6 scroll-mt-24">
+            {/* FAQ Section */}
+            <SlideIn delay={0.4} id="faq" className="mt-20 sm:mt-32 md:mt-40 mb-12 sm:mb-16 md:mb-20 max-w-4xl mx-auto px-4 sm:px-6 scroll-mt-24">
                     <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-black mb-10 sm:mb-14 md:mb-16 text-center uppercase tracking-tight px-2">{t.faq.title}</h2>
                     <div className="space-y-6">
                         {[
@@ -233,31 +249,32 @@ export default function Home({ onStart }: HomeProps) {
                             </div>
                         ))}
                     </div>
-                </div>
-            </div>
+            </SlideIn>
 
             {/* Footer */}
-            <footer className="border-t-4 border-black bg-gray-100 py-12">
-                <div className="container mx-auto px-6">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-                        <div className="flex items-center gap-2">
-                            <span className="font-bold text-gray-600 flex items-center gap-1">
-                                © 2026 ReCV. {t.footer.madeWith}
-                                <svg className="w-4 h-4 text-red-500 fill-red-500 inline" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                                </svg>
-                                {t.footer.by}
-                            </span>
-                        </div>
-                        <div className="flex gap-8 font-bold text-gray-600 flex-wrap justify-center">
-                            <a href="/privacy" className="hover:text-black hover:underline">{t.footer.privacy}</a>
-                            <a href="/terms" className="hover:text-black hover:underline">{t.footer.terms}</a>
-                            <button onClick={() => window.dispatchEvent(new Event('open-support'))} className="hover:text-black hover:underline font-bold text-gray-600">{t.footer.contact}</button>
-                            <a href="https://instagram.com/zcostudio" target="_blank" rel="noopener noreferrer" className="hover:text-black hover:underline">Instagram</a>
+            <SlideIn delay={0.5}>
+                <footer className="border-t-4 border-black bg-gray-100 py-12">
+                    <div className="container mx-auto px-6">
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+                            <div className="flex items-center gap-2">
+                                <span className="font-bold text-gray-600 flex items-center gap-1">
+                                    © 2026 ReCV. {t.footer.madeWith}
+                                    <svg className="w-4 h-4 text-red-500 fill-red-500 inline" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                    </svg>
+                                    {t.footer.by}
+                                </span>
+                            </div>
+                            <div className="flex gap-8 font-bold text-gray-600 flex-wrap justify-center">
+                                <a href="/privacy" className="hover:text-black hover:underline">{t.footer.privacy}</a>
+                                <a href="/terms" className="hover:text-black hover:underline">{t.footer.terms}</a>
+                                <button onClick={() => window.dispatchEvent(new Event('open-support'))} className="hover:text-black hover:underline font-bold text-gray-600">{t.footer.contact}</button>
+                                <a href="https://instagram.com/zcostudio" target="_blank" rel="noopener noreferrer" className="hover:text-black hover:underline">Instagram</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </footer>
+                </footer>
+            </SlideIn>
 
             <AlertModal
                 isOpen={showAlert}

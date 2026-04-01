@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] - 2026-04-02
+
+### 🚀 Performance & UI Enhancements
+- **Global Physics Engine**: Replaced basic CSS hover/click states with hardware-accelerated **Framer Motion** physics (`stiffness: 400`, `damping: 25`) across all primary interactive elements (Buttons, Support Modal, Cards).
+- **Smooth Scrolling**: Implemented **Lenis** global scroll provider (`lerp: 0.1`, `wheelMultiplier: 1.2`) to eliminate native scroll stuttering and deliver a premium, buttery-smooth navigation experience.
+- **Centralized Components**: Created a reusable `<NeoButton>` wrapper to standardize Framer Motion interactions and reduce codebase repetition.
+- **Global Entrance Animations**: Developed a global `<SlideIn>` wrapper component that leverages Framer Motion spring physics to orchestrate staggered component mounting across all major pages (Dashboard, CV Builder, Document Setup, Authentication).
+- **Removed Layout Repaints**: Migrated away from generic CSS translation/shadow utility classes that previously triggered CPU layout recalculations, drastically decreasing "heaviness" on complex builder pages.
+
+---
+
 ## [1.3.0] - 2026-04-01
 
 ### ✨ New Features

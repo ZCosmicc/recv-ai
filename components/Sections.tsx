@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Trash2, X, Plus, Sparkles, Crown, Lock, Loader2, Check } from 'lucide-react';
 import LimitModal from './LimitModal';
+import { motion } from 'framer-motion';
+import { GripVertical } from 'lucide-react';
+import SlideIn from './SlideIn';
 import CVPreviewPane from './CVPreviewPane';
 import { templates } from './CVPreview';
 import { Section, CVData } from '../types';
@@ -99,13 +102,16 @@ export default function Sections({
                                     )}
                                 </div>
                             )}
-                            <button
+                            <motion.button
                                 onClick={onClearData}
-                                className="px-6 py-2 text-white bg-red-500 font-bold border-4 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-2"
+                                whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                className="px-6 py-2 text-white bg-red-500 font-bold border-4 border-black shadow-neo-sm flex items-center gap-2"
                             >
                                 <Trash2 className="w-5 h-5" />
                                 Clear
-                            </button>
+                            </motion.button>
                         </div>
                     </div>
 
@@ -115,8 +121,8 @@ export default function Sections({
 
                             <div className="space-y-2 mb-6">
                                 {sections.filter(s => s.enabled).map((section, index) => (
+                                    <SlideIn key={section.id} delay={index * 0.1}>
                                     <div
-                                        key={section.id}
                                         draggable
                                         onDragStart={() => setDraggedSection(index)}
                                         onDragOver={(e) => e.preventDefault()}
@@ -138,38 +144,47 @@ export default function Sections({
                                             </button>
                                         )}
                                     </div>
+                                    </SlideIn>
                                 ))}
                             </div>
 
                             <div className="w-full mb-6">
                                 <h3 className="text-lg font-bold mb-3">Add Section</h3>
                                 <div className="grid grid-cols-2 gap-3">
-                                    {sections.filter(s => !s.enabled).map(section => (
-                                        <div key={section.id} className="flex gap-2">
-                                            <button
+                                    {sections.filter(s => !s.enabled).map((section, index) => (
+                                        <SlideIn key={section.id} delay={index * 0.1}>
+                                        <div className="flex gap-2 h-full">
+                                            <motion.button
                                                 onClick={() => {
                                                     setSections(sections.map(s =>
                                                         s.id === section.id ? { ...s, enabled: true } : s
                                                     ));
                                                 }}
-                                                className="flex-1 px-4 py-3 border-2 border-black bg-white shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold flex items-center justify-center gap-2"
+                                                whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                                whileTap={{ scale: 0.98 }}
+                                                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                                className="flex-1 px-4 py-3 border-2 border-black bg-white shadow-neo-sm font-bold flex items-center justify-center gap-2"
                                             >
                                                 <Plus className="w-4 h-4" />
                                                 {section.name}
-                                            </button>
+                                            </motion.button>
                                             {!['personal', 'summary', 'experience', 'education', 'skills', 'projects', 'certification', 'language'].includes(section.id) && (
-                                                <button
+                                                <motion.button
                                                     onClick={() => {
                                                         if (confirm(`Delete ${section.name} permanently?`)) {
                                                             setSections(sections.filter(s => s.id !== section.id));
                                                         }
                                                     }}
-                                                    className="px-3 border-2 border-black bg-red-100 hover:bg-red-200 shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all text-red-600"
+                                                    whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                                    className="px-3 border-2 border-black bg-red-100 shadow-neo-sm text-red-600"
                                                 >
                                                     <Trash2 className="w-5 h-5" />
-                                                </button>
+                                                </motion.button>
                                             )}
                                         </div>
+                                        </SlideIn>
                                     ))}
                                     {sections.filter(s => !s.enabled).length === 0 && (
                                         <button disabled className="col-span-2 py-3 border-2 border-gray-200 text-gray-400 font-bold bg-gray-50 cursor-not-allowed">
@@ -179,12 +194,15 @@ export default function Sections({
                                 </div>
                             </div>
 
-                            <button
+                            <motion.button
                                 onClick={() => onNavigate('fill')}
-                                className="w-full p-4 bg-primary text-white border-4 border-black shadow-neo font-bold text-xl hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                                whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                className="w-full p-4 bg-primary text-white border-4 border-black shadow-neo font-bold text-xl"
                             >
                                 Next: Fill Section
-                            </button>
+                            </motion.button>
                         </div>
 
                         <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">

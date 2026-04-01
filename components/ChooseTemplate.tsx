@@ -9,6 +9,8 @@ import { CVData, Section } from '../types';
 import Navbar from './Navbar';
 import LimitModal from './LimitModal';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { motion } from 'framer-motion';
+import SlideIn from './SlideIn';
 
 const DUMMY_SECTIONS: Section[] = [
     { id: 'personal', name: 'Personal', required: true, enabled: true },
@@ -132,30 +134,35 @@ export default function ChooseTemplate({
                             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-2">{t.chooseTemplate.title}</h1>
                         </div>
                         {hasSavedData && (
-                            <button
+                            <motion.button
                                 onClick={onClearData}
-                                className="flex items-center gap-2 px-3 sm:px-4 py-2 text-white bg-red-500 font-bold border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all rounded-none text-sm sm:text-base w-full sm:w-auto justify-center sm:justify-start"
+                                whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                className="flex items-center gap-2 px-3 sm:px-4 py-2 text-white bg-red-500 font-bold border-2 border-black shadow-neo-sm rounded-none text-sm sm:text-base w-full sm:w-auto justify-center sm:justify-start"
                             >
                                 <Trash2 className="w-4 h-4" />
                                 {t.chooseTemplate.clearData}
-                            </button>
+                            </motion.button>
                         )}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
-                        {templates.map(template => {
+                        {templates.map((template, index) => {
                             const isLocked = (template.isPremium && tier !== 'pro');
                             return (
-                                <button
-                                    key={template.id}
-                                    onClick={() => {
+                                <SlideIn key={template.id} delay={index * 0.1} className="h-full w-full">
+                                    <motion.button
+                                        onClick={() => {
                                         if (isLocked) {
                                             setShowLimitModal(true);
                                             return;
                                         }
                                         onSelectTemplate(template.id);
                                     }}
-                                    className={`p-4 sm:p-5 md:p-6 bg-white border-4 border-black transition-transform duration-300 shadow-neo text-left group relative flex flex-col h-full ${selectedTemplate === template.id ? 'bg-primary' : ''} ${!isLocked ? 'hover:-translate-y-2' : 'cursor-not-allowed opacity-90'}`}
+                                    whileHover={!isLocked ? { y: -8 } : {}}
+                                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                    className={`w-full p-4 sm:p-5 md:p-6 bg-white border-4 border-black shadow-neo text-left group relative flex flex-col h-full ${selectedTemplate === template.id ? 'bg-primary' : ''} ${isLocked ? 'cursor-not-allowed opacity-90' : ''}`}
                                 >
                                     {template.isPremium && (
                                         <div className="absolute top-2 sm:top-3 md:top-4 right-2 sm:right-3 md:right-4 z-20 bg-yellow-400 text-black px-2 sm:px-3 py-1 font-bold border-2 border-black shadow-neo-sm flex items-center gap-1 sm:gap-2 text-xs">
@@ -190,7 +197,8 @@ export default function ChooseTemplate({
                                         }`}>
                                         {isLocked ? t.limitModal.upgradeToPro : template.name}
                                     </div>
-                                </button>
+                                    </motion.button>
+                                </SlideIn>
                             );
                         })}
                     </div>

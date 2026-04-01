@@ -5,6 +5,7 @@ import CVPagedContent from './CVPagedContent';
 import { downloadPDF } from '../utils/pdf';
 import Toast, { ToastType } from './Toast';
 import LimitModal from './LimitModal';
+import { motion } from 'framer-motion';
 
 interface ReviewProps {
     cvData: CVData;
@@ -222,14 +223,17 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                     >
                         Back to Edit
                     </button>
-                    <button
+                    <motion.button
                         onClick={handleAnalyze}
                         disabled={analyzing}
-                        className="px-8 py-3 font-bold text-white bg-primary border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        whileHover={analyzing ? {} : { x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                        whileTap={analyzing ? {} : { scale: 0.98 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                        className="px-8 py-3 font-bold text-white bg-primary border-2 border-black shadow-neo flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <Wand2 className="w-5 h-5" />
                         {analyzing ? 'Analyzing...' : tier === 'guest' ? 'Log in to Analyze' : `Analyze My CV (${aiCredits} left)`}
-                    </button>
+                    </motion.button>
                 </div>
                 <LimitModal
                     isOpen={showLimitModal}
@@ -422,20 +426,26 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
 
             {/* Navigation Footer */}
             <div className="mt-8 md:mt-12 flex flex-col sm:flex-row justify-center border-t-4 border-black pt-6 md:pt-8 gap-4 px-4 sm:px-0">
-                <button
+                <motion.button
                     onClick={() => downloadPDF(cvData, undefined, tier)}
-                    className="w-full sm:w-auto px-8 py-3 font-bold text-white bg-green-600 border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-2"
+                    whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    className="w-full sm:w-auto px-8 py-3 font-bold text-white bg-green-600 border-2 border-black shadow-neo flex items-center justify-center gap-2"
                 >
                     <Download className="w-5 h-5" />
                     Download PDF
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                     onClick={() => onNavigate('fill')}
-                    className="w-full sm:w-auto px-8 py-3 font-bold text-white bg-black border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-2"
+                    whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    className="w-full sm:w-auto px-8 py-3 font-bold text-white bg-black border-2 border-black shadow-neo flex items-center justify-center gap-2"
                 >
                     <ChevronRight className="w-5 h-5 rotate-180" />
                     Back to Editor
-                </button>
+                </motion.button>
             </div>
 
             {/* Off-screen paginated pages for PDF generation — NOT display:none, must stay in layout */}

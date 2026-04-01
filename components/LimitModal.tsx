@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { X, Lock, Crown } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import AlertModal from './AlertModal';
+import SlideIn from './SlideIn';
 
 interface LimitModalProps {
     isOpen: boolean;
@@ -21,9 +23,9 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
     const isFree = tier === 'free';
 
     return (
-        <>
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 sm:p-4">
-                <div className="bg-white border-4 border-black shadow-neo-lg w-full max-w-md animate-in fade-in zoom-in duration-200 mx-2 sm:mx-0">
+        <React.Fragment>
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                <SlideIn className="bg-white border-4 border-black shadow-neo-lg w-full max-w-md relative">
                     <div className="flex justify-between items-center p-3 sm:p-4 border-b-4 border-black bg-yellow-100">
                         <h2 className="text-base sm:text-lg md:text-xl font-bold flex items-center gap-1 sm:gap-2 text-yellow-600 pr-2">
                             {isGuest ? <Lock className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" /> : <Crown className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />}
@@ -80,14 +82,19 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                         )}
 
                         <div className="flex gap-4 pt-4">
-                            <button
+                            <motion.button
+                                whileHover={{ backgroundColor: '#f3f4f6' }}
+                                whileTap={{ scale: 0.98 }}
                                 onClick={onClose}
-                                className="flex-1 px-4 py-3 font-bold border-2 border-black hover:bg-gray-100 transition-all"
+                                className="flex-1 px-4 py-3 font-bold border-2 border-black transition-all"
                             >
                                 {(isGuest || isFree || (mode === 'ai' && tier !== 'pro') || mode === 'premium_template') ? t.limitModal.maybeLater : t.limitModal.gotIt}
-                            </button>
+                            </motion.button>
                             {((isGuest || isFree) && mode === 'cv') || (mode === 'ai' && tier !== 'pro') || mode === 'premium_template' ? (
-                                <button
+                                <motion.button
+                                    whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                    whileTap={{ scale: 0.98 }}
+                                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                                     onClick={async () => {
                                         try {
                                             const res = await fetch('/api/payment/create', {
@@ -125,15 +132,15 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                                             setShowAlert(true);
                                         }
                                     }}
-                                    className="flex-1 px-4 py-3 font-bold text-black bg-yellow-400 border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-2"
+                                    className="flex-1 px-4 py-3 font-bold text-black bg-yellow-400 border-2 border-black shadow-neo-sm flex items-center justify-center gap-2"
                                 >
                                     <Crown className="w-4 h-4" />
                                     {t.limitModal.goPro}
-                                </button>
+                                </motion.button>
                             ) : null}
                         </div>
                     </div>
-                </div>
+                </SlideIn>
             </div>
 
             <AlertModal
@@ -146,6 +153,6 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                 }}
                 message={alertMessage}
             />
-        </>
+        </React.Fragment>
     );
 }

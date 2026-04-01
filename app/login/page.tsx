@@ -4,7 +4,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
 import { createClient } from '@/utils/supabase/client';
-import Image from 'next/image';
+import { motion } from 'framer-motion';
+import SlideIn from '@/components/SlideIn';
 import Navbar from '@/components/Navbar'; // Assuming we want shared navbar or maybe a simpler one for auth
 
 export default function LoginPage() {
@@ -89,7 +90,7 @@ export default function LoginPage() {
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <Navbar />
             <div className="flex-1 flex items-center justify-center p-4">
-                <div className="bg-white border-4 border-black shadow-neo-lg w-full max-w-md p-4 sm:p-8 animate-in fade-in zoom-in duration-300 mx-2 sm:mx-0">
+                <SlideIn delay={0.1} className="bg-white border-4 border-black shadow-neo-lg w-full max-w-md p-4 sm:p-8 mx-2 sm:mx-0">
                     <div className="text-center mb-6 sm:mb-8">
                         <h1 className="text-2xl sm:text-3xl font-bold mb-2">Welcome Back</h1>
                         <p className="text-gray-600 text-sm sm:text-base">Sign in to manage your CVs</p>
@@ -169,7 +170,7 @@ export default function LoginPage() {
                     <div className="mt-6 text-center text-xs sm:text-sm text-gray-500">
                         <p>We use Magic Links. No passwords to remember!</p>
                     </div>
-                </div>
+                </SlideIn>
             </div>
         </div>
     );

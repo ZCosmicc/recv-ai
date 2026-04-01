@@ -3,6 +3,8 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { X, Bug, CreditCard, User, Lightbulb, MessageCircle, CheckCircle, ImageIcon, ExternalLink, Loader2, Eye } from 'lucide-react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import SlideIn from './SlideIn';
 
 interface SupportModalProps {
     isOpen: boolean;
@@ -203,7 +205,7 @@ export default function SupportModal({ isOpen, onClose, userEmail }: SupportModa
                 <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={resetAndClose} />
 
                 {/* Modal */}
-                <div className="relative w-full max-w-md bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] animate-in slide-in-from-bottom-4 duration-200 max-h-[90vh] flex flex-col">
+                <SlideIn className="relative w-full max-w-md bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-h-[90vh] flex flex-col">
                     {/* Header */}
                     <div className="flex items-center justify-between p-4 border-b-4 border-black bg-black text-white flex-shrink-0">
                         <div className="flex items-center gap-2 font-bold">
@@ -222,17 +224,20 @@ export default function SupportModal({ isOpen, onClose, userEmail }: SupportModa
                                 <p className="text-sm text-gray-600 mb-4 font-medium">What can we help you with?</p>
                                 <div className="grid grid-cols-1 gap-2">
                                     {CATEGORIES.map((cat) => (
-                                        <button
+                                        <motion.button
                                             key={cat.id}
                                             onClick={() => { setCategory(cat.id); setView('details'); }}
-                                            className="flex items-center gap-3 p-3 border-2 border-black hover:bg-yellow-400 hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all text-left group"
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                            className="flex items-center gap-3 p-3 border-2 border-black hover:bg-yellow-400 transition-colors text-left group"
                                         >
                                             <span className="text-black">{cat.icon}</span>
                                             <div>
                                                 <div className="font-bold text-sm">{cat.label}</div>
                                                 <div className="text-xs text-gray-500 group-hover:text-gray-700">{cat.description}</div>
                                             </div>
-                                        </button>
+                                        </motion.button>
                                     ))}
                                 </div>
                             </div>
@@ -398,12 +403,15 @@ export default function SupportModal({ isOpen, onClose, userEmail }: SupportModa
                                 >
                                     See what we've been fixing lately <ExternalLink className="w-3 h-3" />
                                 </Link>
-                                <button
+                                <motion.button
                                     onClick={resetAndClose}
-                                    className="w-full py-3 bg-yellow-400 text-black font-bold border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                                    whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                    whileTap={{ scale: 0.95 }}
+                                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                    className="w-full py-3 bg-yellow-400 text-black font-bold border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
                                 >
                                     Close
-                                </button>
+                                </motion.button>
                             </div>
                         )}
                     </div>
@@ -411,17 +419,20 @@ export default function SupportModal({ isOpen, onClose, userEmail }: SupportModa
                     {/* Submit button pinned at bottom for details view */}
                     {view === 'details' && (
                         <div className="p-4 border-t-2 border-gray-100 flex-shrink-0">
-                            <button
+                            <motion.button
                                 type="submit"
                                 form="support-form"
                                 disabled={submitting}
-                                className="w-full py-3 bg-black text-white font-bold border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,0.3)' }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                className="w-full py-3 bg-black text-white font-bold border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {submitting ? 'Submitting...' : 'Submit Ticket'}
-                            </button>
+                            </motion.button>
                         </div>
                     )}
-                </div>
+                </SlideIn>
             </div>
         </>
     );

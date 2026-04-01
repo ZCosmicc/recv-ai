@@ -4,6 +4,7 @@ import { Instagram, Heart } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
+import SlideIn from '@/components/SlideIn';
 
 export default function TermsOfService() {
     const { t } = useLanguage();
@@ -18,7 +19,7 @@ export default function TermsOfService() {
                     </Link>
                     <Link
                         href="/"
-                        className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-black bg-white hover:bg-gray-50 font-bold shadow-neo-sm hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all text-sm sm:text-base"
+                        className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-black bg-white hover:bg-gray-50 font-bold shadow-neo-sm transition-all text-sm sm:text-base"
                     >
                         {t.terms.backButton}
                     </Link>
@@ -26,7 +27,7 @@ export default function TermsOfService() {
             </nav>
 
             {/* Content */}
-            <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-16 max-w-4xl">
+            <SlideIn delay={0.1} className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-4xl min-h-[calc(100vh-80px)]">
                 <h1 className="text-3xl sm:text-5xl font-extrabold text-black mb-4 sm:mb-6">{t.terms.title}</h1>
                 <p className="text-gray-600 mb-8">{t.terms.lastUpdated}: January 29, 2026</p>
 
@@ -219,7 +220,7 @@ export default function TermsOfService() {
                         </p>
                     </section>
                 </div>
-            </div>
+            </SlideIn>
 
             {/* Footer */}
             <footer className="border-t-4 border-black bg-gray-50 py-8 mt-20">

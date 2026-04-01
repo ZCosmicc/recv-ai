@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { Menu, X } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -113,21 +114,27 @@ export default function Navbar({ onNavigate, onSectionClick }: NavbarProps) {
                         </button>
                         <div className="flex items-center gap-4">
                             <span className="text-xs opacity-80 truncate max-w-[150px]">{user.email}</span>
-                            <button
+                            <motion.button
                                 onClick={handleLogout}
-                                className="text-black bg-white px-6 py-2 border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold"
+                                whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                whileTap={{ scale: 0.95 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                className="text-black bg-white px-6 py-2 border-2 border-black shadow-neo-sm font-bold"
                             >
                                 {t.nav.logout}
-                            </button>
+                            </motion.button>
                         </div>
                     </>
                 ) : (
-                    <button
+                    <motion.button
                         onClick={() => router.push('/login')}
-                        className="text-black bg-white px-6 py-2 border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold"
+                        whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                        className="text-black bg-white px-6 py-2 border-2 border-black shadow-neo-sm font-bold"
                     >
                         {t.nav.login}
-                    </button>
+                    </motion.button>
                 )}
             </div>
 

@@ -1,7 +1,10 @@
 'use client';
 
+import React from 'react';
 import { X, AlertCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
+import SlideIn from './SlideIn';
 
 interface AlertModalProps {
     isOpen: boolean;
@@ -28,7 +31,7 @@ export default function AlertModal({ isOpen, onClose, title, message, type = 'in
 
     return (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50 p-2 sm:p-4">
-            <div className={`bg-white border-4 shadow-neo-lg max-w-md w-full p-4 sm:p-6 mx-2 sm:mx-0 ${colors[type].replace('bg-', 'border-')}`}>
+            <SlideIn className={`bg-white border-4 shadow-neo-lg max-w-md w-full p-4 sm:p-6 mx-2 sm:mx-0 ${colors[type].replace('bg-', 'border-')}`}>
                 {/* Header */}
                 <div className="flex justify-between items-start mb-3 sm:mb-4">
                     <div className={`flex items-center gap-2 ${type === 'error' ? 'text-red-600' : type === 'warning' ? 'text-yellow-600' : type === 'success' ? 'text-green-600' : 'text-blue-600'}`}>
@@ -49,13 +52,16 @@ export default function AlertModal({ isOpen, onClose, title, message, type = 'in
                 </div>
 
                 {/* Close Button */}
-                <button
+                <motion.button
                     onClick={onClose}
-                    className="w-full px-4 sm:px-6 py-2 sm:py-3 bg-white text-black font-bold border-4 border-black shadow-neo hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all text-sm sm:text-base"
+                    whileHover={{ x: 4, y: 4, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    className="w-full px-4 sm:px-6 py-2 sm:py-3 bg-white text-black font-bold border-4 border-black shadow-neo flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                     {t.alertModal.gotIt}
-                </button>
-            </div>
+                </motion.button>
+            </SlideIn>
         </div>
     );
 }

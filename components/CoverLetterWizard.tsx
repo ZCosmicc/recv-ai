@@ -5,10 +5,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { Loader2, ChevronRight, ChevronLeft, Sparkles, CheckCircle, FileText, Copy, Download, RefreshCcw } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import SlideIn from './SlideIn';
 import { jsPDF } from 'jspdf';
 import Toast, { ToastType } from './Toast';
 import PlanCard from './PlanCard';
 import { useDebounce } from '@/hooks/useDebounce';
+import { motion } from 'framer-motion';
 
 interface CV {
     id: string;
@@ -330,7 +332,7 @@ export default function CoverLetterWizard() {
     // --- RENDER STEPS ---
 
     const renderStep1_SelectCV = () => (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+        <SlideIn delay={0.1} className="space-y-6">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold flex items-center gap-2">
                     <FileText className="w-6 h-6" />
@@ -371,19 +373,22 @@ export default function CoverLetterWizard() {
             )}
 
             <div className="flex justify-end pt-4">
-                <button
+                <motion.button
                     onClick={() => setStep(1)}
                     disabled={!selectedCvId}
-                    className="px-6 py-3 bg-blue-600 text-white font-bold flex items-center gap-2 border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50 disabled:shadow-none disabled:translate-x-0 disabled:translate-y-0"
+                    whileHover={!selectedCvId ? {} : { x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                    whileTap={!selectedCvId ? {} : { scale: 0.98 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    className="px-6 py-3 bg-blue-600 text-white font-bold flex items-center gap-2 border-2 border-black shadow-neo disabled:opacity-50 disabled:shadow-none"
                 >
                     {t.coverLetter.nextStep} <ChevronRight className="w-4 h-4" />
-                </button>
+                </motion.button>
             </div>
-        </div>
+        </SlideIn>
     );
 
     const renderStep2_JobDetails = () => (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+        <SlideIn delay={0.1} className="space-y-6">
             <h2 className="text-2xl font-bold flex items-center gap-2">
                 <Sparkles className="w-6 h-6 text-primary" />
                 {t.coverLetter.jobDetails}
@@ -493,20 +498,23 @@ export default function CoverLetterWizard() {
                 >
                     {t.coverLetter.back}
                 </button>
-                <button
+                <motion.button
                     onClick={handleGenerate}
                     disabled={isGenerating || !jobTitle || !companyName || !jobDescription}
-                    className="w-full md:w-auto px-8 py-3 bg-blue-600 text-white font-bold flex items-center justify-center gap-2 border-2 border-black shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50 disabled:shadow-none disabled:translate-x-0 disabled:translate-y-0"
+                    whileHover={(isGenerating || !jobTitle || !companyName || !jobDescription) ? {} : { x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                    whileTap={(isGenerating || !jobTitle || !companyName || !jobDescription) ? {} : { scale: 0.98 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    className="w-full md:w-auto px-8 py-3 bg-blue-600 text-white font-bold flex items-center justify-center gap-2 border-2 border-black shadow-neo disabled:opacity-50 disabled:shadow-none"
                 >
                     {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
                     {isGenerating ? t.coverLetter.generating : t.coverLetter.generate}
-                </button>
+                </motion.button>
             </div>
-        </div>
+        </SlideIn>
     );
 
     const renderStep3_Preview = () => (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+        <SlideIn delay={0.1} className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <h2 className="text-2xl font-bold text-green-600 flex items-center gap-2">
                     <CheckCircle className="w-6 h-6" />
@@ -519,12 +527,15 @@ export default function CoverLetterWizard() {
                     >
                         <Copy className="w-4 h-4" /> {t.coverLetter.copy}
                     </button>
-                    <button
+                    <motion.button
                         onClick={downloadPDF}
-                        className="w-full md:w-auto flex-1 md:flex-none px-4 py-2 bg-primary text-white border-2 border-black font-bold hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none shadow-neo-sm transition-all flex items-center justify-center gap-2"
+                        whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                        whileTap={{ scale: 0.98 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                        className="w-full md:w-auto flex-1 md:flex-none px-4 py-2 bg-primary text-white border-2 border-black font-bold shadow-neo-sm flex items-center justify-center gap-2"
                     >
                         <Download className="w-4 h-4" /> {t.coverLetter.download}
-                    </button>
+                    </motion.button>
                 </div>
             </div>
 
@@ -541,7 +552,7 @@ export default function CoverLetterWizard() {
                     <RefreshCcw className="w-3 h-3" /> {t.coverLetter.startOver}
                 </button>
             </div>
-        </div>
+        </SlideIn>
     );
 
     return (

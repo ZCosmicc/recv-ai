@@ -2,6 +2,12 @@
 
 All user-facing updates and improvements to Recv. AI.
 
+## [1.3.1] - 2026-04-02
+### 🚀 Performance & Feel
+- **Buttery Smooth Interactions:** We completely rebuilt the engineering behind our buttons and animations. Hovering and clicking around the application now uses advanced, hardware-accelerated physics. This removes any feeling of "heaviness" or stuttering—everything feels snappy, premium, and alive!
+- **Silky Scrolling:** We replaced the browser's default choppy scrolling engine with a professional smooth-scrolling system. Gliding down pages and reading through your CV preview is now incredibly fluid.
+- **Global Entrance Animations:** Every single page and list across the application now slides in beautifully on staggered delays. No more jarring page loads—everything cascades smoothly as you work.
+
 ## [1.3.0] - 2026-04-01
 ### ✨ New Features
 - **In-App Support Tickets:** You can now easily report bugs, suggest features, or get help with your account directly from any page. Just click the "Support" button in the bottom right corner. You can even attach up to 3 screenshots to help us understand the issue faster!

@@ -1,5 +1,7 @@
 import React from 'react';
 import { X, AlertTriangle } from 'lucide-react';
+import { motion } from 'framer-motion';
+import SlideIn from './SlideIn';
 
 interface ConfirmModalProps {
     isOpen: boolean;
@@ -24,7 +26,7 @@ export default function ConfirmModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 sm:p-4">
-            <div className="bg-white border-4 border-black shadow-neo-lg w-full max-w-md animate-in fade-in zoom-in duration-200 mx-2 sm:mx-0">
+            <SlideIn className="bg-white border-4 border-black shadow-neo-lg w-full max-w-md mx-2 sm:mx-0">
                 <div className={`flex justify-between items-center p-3 sm:p-4 border-b-4 border-black ${isDestructive ? 'bg-red-100' : 'bg-gray-100'}`}>
                     <h2 className={`text-lg sm:text-xl font-bold flex items-center gap-2 ${isDestructive ? 'text-red-600' : 'text-black'}`}>
                         {isDestructive && <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />}
@@ -41,22 +43,26 @@ export default function ConfirmModal({
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 sm:pt-4">
-                        <button
+                        <motion.button
                             onClick={onClose}
-                            className="flex-1 px-4 py-2 sm:py-3 font-bold border-2 border-black hover:bg-gray-100 transition-all text-sm sm:text-base order-2 sm:order-1"
+                            whileHover={{ backgroundColor: '#f3f4f6' }}
+                            whileTap={{ scale: 0.98 }}
+                            className="flex-1 px-4 py-2 sm:py-3 font-bold bg-white text-black border-2 border-black transition-all text-sm sm:text-base order-2 sm:order-1"
                         >
                             Cancel
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
                             onClick={onConfirm}
-                            className={`flex-1 px-4 py-2 sm:py-3 font-bold text-white border-2 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center justify-center gap-2 text-sm sm:text-base order-1 sm:order-2 ${isDestructive ? 'bg-red-600' : 'bg-primary'
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className={`flex-1 px-4 py-2 sm:py-3 font-bold text-white border-2 border-black transition-all flex items-center justify-center gap-2 text-sm sm:text-base order-1 sm:order-2 ${isDestructive ? 'bg-red-600' : 'bg-primary'
                                 }`}
                         >
                             {confirmText}
-                        </button>
+                        </motion.button>
                     </div>
                 </div>
-            </div>
+            </SlideIn>
         </div>
     );
 }

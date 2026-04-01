@@ -6,6 +6,7 @@ import {
     ChevronLeft, Trash2, Info, GripVertical, X, Plus, Sparkles, Download, Menu, Crown, Lock, Loader2, Check
 } from 'lucide-react';
 import LimitModal from './LimitModal';
+import SlideIn from './SlideIn';
 import { CVData, Section } from '../types';
 import CVPreviewPane from './CVPreviewPane';
 import CVPagedContent from './CVPagedContent';
@@ -13,6 +14,7 @@ import { downloadPDF } from '../utils/pdf';
 import { templates } from './CVPreview';
 import Navbar from './Navbar';
 import PlanCard from './PlanCard';
+import { motion } from 'framer-motion';
 
 interface FillProps {
     cvData: CVData;
@@ -122,16 +124,19 @@ export default function Fill({
                                     )}
                                 </div>
                             )}
-                            <button
+                            <motion.button
                                 onClick={onClearData}
-                                className="px-6 py-2 text-white bg-red-500 font-bold border-4 border-black shadow-neo-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-2"
+                                whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                className="px-6 py-2 text-white bg-red-500 font-bold border-4 border-black shadow-neo-sm flex items-center gap-2"
                             >
                                 <Trash2 className="w-5 h-5" />
                                 Clear
-                            </button>
+                            </motion.button>
                         </div>
                     </div>
-
+                    <SlideIn delay={0.1}>
                     <div className="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-8">
                         <div className="order-1 space-y-6">
                             <button
@@ -311,7 +316,7 @@ export default function Fill({
                                                     setDraggedItem(null);
                                                     setDraggedItemType(null);
                                                 }}
-                                                className="p-4 border-2 border-black space-y-3 cursor-move hover:shadow-neo-sm transition-all"
+                                                className="p-4 border-2 border-black space-y-3 cursor-move hover:bg-gray-50 transition-colors"
                                             >
                                                 <div className="flex gap-2">
                                                     <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0" />
@@ -460,7 +465,7 @@ export default function Fill({
                                         ))}
                                         <button
                                             onClick={() => setCvData({ ...cvData, experience: [...cvData.experience, { title: '', company: '', startDate: '', endDate: '', description: '', current: false }] })}
-                                            className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white hover:border-solid hover:shadow-neo-sm transition-all font-bold text-black"
+                                            className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
                                             <Plus className="w-4 h-4 inline mr-2" />
                                             Add Experience
@@ -491,7 +496,7 @@ export default function Fill({
                                                     setDraggedItem(null);
                                                     setDraggedItemType(null);
                                                 }}
-                                                className="p-4 border-2 border-black space-y-3 cursor-move hover:shadow-neo-sm transition-all"
+                                                className="p-4 border-2 border-black space-y-3 cursor-move hover:bg-gray-50 transition-colors"
                                             >
                                                 <div className="flex gap-2">
                                                     <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0" />
@@ -558,7 +563,7 @@ export default function Fill({
                                         ))}
                                         <button
                                             onClick={() => setCvData({ ...cvData, education: [...cvData.education, { degree: '', major: '', institution: '', year: '' }] })}
-                                            className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white hover:border-solid hover:shadow-neo-sm transition-all font-bold text-black"
+                                            className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
                                             <Plus className="w-4 h-4 inline mr-2" />
                                             Add Education
@@ -589,7 +594,7 @@ export default function Fill({
                                                     setDraggedItem(null);
                                                     setDraggedItemType(null);
                                                 }}
-                                                className="flex gap-2 cursor-move hover:shadow-neo-sm p-2 border-2 border-transparent hover:border-black transition-all"
+                                                className="flex gap-2 cursor-move hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors"
                                             >
                                                 <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0" />
                                                 <input
@@ -613,7 +618,7 @@ export default function Fill({
                                         ))}
                                         <button
                                             onClick={() => setCvData({ ...cvData, skills: [...cvData.skills, ''] })}
-                                            className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white hover:border-solid hover:shadow-neo-sm transition-all font-bold text-black"
+                                            className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
                                             <Plus className="w-4 h-4 inline mr-2" />
                                             Add Skill
@@ -644,7 +649,7 @@ export default function Fill({
                                                     setDraggedItem(null);
                                                     setDraggedItemType(null);
                                                 }}
-                                                className="p-4 border-2 border-black space-y-3 cursor-move hover:shadow-neo-sm transition-all"
+                                                className="p-4 border-2 border-black space-y-3 cursor-move hover:bg-gray-50 transition-colors"
                                             >
                                                 <div className="flex gap-2">
                                                     <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0" />
@@ -705,7 +710,7 @@ export default function Fill({
                                         ))}
                                         <button
                                             onClick={() => setCvData({ ...cvData, projects: [...cvData.projects, { title: '', description: '', technologies: '', link: '' }] })}
-                                            className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white hover:border-solid hover:shadow-neo-sm transition-all font-bold text-black"
+                                            className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
                                             <Plus className="w-4 h-4 inline mr-2" />
                                             Add Project
@@ -736,7 +741,7 @@ export default function Fill({
                                                     setDraggedItem(null);
                                                     setDraggedItemType(null);
                                                 }}
-                                                className="flex gap-2 cursor-move hover:shadow-neo-sm p-2 border-2 border-transparent hover:border-black transition-all"
+                                                className="flex gap-2 cursor-move hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors"
                                             >
                                                 <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0" />
                                                 <input
@@ -760,7 +765,7 @@ export default function Fill({
                                         ))}
                                         <button
                                             onClick={() => setCvData({ ...cvData, certification: [...cvData.certification, ''] })}
-                                            className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white hover:border-solid hover:shadow-neo-sm transition-all font-bold text-black"
+                                            className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
                                             <Plus className="w-4 h-4 inline mr-2" />
                                             Add Certification
@@ -791,7 +796,7 @@ export default function Fill({
                                                     setDraggedItem(null);
                                                     setDraggedItemType(null);
                                                 }}
-                                                className="flex gap-2 cursor-move hover:shadow-neo-sm p-2 border-2 border-transparent hover:border-black transition-all"
+                                                className="flex gap-2 cursor-move hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors"
                                             >
                                                 <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0" />
                                                 <input
@@ -815,7 +820,7 @@ export default function Fill({
                                         ))}
                                         <button
                                             onClick={() => setCvData({ ...cvData, language: [...cvData.language, ''] })}
-                                            className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white hover:border-solid hover:shadow-neo-sm transition-all font-bold text-black"
+                                            className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
                                             <Plus className="w-4 h-4 inline mr-2" />
                                             Add Language
@@ -826,20 +831,26 @@ export default function Fill({
 
                             <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                 <div className="space-y-3">
-                                    <button
+                                    <motion.button
                                         onClick={() => onNavigate('review')}
-                                        className="w-full p-4 bg-purple-600 text-white border-2 border-black shadow-neo-sm rounded-none hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold flex items-center justify-center gap-2 group"
+                                        whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                        whileTap={{ scale: 0.98 }}
+                                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                        className="w-full p-4 bg-purple-600 text-white border-2 border-black shadow-neo-sm rounded-none font-bold flex items-center justify-center gap-2 group"
                                     >
                                         <Sparkles className="w-5 h-5 group-hover:animate-pulse" />
                                         Review & Improve (AI)
-                                    </button>
-                                    <button
+                                    </motion.button>
+                                    <motion.button
                                         onClick={() => downloadPDF(cvData, undefined, tier)}
-                                        className="w-full p-4 bg-primary text-white border-2 border-black shadow-neo-sm rounded-none hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-bold flex items-center justify-center gap-2"
+                                        whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                        whileTap={{ scale: 0.98 }}
+                                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                        className="w-full p-4 bg-primary text-white border-2 border-black shadow-neo-sm rounded-none font-bold flex items-center justify-center gap-2"
                                     >
                                         <Download className="w-5 h-5" />
                                         Download PDF
-                                    </button>
+                                    </motion.button>
                                 </div>
                             </div>
                         </div>
@@ -870,6 +881,7 @@ export default function Fill({
                             </div>
                         </div>
                     </div>
+                    </SlideIn>
                 </div>
             </div>
 
