@@ -77,7 +77,14 @@ export default function AdminPage() {
             });
 
             if (res.ok) {
-                setUsers(users.map(u => u.id === userId ? { ...u, tier: newTier } : u));
+                // Calculate new pro_expires_at to match what the server just set (30 days)
+                const newExpiresAt = newTier === 'pro'
+                    ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+                    : null;
+                setUsers(users.map(u => u.id === userId
+                    ? { ...u, tier: newTier, pro_expires_at: newExpiresAt }
+                    : u
+                ));
             }
         } catch (error) {
             console.error('Failed to update tier:', error);
@@ -167,6 +174,7 @@ export default function AdminPage() {
                                     <tr className="border-b-4 border-black">
                                         <th className="p-3 font-extrabold">Email</th>
                                         <th className="p-3 font-extrabold">Tier</th>
+                                        <th className="p-3 font-extrabold">Pro Expires</th>
                                         <th className="p-3 font-extrabold">Credits Used Today</th>
                                         <th className="p-3 font-extrabold">Joined</th>
                                         <th className="p-3 font-extrabold">Action</th>
@@ -180,6 +188,9 @@ export default function AdminPage() {
                                                 <span className={`px-2 py-1 text-xs font-bold border-2 border-black ${user.tier === 'pro' ? 'bg-yellow-400 text-black' : 'bg-gray-200'}`}>
                                                     {user.tier?.toUpperCase() || 'FREE'}
                                                 </span>
+                                            </td>
+                                            <td className="p-3">
+                                                <ProExpiryBadge expiresAt={user.pro_expires_at} tier={user.tier} />
                                             </td>
                                             <td className="p-3">{user.daily_credits_used || 0}</td>
                                             <td className="p-3 text-sm text-gray-500">{new Date(user.created_at).toLocaleDateString()}</td>
@@ -232,6 +243,34 @@ export default function AdminPage() {
                 isDestructive={confirmModal.currentTier === 'pro'}
             />
         </div>
+    );
+}
+
+function ProExpiryBadge({ expiresAt, tier }: { expiresAt: string | null; tier: string }) {
+    if (tier !== 'pro' || !expiresAt) return <span className="text-xs text-gray-400">—</span>;
+
+    const expiry = new Date(expiresAt);
+    const now = new Date();
+    const daysLeft = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    const isExpired = daysLeft <= 0;
+    const isExpiringSoon = daysLeft > 0 && daysLeft <= 7;
+
+    const dateStr = expiry.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    if (isExpired) return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold bg-red-100 text-red-700 border border-red-300 rounded">
+            🔴 Expired {dateStr}
+        </span>
+    );
+    if (isExpiringSoon) return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold bg-orange-100 text-orange-700 border border-orange-300 rounded">
+            🟠 {dateStr} ({daysLeft}d)
+        </span>
+    );
+    return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold bg-green-100 text-green-700 border border-green-300 rounded">
+            🟢 {dateStr}
+        </span>
     );
 }
 
