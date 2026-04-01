@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.7] - 2026-04-01
+
+### 🐛 Bug Fixes
+- **Login Page**: Logged-in users visiting `/login` are now immediately redirected to `/dashboard` instead of seeing the login form or Home Page again.
+- **Session Persistence**: Opening a cloud CV (via dashboard Edit) no longer resets the user back to the Sections step on every tab switch or focus change.
+  - Cloud CV loads now land directly on the Fill page (not Sections).
+  - Auth state listener is now guarded to only reload data on actual `SIGNED_IN`/`SIGNED_OUT` events, not on token refreshes.
+- **Project Links in Templates**: Project link URLs were only visible in the Minimal template. Now correctly shown in all templates:
+  - Corporate, Creative, Executive, and Modern templates all render `p.link` under each project entry.
+- **Pro Plan Expiry on Admin Upgrade**: Admin PATCH was only saving `tier` but not `pro_expires_at`, causing upgraded users to appear as expired or revert to Free.
+  - Admin upgrades now set `pro_expires_at` to **30 days from now** (matching the Pakasir payment webhook), consistent with the monthly subscription model.
+  - Admin downgrades now clear `pro_expires_at` (set to `null`).
+- **Executive Template Custom Fields Alignment**: Custom fields in the Executive template sidebar were forced `text-left`, breaking the centered layout inherited from their parent container. Removed the explicit `text-left` class so they now correctly center-align with email, phone, and location.
+
+### ✨ Improvements
+
+#### Admin Panel
+- **Pro Expires Column**: Added a new "Pro Expires" column to the Users table showing each Pro user's subscription end date with color-coded status badges:
+  - 🟢 Green — Active subscription with >7 days remaining
+  - 🟠 Orange — Expiring within 7 days (shows days remaining)
+  - 🔴 Red — Subscription has expired
+  - `—` — Free tier users or Pro users with no expiry date set
+- **Instant State Update**: After toggling a user's tier in admin, the Pro Expires column now updates immediately in the UI (no page refresh needed).
+
+### 🔧 Infrastructure
+- **Rate Limiter Migration**: Replaced Upstash Redis rate limiter with a self-hosted in-memory sliding window implementation.
+  - No external service dependency — zero maintenance, zero cost, no inactivity archiving concerns.
+  - Same behavior: 20 requests per 10 seconds per IP across all `/api` routes.
+  - `@upstash/ratelimit` and `@upstash/redis` packages retained in `package.json` for potential future use.
+
+---
+
 ## [1.2.6] - 2026-02-14
 
 ### 🌐 Custom Domain Setup
