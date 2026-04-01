@@ -14,6 +14,9 @@ export default function AdminPage() {
     const [userSearch, setUserSearch] = useState('');
     const [updating, setUpdating] = useState<string | null>(null);
     const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; userId: string; currentTier: string }>({ isOpen: false, userId: '', currentTier: '' });
+    const [tickets, setTickets] = useState<any[]>([]);
+    const [ticketFilter, setTicketFilter] = useState<'all' | 'open' | 'in_progress' | 'resolved'>('all');
+    const [updatingTicket, setUpdatingTicket] = useState<string | null>(null);
 
     useEffect(() => {
         fetchData();
@@ -37,6 +40,9 @@ export default function AdminPage() {
 
             // 2. Fetch Users
             fetchUsers();
+
+            // 3. Fetch Tickets
+            fetchTickets();
         } catch (error) {
             console.error(error);
             router.push('/');
@@ -51,6 +57,29 @@ export default function AdminPage() {
             const data = await res.json();
             setUsers(data.users || []);
         }
+    };
+
+    const fetchTickets = async (status = 'all') => {
+        const res = await fetch(`/api/admin/tickets?status=${status}`);
+        if (res.ok) {
+            const data = await res.json();
+            setTickets(data.tickets || []);
+        }
+    };
+
+    const cycleTicketStatus = async (ticketId: string, currentStatus: string) => {
+        const next: Record<string, string> = { open: 'in_progress', in_progress: 'resolved', resolved: 'open' };
+        const newStatus = next[currentStatus] ?? 'open';
+        setUpdatingTicket(ticketId);
+        const res = await fetch('/api/admin/tickets', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ticketId, status: newStatus }),
+        });
+        if (res.ok) {
+            setTickets(tickets.map(t => t.id === ticketId ? { ...t, status: newStatus } : t));
+        }
+        setUpdatingTicket(null);
     };
 
     const handleSearch = (e: React.FormEvent) => {
@@ -233,6 +262,86 @@ export default function AdminPage() {
                 </div>
             </div>
 
+            {/* Support Tickets */}
+            <div className="px-4 sm:px-8 pb-8 max-w-7xl mx-auto w-full">
+                <div className="bg-white border-4 border-black shadow-neo p-4 sm:p-6 text-sm sm:text-base">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                        <h2 className="text-xl sm:text-2xl font-bold">Support Tickets</h2>
+                        <div className="flex gap-2 flex-wrap">
+                            {(['all', 'open', 'in_progress', 'resolved'] as const).map(f => (
+                                <button
+                                    key={f}
+                                    onClick={() => { setTicketFilter(f); fetchTickets(f); }}
+                                    className={`px-3 py-1 text-xs font-bold border-2 border-black transition-all ${
+                                        ticketFilter === f ? 'bg-black text-white' : 'bg-white hover:bg-gray-100'
+                                    }`}
+                                >
+                                    {f === 'all' ? 'All' : f === 'in_progress' ? 'In Progress' : f.charAt(0).toUpperCase() + f.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {tickets.length === 0 ? (
+                        <p className="text-gray-400 italic text-sm py-4">No tickets found.</p>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead>
+                                    <tr className="border-b-4 border-black">
+                                        <th className="p-3 font-extrabold">Date</th>
+                                        <th className="p-3 font-extrabold">Email</th>
+                                        <th className="p-3 font-extrabold">Category</th>
+                                        <th className="p-3 font-extrabold">Subject</th>
+                                        <th className="p-3 font-extrabold">Status</th>
+                                        <th className="p-3 font-extrabold">Screenshot</th>
+                                        <th className="p-3 font-extrabold">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {tickets.map((ticket: any) => (
+                                        <tr key={ticket.id} className="border-b border-gray-200 hover:bg-gray-50">
+                                            <td className="p-3 text-xs text-gray-500 whitespace-nowrap">{new Date(ticket.created_at).toLocaleDateString()}</td>
+                                            <td className="p-3 text-sm max-w-[140px] truncate">{ticket.email}</td>
+                                            <td className="p-3">
+                                                <span className="px-2 py-0.5 text-xs font-bold border border-black bg-gray-100">
+                                                    {ticket.category}
+                                                </span>
+                                            </td>
+                                            <td className="p-3 text-sm max-w-[180px]">
+                                                <div className="truncate font-medium" title={ticket.subject}>{ticket.subject}</div>
+                                                <div className="text-xs text-gray-400 truncate mt-0.5" title={ticket.description}>{ticket.description}</div>
+                                            </td>
+                                            <td className="p-3">
+                                                <TicketStatusBadge status={ticket.status} />
+                                            </td>
+                                            <td className="p-3">
+                                                {ticket.screenshot_url ? (
+                                                    <a href={ticket.screenshot_url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold underline hover:text-blue-600">
+                                                        View
+                                                    </a>
+                                                ) : (
+                                                    <span className="text-xs text-gray-400">—</span>
+                                                )}
+                                            </td>
+                                            <td className="p-3">
+                                                <button
+                                                    onClick={() => cycleTicketStatus(ticket.id, ticket.status)}
+                                                    disabled={updatingTicket === ticket.id}
+                                                    className="text-xs font-bold underline hover:text-primary disabled:opacity-50"
+                                                >
+                                                    {updatingTicket === ticket.id ? '...' : ticket.status === 'resolved' ? 'Reopen' : 'Advance'}
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+            </div>
+
             <ConfirmModal
                 isOpen={confirmModal.isOpen}
                 title={confirmModal.currentTier === 'pro' ? '⬇️ Downgrade User' : '⬆️ Upgrade to Pro'}
@@ -246,7 +355,26 @@ export default function AdminPage() {
     );
 }
 
+function TicketStatusBadge({ status }: { status: string }) {
+    if (status === 'open') return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold bg-yellow-100 text-yellow-800 border border-yellow-300 rounded">
+            🟡 Open
+        </span>
+    );
+    if (status === 'in_progress') return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold bg-blue-100 text-blue-800 border border-blue-300 rounded">
+            🔵 In Progress
+        </span>
+    );
+    return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold bg-green-100 text-green-800 border border-green-300 rounded">
+            🟢 Resolved
+        </span>
+    );
+}
+
 function ProExpiryBadge({ expiresAt, tier }: { expiresAt: string | null; tier: string }) {
+
     if (tier !== 'pro' || !expiresAt) return <span className="text-xs text-gray-400">—</span>;
 
     const expiry = new Date(expiresAt);

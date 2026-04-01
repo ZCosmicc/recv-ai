@@ -92,3 +92,17 @@ export const pakasirWebhookSchema = z.object({
 export type AnalyzeRequest = z.infer<typeof analyzeRequestSchema>;
 export type RefineRequest = z.infer<typeof refineRequestSchema>;
 export type PakasirWebhookRequest = z.infer<typeof pakasirWebhookSchema>;
+
+/**
+ * Validation schema for /api/support route
+ */
+export const supportTicketSchema = z.object({
+    email: z.string().email('Valid email required'),
+    category: z.enum(['bug', 'payment', 'account', 'feature', 'other']),
+    subject: z.string().min(3, 'Subject too short').max(100, 'Subject too long'),
+    description: z.string().min(10, 'Please describe the issue').max(1000, 'Too long'),
+    screenshot_url: z.string().url().optional().or(z.literal('')),
+});
+
+export type SupportTicketRequest = z.infer<typeof supportTicketSchema>;
+

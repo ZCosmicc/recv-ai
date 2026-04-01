@@ -1,6 +1,6 @@
 'use client';
 
-import { Mail, Instagram, Heart } from 'lucide-react';
+import { Instagram, Heart } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -115,7 +115,7 @@ export default function PrivacyPolicy() {
                         <ul className="list-disc list-inside space-y-2 ml-4">
                             <li><strong>Access:</strong> Request a copy of your personal data</li>
                             <li><strong>Correction:</strong> Update or correct your information</li>
-                            <li><strong>Deletion:</strong> Request deletion of your account and all associated data</li>
+                            <li><strong>Deletion:</strong> Delete your account and all data directly from your <strong>Dashboard → Danger Zone</strong></li>
                             <li><strong>Export:</strong> Download your CV data at any time</li>
                         </ul>
                         <p className="mt-4">
@@ -165,18 +165,18 @@ export default function PrivacyPolicy() {
 
                     <section>
                         <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Contact Us</h2>
-                        <p className="leading-relaxed">
-                            If you have any questions about this Privacy Policy, please contact us:
+                        <p className="leading-relaxed mb-4">
+                            If you have any questions about this Privacy Policy or wish to exercise your data rights, please use our in-app support system.
                         </p>
-                        <div className="mt-4 space-y-2">
-                            <p className="flex items-center gap-2">
-                                <Mail className="w-5 h-5" />
-                                <a href="mailto:farizfadillah612@gmail.com" className="text-blue-600 hover:underline font-medium">
-                                    farizfadillah612@gmail.com
-                                </a>
+                        <div className="mt-4 p-4 border-2 border-black bg-yellow-50">
+                            <p className="text-sm font-bold mb-1">💬 In-App Support</p>
+                            <p className="text-sm text-gray-700">
+                                Click the <strong>Support</strong> button in the bottom-right corner of any page to submit a query — email required.
                             </p>
-                            <p className="flex items-center gap-2">
-                                <Instagram className="w-5 h-5" />
+                        </div>
+                        <div className="mt-3 space-y-2">
+                            <p className="flex items-center gap-2 text-sm">
+                                <Instagram className="w-4 h-4" />
                                 <a href="https://instagram.com/zcostudio" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-medium">
                                     @zcostudio
                                 </a>

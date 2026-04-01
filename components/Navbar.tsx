@@ -101,6 +101,8 @@ export default function Navbar({ onNavigate, onSectionClick }: NavbarProps) {
                     </>
                 )}
 
+                <a href="/changelog" className="hover:underline decoration-2 underline-offset-4">Changelog</a>
+
                 {user ? (
                     <>
                         <button
@@ -163,6 +165,8 @@ export default function Navbar({ onNavigate, onSectionClick }: NavbarProps) {
                             <a href="#faq" className="text-white font-bold text-lg py-2 border-b border-white/20" onClick={(e) => handleSectionClick(e, 'faq')}>{t.nav.faq}</a>
                         </>
                     )}
+
+                    <a href="/changelog" className="text-white font-bold text-lg py-2 border-b border-white/20">Changelog</a>
 
                     {user ? (
                         <>

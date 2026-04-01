@@ -7,7 +7,7 @@ import Navbar from '@/components/Navbar';
 import ConfirmModal from '@/components/ConfirmModal';
 import LimitModal from '@/components/LimitModal';
 import PlanCard from '@/components/PlanCard';
-import { Plus, FileText, Trash2, Edit2, MoreVertical, Loader2, Check, X, Lock } from 'lucide-react';
+import { Plus, FileText, Trash2, Edit2, MoreVertical, Loader2, Check, X, Lock, AlertTriangle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CV {
@@ -42,6 +42,12 @@ export default function Dashboard() {
     // Delete State
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [deletingType, setDeletingType] = useState<'cv' | 'cover-letter'>('cv');
+
+    // Account Deletion State
+    const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+    const [deleteConfirmText, setDeleteConfirmText] = useState('');
+    const [deletingAccount, setDeletingAccount] = useState(false);
+    const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
 
     useEffect(() => {
         const loadData = async () => {
@@ -189,6 +195,28 @@ export default function Dashboard() {
 
     const handleEditCV = (id: string) => {
         router.push(`/?id=${id}`);
+    };
+
+    const handleDeleteAccount = async () => {
+        if (deleteConfirmText !== 'DELETE') return;
+        setDeletingAccount(true);
+        setDeleteAccountError(null);
+        try {
+            const res = await fetch('/api/account', { method: 'DELETE' });
+            if (!res.ok) {
+                const data = await res.json();
+                setDeleteAccountError(data.error || 'Failed to delete account.');
+                setDeletingAccount(false);
+                return;
+            }
+            // Clear local data and redirect
+            localStorage.clear();
+            await supabase.auth.signOut();
+            router.push('/');
+        } catch {
+            setDeleteAccountError('Something went wrong. Please try again.');
+            setDeletingAccount(false);
+        }
     };
 
     const formatDate = (dateString: string) => {
@@ -444,6 +472,71 @@ export default function Dashboard() {
                     </>
                 )}
             </div>
+
+            {/* Danger Zone */}
+            <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-8 pb-10">
+                <div className="border-2 border-red-300 bg-red-50 p-6">
+                    <div className="flex items-center gap-2 mb-2">
+                        <AlertTriangle className="w-5 h-5 text-red-600" />
+                        <h2 className="text-base font-extrabold text-red-700 uppercase tracking-wide">Danger Zone</h2>
+                    </div>
+                    <p className="text-sm text-red-600 mb-4">
+                        Permanently delete your account and all associated data — CVs, cover letters, and support tickets. This action <strong>cannot be undone</strong>.
+                    </p>
+                    <button
+                        onClick={() => { setShowDeleteAccount(true); setDeleteConfirmText(''); setDeleteAccountError(null); }}
+                        className="px-4 py-2 border-2 border-red-600 text-red-600 font-bold text-sm hover:bg-red-600 hover:text-white transition-colors"
+                    >
+                        Delete My Account
+                    </button>
+                </div>
+            </div>
+
+            {/* Delete Account Modal */}
+            {showDeleteAccount && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/40" onClick={() => setShowDeleteAccount(false)} />
+                    <div className="relative bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-md p-6">
+                        <div className="flex items-center gap-2 mb-4">
+                            <AlertTriangle className="w-6 h-6 text-red-600" />
+                            <h2 className="text-xl font-extrabold">Delete Account</h2>
+                        </div>
+                        <p className="text-sm text-gray-700 mb-3">This will permanently delete:</p>
+                        <ul className="text-sm text-gray-600 space-y-1 mb-4 ml-4 list-disc">
+                            <li>Your account and login access</li>
+                            <li>All your CVs</li>
+                            <li>All your cover letters</li>
+                            <li>All your support tickets</li>
+                        </ul>
+                        <p className="text-sm font-bold mb-2">Type <span className="font-mono bg-gray-100 px-1">DELETE</span> to confirm:</p>
+                        <input
+                            type="text"
+                            value={deleteConfirmText}
+                            onChange={e => setDeleteConfirmText(e.target.value)}
+                            placeholder="DELETE"
+                            className="w-full border-2 border-black p-2 text-sm font-mono mb-4 focus:outline-none focus:ring-2 focus:ring-red-400"
+                        />
+                        {deleteAccountError && (
+                            <p className="text-sm text-red-600 mb-3 font-medium">{deleteAccountError}</p>
+                        )}
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setShowDeleteAccount(false)}
+                                className="flex-1 py-2 border-2 border-black font-bold text-sm hover:bg-gray-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeleteAccount}
+                                disabled={deleteConfirmText !== 'DELETE' || deletingAccount}
+                                className="flex-1 py-2 bg-red-600 text-white font-bold text-sm border-2 border-red-600 hover:bg-red-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                            >
+                                {deletingAccount ? 'Deleting...' : 'Yes, delete everything'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <ConfirmModal
                 isOpen={!!deletingId}

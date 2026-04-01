@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2026-04-01
+
+### ✨ New Features
+
+#### In-App Support Ticket System
+- **Floating Support Button**: Fixed bottom-right button visible on every page (globally added to root layout)
+- **Support Modal** — 3 views:
+  - Category selection: Bug Report, Payment Issue, Account Problem, Feature Request, Other
+  - Details form: subject, description, optional screenshot upload (drag & drop, max 5MB)
+  - Confirmation screen: thank-you message with 2–7 day estimate and link to Changelog
+- **Screenshot Upload**: Images uploaded to Supabase Storage (`support-screenshots` bucket, private)
+- **Rate Limiting**: Logged-in users limited to 1 ticket per 24 hours; guests rate-limited by IP
+- **Email prefill**: Automatically filled for logged-in users; manual entry for guests
+
+#### Admin Panel — Support Tickets Tab
+- New **Support Tickets** section below Users table
+- Displays: Date, Email, Category, Subject + Description preview, Status badge, Screenshot link, Action
+- Status badges: 🟡 Open, 🔵 In Progress, 🟢 Resolved
+- Filter buttons: All / Open / In Progress / Resolved
+- **Advance** button cycles status (Open → In Progress → Resolved), **Reopen** resets to Open
+- Instant UI update without page refresh
+
+#### Public Changelog Page (`/changelog`)
+- Server-rendered page that reads `CHANGELOG.md` via `fs` — auto-updates on every deploy
+- Styled with neobrutalist design matching the rest of the app
+- Added **Changelog** link to the Navbar (desktop + mobile)
+
+#### Account Self-Deletion (PDPA/GDPR Compliance)
+- **Danger Zone** section at the bottom of the Dashboard
+- Confirmation modal requiring user to type `DELETE` exactly before proceeding
+- Permanently deletes: storage files, support tickets, cover letters, CVs, profile, and auth account
+- Redirects to home page after deletion
+
+### 🔧 Changes
+- **Privacy Page**: Removed personal email from "Contact Us" section — replaced with support modal callout. Updated "Deletion" right to reference self-service via Dashboard.
+- **Terms Page**: Removed personal email from "Contact Information" section — replaced with support modal callout.
+- Both pages retain the Instagram `@zcostudio` link as secondary contact.
+
+### 🛡️ Infrastructure
+- `POST /api/support` — submit tickets with Zod validation and DB-based rate limiting
+- `POST /api/support/upload` — screenshot upload to Supabase Storage with type/size validation
+- `GET/PATCH /api/admin/tickets` — admin-only ticket management
+- `DELETE /api/account` — full account wipe using service role (ordered deletion)
+
+---
+
 ## [1.2.7] - 2026-04-01
 
 ### 🐛 Bug Fixes

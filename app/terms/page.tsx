@@ -1,6 +1,6 @@
 'use client';
 
-import { Mail, Instagram, Heart } from 'lucide-react';
+import { Instagram, Heart } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -193,17 +193,17 @@ export default function TermsOfService() {
                     <section>
                         <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Contact Information</h2>
                         <p className="leading-relaxed mb-4">
-                            If you have any questions about these Terms of Service, please contact us:
+                            If you have any questions about these Terms of Service, please reach out via our in-app support system.
                         </p>
-                        <div className="space-y-2">
-                            <p className="flex items-center gap-2">
-                                <Mail className="w-5 h-5" />
-                                <a href="mailto:farizfadillah612@gmail.com" className="text-blue-600 hover:underline font-medium">
-                                    farizfadillah612@gmail.com
-                                </a>
+                        <div className="p-4 border-2 border-black bg-yellow-50">
+                            <p className="text-sm font-bold mb-1">💬 In-App Support</p>
+                            <p className="text-sm text-gray-700">
+                                Click the <strong>Support</strong> button in the bottom-right corner of any page to submit a query — email required.
                             </p>
-                            <p className="flex items-center gap-2">
-                                <Instagram className="w-5 h-5" />
+                        </div>
+                        <div className="mt-3 space-y-2">
+                            <p className="flex items-center gap-2 text-sm">
+                                <Instagram className="w-4 h-4" />
                                 <a href="https://instagram.com/zcostudio" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-medium">
                                     @zcostudio
                                 </a>

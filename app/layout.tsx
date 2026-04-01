@@ -49,6 +49,7 @@ export const metadata: Metadata = {
 };
 
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import SupportButton from '@/components/SupportButton';
 
 export default function RootLayout({
   children,
@@ -63,8 +64,10 @@ export default function RootLayout({
       >
         <LanguageProvider>
           {children}
+          <SupportButton />
         </LanguageProvider>
       </body>
     </html>
   );
 }
+
