@@ -51,6 +51,8 @@ export const metadata: Metadata = {
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import SupportButton from '@/components/SupportButton';
 
+import LenisProvider from '@/components/LenisProvider';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -63,8 +65,10 @@ export default function RootLayout({
         className={`${plusJakartaSans.variable} font-sans antialiased`}
       >
         <LanguageProvider>
-          {children}
-          <SupportButton />
+          <LenisProvider>
+            {children}
+            <SupportButton />
+          </LenisProvider>
         </LanguageProvider>
       </body>
     </html>
