@@ -19,15 +19,18 @@ All notable changes to this project will be documented in this file.
 #### Admin Panel — Support Tickets Tab
 - New **Support Tickets** section below Users table
 - Displays: Date, Email, Category, Subject + Description preview, Status badge, Screenshot link, Action
+- **Detailed View**: Clickable ticket subject opens a full modal displaying all details and multiple screenshots using a 1:1 Lightbox.
 - Status badges: 🟡 Open, 🔵 In Progress, 🟢 Resolved
 - Filter buttons: All / Open / In Progress / Resolved
 - **Advance** button cycles status (Open → In Progress → Resolved), **Reopen** resets to Open
+- **Delete Ticket**: Added a delete action (UI + API `DELETE /api/admin/tickets`) to remove resolved or spam tickets.
 - Instant UI update without page refresh
 
-#### Public Changelog Page (`/changelog`)
-- Server-rendered page that reads `CHANGELOG.md` via `fs` — auto-updates on every deploy
-- Styled with neobrutalist design matching the rest of the app
-- Added **Changelog** link to the Navbar (desktop + mobile)
+#### Public Changelog Page (`/changelog`) & PublicChangelog.md Split
+- Server-rendered page now reads our new `PublicChangelog.md` via `fs` instead of `CHANGELOG.md` — auto-updates on every deploy.
+- Styled with neobrutalist design matching the rest of the app.
+- Added **Changelog** link to the Navbar (desktop + mobile).
+- 📝 **Developer Note**: Whenever adding new user-facing features or noteworthy bug fixes to `CHANGELOG.md`, remember to translate and append them in a friendly, non-technical format to `PublicChangelog.md`!
 
 #### Account Self-Deletion (PDPA/GDPR Compliance)
 - **Danger Zone** section at the bottom of the Dashboard

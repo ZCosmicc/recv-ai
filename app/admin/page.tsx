@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, Users, Activity, Zap, Search, ChevronRight, Crown } from 'lucide-react';
+import { LayoutDashboard, Users, Activity, Zap, Search, ChevronRight, Crown, X, Trash2 } from 'lucide-react';
 import ConfirmModal from '@/components/ConfirmModal';
 
 export default function AdminPage() {
@@ -17,6 +17,8 @@ export default function AdminPage() {
     const [tickets, setTickets] = useState<any[]>([]);
     const [ticketFilter, setTicketFilter] = useState<'all' | 'open' | 'in_progress' | 'resolved'>('all');
     const [updatingTicket, setUpdatingTicket] = useState<string | null>(null);
+    const [selectedTicket, setSelectedTicket] = useState<any | null>(null);
+    const [deletingTicket, setDeletingTicket] = useState<string | null>(null);
 
     useEffect(() => {
         fetchData();
@@ -80,6 +82,17 @@ export default function AdminPage() {
             setTickets(tickets.map(t => t.id === ticketId ? { ...t, status: newStatus } : t));
         }
         setUpdatingTicket(null);
+    };
+
+    const deleteTicket = async (ticketId: string) => {
+        if (!window.confirm('Are you sure you want to delete this ticket?')) return;
+        setDeletingTicket(ticketId);
+        const res = await fetch(`/api/admin/tickets?id=${ticketId}`, { method: 'DELETE' });
+        if (res.ok) {
+            setTickets(tickets.filter(t => t.id !== ticketId));
+            if (selectedTicket?.id === ticketId) setSelectedTicket(null);
+        }
+        setDeletingTicket(null);
     };
 
     const handleSearch = (e: React.FormEvent) => {
@@ -309,7 +322,13 @@ export default function AdminPage() {
                                                 </span>
                                             </td>
                                             <td className="p-3 text-sm max-w-[180px]">
-                                                <div className="truncate font-medium" title={ticket.subject}>{ticket.subject}</div>
+                                                <button 
+                                                    onClick={() => setSelectedTicket(ticket)}
+                                                    className="truncate font-bold text-left hover:text-blue-600 block w-full" 
+                                                    title={ticket.subject}
+                                                >
+                                                    {ticket.subject}
+                                                </button>
                                                 <div className="text-xs text-gray-400 truncate mt-0.5" title={ticket.description}>{ticket.description}</div>
                                             </td>
                                             <td className="p-3">
@@ -336,13 +355,23 @@ export default function AdminPage() {
                                                 )}
                                             </td>
                                             <td className="p-3">
-                                                <button
-                                                    onClick={() => cycleTicketStatus(ticket.id, ticket.status)}
-                                                    disabled={updatingTicket === ticket.id}
-                                                    className="text-xs font-bold underline hover:text-primary disabled:opacity-50"
-                                                >
-                                                    {updatingTicket === ticket.id ? '...' : ticket.status === 'resolved' ? 'Reopen' : 'Advance'}
-                                                </button>
+                                                <div className="flex flex-col gap-2 items-start">
+                                                    <button
+                                                        onClick={() => cycleTicketStatus(ticket.id, ticket.status)}
+                                                        disabled={updatingTicket === ticket.id}
+                                                        className="text-xs font-bold underline hover:text-primary disabled:opacity-50"
+                                                    >
+                                                        {updatingTicket === ticket.id ? '...' : ticket.status === 'resolved' ? 'Reopen' : 'Advance'}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => deleteTicket(ticket.id)}
+                                                        disabled={deletingTicket === ticket.id}
+                                                        className="text-xs font-bold text-red-600 hover:text-red-800 disabled:opacity-50 flex items-center gap-1"
+                                                    >
+                                                        <Trash2 className="w-3 h-3" />
+                                                        Delete
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}
@@ -362,6 +391,99 @@ export default function AdminPage() {
                 onClose={() => setConfirmModal({ isOpen: false, userId: '', currentTier: '' })}
                 isDestructive={confirmModal.currentTier === 'pro'}
             />
+
+            {/* Ticket Details Modal */}
+            {selectedTicket && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/40" onClick={() => setSelectedTicket(null)} />
+                    <div className="relative bg-white border-4 border-black shadow-neo max-w-2xl w-full max-h-[90vh] flex flex-col">
+                        <div className="flex justify-between items-center p-4 border-b-4 border-black">
+                            <h2 className="text-xl font-bold">Ticket Details</h2>
+                            <button onClick={() => setSelectedTicket(null)} className="hover:bg-gray-100 p-1">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <div className="p-6 overflow-y-auto space-y-4 text-sm">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <div className="text-gray-500 font-bold mb-1">Status</div>
+                                    <TicketStatusBadge status={selectedTicket.status} />
+                                </div>
+                                <div>
+                                    <div className="text-gray-500 font-bold mb-1">Date</div>
+                                    <div className="font-medium">{new Date(selectedTicket.created_at).toLocaleString()}</div>
+                                </div>
+                                <div>
+                                    <div className="text-gray-500 font-bold mb-1">User Email</div>
+                                    <div className="font-medium">{selectedTicket.email}</div>
+                                </div>
+                                <div>
+                                    <div className="text-gray-500 font-bold mb-1">Category</div>
+                                    <span className="px-2 py-0.5 text-xs font-bold border border-black bg-gray-100">
+                                        {selectedTicket.category}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="pt-4 border-t border-gray-200">
+                                <div className="text-gray-500 font-bold mb-1">Subject</div>
+                                <div className="font-bold text-lg">{selectedTicket.subject}</div>
+                            </div>
+                            
+                            <div>
+                                <div className="text-gray-500 font-bold mb-1">Description</div>
+                                <div className="whitespace-pre-wrap bg-gray-50 p-3 border border-gray-200 text-gray-800">
+                                    {selectedTicket.description}
+                                </div>
+                            </div>
+
+                            {selectedTicket.screenshot_url && (
+                                <div>
+                                    <div className="text-gray-500 font-bold mb-2">Screenshots</div>
+                                    <div className="flex gap-2 flex-wrap">
+                                        {(() => {
+                                            try {
+                                                const urls: string[] = JSON.parse(selectedTicket.screenshot_url);
+                                                return urls.map((url, i) => (
+                                                    <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="border-2 border-black inline-block relative group">
+                                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                        <img src={url} alt={`Screenshot ${i + 1}`} className="h-24 w-24 object-cover" />
+                                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                                            <span className="text-white text-xs font-bold">View</span>
+                                                        </div>
+                                                    </a>
+                                                ));
+                                            } catch {
+                                                return (
+                                                    <a href={selectedTicket.screenshot_url} target="_blank" rel="noopener noreferrer" className="border-2 border-black inline-block relative group">
+                                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                        <img src={selectedTicket.screenshot_url} alt="Screenshot" className="h-24 w-24 object-cover" />
+                                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                                            <span className="text-white text-xs font-bold">View</span>
+                                                        </div>
+                                                    </a>
+                                                );
+                                            }
+                                        })()}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        <div className="p-4 border-t-4 border-black bg-gray-50 flex justify-between items-center">
+                            <button
+                                onClick={() => deleteTicket(selectedTicket.id)}
+                                disabled={deletingTicket === selectedTicket.id}
+                                className="px-4 py-2 border-2 border-red-600 text-red-600 font-bold text-sm hover:bg-red-600 hover:text-white transition-colors disabled:opacity-50"
+                            >
+                                {deletingTicket === selectedTicket.id ? 'Deleting...' : 'Delete Ticket'}
+                            </button>
+                            <button onClick={() => setSelectedTicket(null)} className="px-4 py-2 bg-black text-white font-bold text-sm hover:bg-gray-800 transition-colors">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
