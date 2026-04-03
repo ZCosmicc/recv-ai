@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import fs from 'fs';
 import path from 'path';
 import SlideIn from '@/components/SlideIn';
+import NeoButtonLink from '@/components/NeoButtonLink';
 
 export const metadata = {
     title: 'Changelog',
@@ -23,12 +24,12 @@ export default function ChangelogPage() {
                     <Link href="/" className="flex items-center gap-2">
                         <Image src="/LogoPrimaryReCV.png" alt="ReCV Logo" width={100} height={34} className="object-contain" />
                     </Link>
-                    <Link
+                    <NeoButtonLink
                         href="/"
-                        className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-black bg-white hover:bg-gray-50 font-bold shadow-neo-sm transition-all text-sm sm:text-base"
+                        className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-black bg-white font-bold shadow-neo-sm text-sm sm:text-base"
                     >
                         ← Back
-                    </Link>
+                    </NeoButtonLink>
                 </div>
             </nav>
 

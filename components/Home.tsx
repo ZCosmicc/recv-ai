@@ -80,7 +80,7 @@ export default function Home({ onStart }: HomeProps) {
             {/* Features Section */}
             <SlideIn delay={0.2} id="features" className="mt-20 sm:mt-32 md:mt-40 text-center scroll-mt-24">
                     <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary mb-12 sm:mb-16 md:mb-20 uppercase tracking-tight px-2">{t.features.title}</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 md:gap-10 max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 md:gap-10 max-w-7xl mx-auto px-4 sm:px-6">
                         {/* Feature 1 */}
                         <div className="bg-white border-4 border-black shadow-neo p-6 sm:p-8 md:p-10 flex flex-col items-center h-full hover:-translate-y-2 transition-transform duration-300">
                             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary border-4 border-black mb-4 sm:mb-6 flex items-center justify-center shadow-neo-sm">
@@ -121,7 +121,7 @@ export default function Home({ onStart }: HomeProps) {
             {/* Pricing Section */}
             <SlideIn delay={0.3} id="pricing" className="mt-20 sm:mt-32 md:mt-40 text-center scroll-mt-24">
                     <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-black mb-12 sm:mb-16 md:mb-20 uppercase tracking-tight px-2">{t.pricing.title}</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12 max-w-5xl mx-auto px-2 sm:px-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12 max-w-5xl mx-auto px-4 sm:px-6">
                         {/* Free Plan */}
                         <div className="bg-white border-4 border-black shadow-neo p-6 sm:p-8 text-left relative">
                             <div className="absolute top-0 right-0 bg-black text-white px-3 sm:px-4 py-1 font-bold text-xs sm:text-sm border-l-4 border-b-4 border-white">{t.pricing.popular}</div>

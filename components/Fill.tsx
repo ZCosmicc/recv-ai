@@ -14,7 +14,7 @@ import { downloadPDF } from '../utils/pdf';
 import { templates } from './CVPreview';
 import Navbar from './Navbar';
 import PlanCard from './PlanCard';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface FillProps {
     cvData: CVData;
@@ -209,41 +209,55 @@ export default function Fill({
                                                 <label className="text-sm font-bold text-black">Custom Fields</label>
                                                 <Tooltip id="custom-tip" text="Add LinkedIn, GitHub, Portfolio, or other professional links" />
                                             </div>
+                                            <AnimatePresence initial={false}>
                                             {cvData.personal.customFields.map((field, idx) => (
-                                                <div key={idx} className="flex gap-2 mb-2">
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Label"
-                                                        value={field.label}
-                                                        onChange={(e) => {
-                                                            const newFields = [...cvData.personal.customFields];
-                                                            newFields[idx].label = e.target.value;
-                                                            setCvData({ ...cvData, personal: { ...cvData.personal, customFields: newFields } });
-                                                        }}
-                                                        className="w-1/3 px-4 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
-                                                    />
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Value"
-                                                        value={field.value}
-                                                        onChange={(e) => {
-                                                            const newFields = [...cvData.personal.customFields];
-                                                            newFields[idx].value = e.target.value;
-                                                            setCvData({ ...cvData, personal: { ...cvData.personal, customFields: newFields } });
-                                                        }}
-                                                        className="flex-1 px-4 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
-                                                    />
-                                                    <button
-                                                        onClick={() => {
-                                                            const newFields = cvData.personal.customFields.filter((f, i) => i !== idx);
-                                                            setCvData({ ...cvData, personal: { ...cvData.personal, customFields: newFields } });
-                                                        }}
-                                                        className="text-red-500 font-bold border-2 border-transparent hover:border-black p-1"
-                                                    >
-                                                        <X className="w-5 h-5" />
-                                                    </button>
-                                                </div>
+                                                <motion.div
+                                                    key={idx}
+                                                    initial={{ opacity: 0, y: 12 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
+                                                    transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                                                    className="mb-2"
+                                                >
+                                                    {/* Mobile: stacked. sm+: side-by-side row */}
+                                                    <div className="flex items-start gap-2">
+                                                        <div className="flex-1 grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-2">
+                                                            <input
+                                                                type="text"
+                                                                placeholder="Label"
+                                                                value={field.label}
+                                                                onChange={(e) => {
+                                                                    const newFields = [...cvData.personal.customFields];
+                                                                    newFields[idx].label = e.target.value;
+                                                                    setCvData({ ...cvData, personal: { ...cvData.personal, customFields: newFields } });
+                                                                }}
+                                                                className="w-full px-4 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
+                                                            />
+                                                            <input
+                                                                type="text"
+                                                                placeholder="Value"
+                                                                value={field.value}
+                                                                onChange={(e) => {
+                                                                    const newFields = [...cvData.personal.customFields];
+                                                                    newFields[idx].value = e.target.value;
+                                                                    setCvData({ ...cvData, personal: { ...cvData.personal, customFields: newFields } });
+                                                                }}
+                                                                className="w-full px-4 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
+                                                            />
+                                                        </div>
+                                                        <button
+                                                            onClick={() => {
+                                                                const newFields = cvData.personal.customFields.filter((f, i) => i !== idx);
+                                                                setCvData({ ...cvData, personal: { ...cvData.personal, customFields: newFields } });
+                                                            }}
+                                                            className="text-red-500 font-bold border-2 border-transparent hover:border-black p-1 mt-1 flex-shrink-0"
+                                                        >
+                                                            <X className="w-5 h-5" />
+                                                        </button>
+                                                    </div>
+                                                </motion.div>
                                             ))}
+                                            </AnimatePresence>
 
                                             {cvData.personal.customFields.length < 2 && (
                                                 <button
@@ -298,9 +312,14 @@ export default function Fill({
                                         <Tooltip id="exp-tip" text="List work experience in reverse chronological order. Use bullet points and quantify achievements." />
                                     </div>
                                     <div className="space-y-4">
+                                        <AnimatePresence initial={false}>
                                         {cvData.experience.map((exp, idx) => (
-                                            <div
+                                            <motion.div
                                                 key={idx}
+                                                initial={{ opacity: 0, y: 16 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
+                                                transition={{ type: 'spring', stiffness: 300, damping: 24 }}
                                                 draggable
                                                 onDragStart={() => {
                                                     setDraggedItem(idx);
@@ -461,8 +480,9 @@ export default function Fill({
                                                         <X className="w-5 h-5" />
                                                     </button>
                                                 </div>
-                                            </div>
+                                            </motion.div>
                                         ))}
+                                        </AnimatePresence>
                                         <button
                                             onClick={() => setCvData({ ...cvData, experience: [...cvData.experience, { title: '', company: '', startDate: '', endDate: '', description: '', current: false }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -478,9 +498,14 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Education</h2>
                                     <div className="space-y-4">
+                                        <AnimatePresence initial={false}>
                                         {cvData.education.map((edu, idx) => (
-                                            <div
+                                            <motion.div
                                                 key={idx}
+                                                initial={{ opacity: 0, y: 16 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
+                                                transition={{ type: 'spring', stiffness: 300, damping: 24 }}
                                                 draggable
                                                 onDragStart={() => {
                                                     setDraggedItem(idx);
@@ -559,8 +584,9 @@ export default function Fill({
                                                         <X className="w-5 h-5" />
                                                     </button>
                                                 </div>
-                                            </div>
+                                            </motion.div>
                                         ))}
+                                        </AnimatePresence>
                                         <button
                                             onClick={() => setCvData({ ...cvData, education: [...cvData.education, { degree: '', major: '', institution: '', year: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -576,9 +602,14 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Skills</h2>
                                     <div className="space-y-3">
+                                        <AnimatePresence initial={false}>
                                         {cvData.skills.map((skill, idx) => (
-                                            <div
+                                            <motion.div
                                                 key={idx}
+                                                initial={{ opacity: 0, y: 12 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
+                                                transition={{ type: 'spring', stiffness: 300, damping: 24 }}
                                                 draggable
                                                 onDragStart={() => {
                                                     setDraggedItem(idx);
@@ -614,8 +645,9 @@ export default function Fill({
                                                 >
                                                     <X className="w-5 h-5" />
                                                 </button>
-                                            </div>
+                                            </motion.div>
                                         ))}
+                                        </AnimatePresence>
                                         <button
                                             onClick={() => setCvData({ ...cvData, skills: [...cvData.skills, ''] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -631,9 +663,14 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Projects</h2>
                                     <div className="space-y-4">
+                                        <AnimatePresence initial={false}>
                                         {(cvData.projects || []).map((project, idx) => (
-                                            <div
+                                            <motion.div
                                                 key={idx}
+                                                initial={{ opacity: 0, y: 16 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
+                                                transition={{ type: 'spring', stiffness: 300, damping: 24 }}
                                                 draggable
                                                 onDragStart={() => {
                                                     setDraggedItem(idx);
@@ -706,8 +743,9 @@ export default function Fill({
                                                         <X className="w-5 h-5" />
                                                     </button>
                                                 </div>
-                                            </div>
+                                            </motion.div>
                                         ))}
+                                        </AnimatePresence>
                                         <button
                                             onClick={() => setCvData({ ...cvData, projects: [...cvData.projects, { title: '', description: '', technologies: '', link: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -723,9 +761,14 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl font-semibold mb-4">Certifications</h2>
                                     <div className="space-y-3">
+                                        <AnimatePresence initial={false}>
                                         {cvData.certification.map((cert, idx) => (
-                                            <div
+                                            <motion.div
                                                 key={idx}
+                                                initial={{ opacity: 0, y: 12 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
+                                                transition={{ type: 'spring', stiffness: 300, damping: 24 }}
                                                 draggable
                                                 onDragStart={() => {
                                                     setDraggedItem(idx);
@@ -761,8 +804,9 @@ export default function Fill({
                                                 >
                                                     <X className="w-5 h-5" />
                                                 </button>
-                                            </div>
+                                            </motion.div>
                                         ))}
+                                        </AnimatePresence>
                                         <button
                                             onClick={() => setCvData({ ...cvData, certification: [...cvData.certification, ''] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -778,9 +822,14 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl font-semibold mb-4">Languages</h2>
                                     <div className="space-y-3">
+                                        <AnimatePresence initial={false}>
                                         {cvData.language.map((lang, idx) => (
-                                            <div
+                                            <motion.div
                                                 key={idx}
+                                                initial={{ opacity: 0, y: 12 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
+                                                transition={{ type: 'spring', stiffness: 300, damping: 24 }}
                                                 draggable
                                                 onDragStart={() => {
                                                     setDraggedItem(idx);
@@ -816,8 +865,9 @@ export default function Fill({
                                                 >
                                                     <X className="w-5 h-5" />
                                                 </button>
-                                            </div>
+                                            </motion.div>
                                         ))}
+                                        </AnimatePresence>
                                         <button
                                             onClick={() => setCvData({ ...cvData, language: [...cvData.language, ''] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"

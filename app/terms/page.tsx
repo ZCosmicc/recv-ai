@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
 import SlideIn from '@/components/SlideIn';
+import NeoButtonLink from '@/components/NeoButtonLink';
 
 export default function TermsOfService() {
     const { t } = useLanguage();
@@ -17,12 +18,12 @@ export default function TermsOfService() {
                     <Link href="/" className="flex items-center gap-2">
                         <Image src="/LogoPrimaryReCV.png" alt="ReCV Logo" width={100} height={34} className="object-contain" />
                     </Link>
-                    <Link
+                    <NeoButtonLink
                         href="/"
-                        className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-black bg-white hover:bg-gray-50 font-bold shadow-neo-sm transition-all text-sm sm:text-base"
+                        className="px-3 sm:px-4 py-1.5 sm:py-2 border-2 border-black bg-white font-bold shadow-neo-sm text-sm sm:text-base"
                     >
                         {t.terms.backButton}
-                    </Link>
+                    </NeoButtonLink>
                 </div>
             </nav>
 

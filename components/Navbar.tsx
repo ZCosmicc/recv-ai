@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { Menu, X } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -151,64 +151,129 @@ export default function Navbar({ onNavigate, onSectionClick }: NavbarProps) {
                 </button>
 
                 {/* Hamburger Button */}
-                <button
+                <motion.button
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                     className="text-white p-1"
                     aria-label="Toggle menu"
+                    whileTap={{ scale: 0.85 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 20 }}
                 >
-                    {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
+                    <AnimatePresence mode="wait" initial={false}>
+                        {mobileMenuOpen ? (
+                            <motion.span
+                                key="close"
+                                initial={{ rotate: -90, opacity: 0 }}
+                                animate={{ rotate: 0, opacity: 1 }}
+                                exit={{ rotate: 90, opacity: 0 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 25, duration: 0.15 }}
+                                style={{ display: 'block' }}
+                            >
+                                <X size={24} />
+                            </motion.span>
+                        ) : (
+                            <motion.span
+                                key="open"
+                                initial={{ rotate: 90, opacity: 0 }}
+                                animate={{ rotate: 0, opacity: 1 }}
+                                exit={{ rotate: -90, opacity: 0 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 25, duration: 0.15 }}
+                                style={{ display: 'block' }}
+                            >
+                                <Menu size={24} />
+                            </motion.span>
+                        )}
+                    </AnimatePresence>
+                </motion.button>
             </div>
 
             {/* Mobile Menu Overlay */}
-            {mobileMenuOpen && (
-                <div className="fixed inset-0 top-[57px] md:top-[65px] bg-primary z-40 flex flex-col p-6 gap-4 overflow-y-auto">
-                    <a href="#" className="text-white font-bold text-lg py-2 border-b border-white/20" onClick={handleHomeClick}>{t.nav.home}</a>
+            <AnimatePresence>
+                {mobileMenuOpen && (
+                    <motion.div
+                        key="mobile-menu"
+                        initial={{ opacity: 0, y: -16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -16 }}
+                        transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+                        className="fixed inset-0 top-[57px] md:top-[65px] bg-primary z-40 flex flex-col p-6 gap-4 overflow-y-auto"
+                    >
+                        {[
+                            { label: t.nav.home, onClick: handleHomeClick },
+                            ...(isLandingPage ? [
+                                { label: t.nav.features, onClick: (e: React.MouseEvent) => handleSectionClick(e, 'features') },
+                                { label: t.nav.pricing, onClick: (e: React.MouseEvent) => handleSectionClick(e, 'pricing') },
+                                { label: t.nav.faq, onClick: (e: React.MouseEvent) => handleSectionClick(e, 'faq') },
+                            ] : []),
+                        ].map((item, i) => (
+                            <motion.a
+                                key={item.label}
+                                href="#"
+                                initial={{ opacity: 0, x: -12 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.05, type: 'spring', stiffness: 300, damping: 24 }}
+                                className="text-white font-bold text-lg py-2 border-b border-white/20"
+                                onClick={item.onClick}
+                            >
+                                {item.label}
+                            </motion.a>
+                        ))}
 
-                    {isLandingPage && (
-                        <>
-                            <a href="#features" className="text-white font-bold text-lg py-2 border-b border-white/20" onClick={(e) => handleSectionClick(e, 'features')}>{t.nav.features}</a>
-                            <a href="#pricing" className="text-white font-bold text-lg py-2 border-b border-white/20" onClick={(e) => handleSectionClick(e, 'pricing')}>{t.nav.pricing}</a>
-                            <a href="#faq" className="text-white font-bold text-lg py-2 border-b border-white/20" onClick={(e) => handleSectionClick(e, 'faq')}>{t.nav.faq}</a>
-                        </>
-                    )}
+                        <motion.a
+                            href="/changelog"
+                            initial={{ opacity: 0, x: -12 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: (isLandingPage ? 4 : 1) * 0.05, type: 'spring', stiffness: 300, damping: 24 }}
+                            className="text-white font-bold text-lg py-2 border-b border-white/20"
+                        >
+                            Changelog
+                        </motion.a>
 
-                    <a href="/changelog" className="text-white font-bold text-lg py-2 border-b border-white/20">Changelog</a>
-
-                    {user ? (
-                        <>
-                            <button
+                        {user ? (
+                            <>
+                                <motion.button
+                                    initial={{ opacity: 0, x: -12 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: (isLandingPage ? 5 : 2) * 0.05, type: 'spring', stiffness: 300, damping: 24 }}
+                                    onClick={() => {
+                                        setMobileMenuOpen(false);
+                                        router.push('/dashboard');
+                                    }}
+                                    className="text-white font-bold text-lg py-2 border-b border-white/20 text-left"
+                                >
+                                    {t.nav.dashboard}
+                                </motion.button>
+                                <motion.div
+                                    initial={{ opacity: 0, x: -12 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: (isLandingPage ? 6 : 3) * 0.05, type: 'spring', stiffness: 300, damping: 24 }}
+                                    className="py-2 border-b border-white/20"
+                                >
+                                    <span className="text-white/80 text-sm block mb-2">{user.email}</span>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full text-black bg-white px-6 py-3 border-2 border-black shadow-neo-sm font-bold text-center"
+                                    >
+                                        {t.nav.logout}
+                                    </button>
+                                </motion.div>
+                            </>
+                        ) : (
+                            <motion.button
+                                initial={{ opacity: 0, x: -12 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: (isLandingPage ? 5 : 2) * 0.05, type: 'spring', stiffness: 300, damping: 24 }}
                                 onClick={() => {
                                     setMobileMenuOpen(false);
-                                    router.push('/dashboard');
+                                    router.push('/login');
                                 }}
-                                className="text-white font-bold text-lg py-2 border-b border-white/20 text-left"
+                                className="w-full text-black bg-white px-6 py-3 border-2 border-black shadow-neo-sm font-bold mt-4"
                             >
-                                {t.nav.dashboard}
-                            </button>
-                            <div className="py-2 border-b border-white/20">
-                                <span className="text-white/80 text-sm block mb-2">{user.email}</span>
-                                <button
-                                    onClick={handleLogout}
-                                    className="w-full text-black bg-white px-6 py-3 border-2 border-black shadow-neo-sm font-bold text-center"
-                                >
-                                    {t.nav.logout}
-                                </button>
-                            </div>
-                        </>
-                    ) : (
-                        <button
-                            onClick={() => {
-                                setMobileMenuOpen(false);
-                                router.push('/login');
-                            }}
-                            className="w-full text-black bg-white px-6 py-3 border-2 border-black shadow-neo-sm font-bold mt-4"
-                        >
-                            {t.nav.login}
-                        </button>
-                    )}
-                </div>
-            )}
+                                {t.nav.login}
+                            </motion.button>
+                        )}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </nav>
     );
 }

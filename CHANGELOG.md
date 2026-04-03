@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.2] - 2026-04-04
+
+### ✨ UI/UX Polish
+
+#### Animated Mobile Navbar
+- **Hamburger Icon Transition**: The `☰` ↔ `✕` icon swap now uses `AnimatePresence mode="wait"` — the outgoing icon rotates and fades out before the incoming one rotates in from the opposite direction. Button also has a spring `scale: 0.85` tap feedback.
+- **Menu Overlay Slide**: The full-screen mobile menu now slides down from `y: -16` + fades in on open, and reverses on close — eliminating the jarring instant appear/disappear.
+- **Link Stagger**: Nav links inside the mobile menu cascade in from the left with a `50ms` sequential stagger for a premium cascading feel.
+
+#### Fill Page — Card Entrance/Exit Animations
+- Wrapped all repeating item lists in `AnimatePresence initial={false}` so only **newly added** items animate (existing items on page load stay still).
+- New cards slide up from `y: 16` with a spring physics entrance (`stiffness: 300, damping: 24`); deleted items slide up and fade out.
+- Sections covered: **Experience, Education, Skills, Projects, Certifications, Languages, Custom Fields** (7 total).
+
+#### NeoButtonLink Component
+- Created `NeoButtonLink.tsx` — a `motion(Link)` wrapper that applies the same neo-brutalist spring physics (`x/y` shift + shadow collapse on hover, `scale: 0.96` on tap) as `NeoButton.tsx`, but renders as a proper `<a>` anchor for navigation.
+- Applied to back buttons on **Changelog**, **Privacy**, and **Terms** pages.
+
+### 🐛 Bug Fixes
+
+- **Mobile: Features & Pricing card padding** — Feature cards and Pricing cards had no horizontal padding on mobile, causing them to touch the screen edges. Added `px-4 sm:px-6` to match the FAQ section.
+- **Mobile: Custom Fields label squashed** — The "Label" input in Personal Info custom fields used a fixed `w-1/3` in a flex row, severely squashing it on narrow screens. Replaced with a responsive CSS grid (`grid-cols-1 sm:grid-cols-[1fr_2fr]`) so Label stacks above Value on mobile (both full width) and sits side-by-side on desktop.
+
+---
+
 ## [1.3.1] - 2026-04-02
 
 ### 🚀 Performance & UI Enhancements
