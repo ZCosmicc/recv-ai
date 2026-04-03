@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Trash2, X, Plus, Sparkles, Crown, Lock, Loader2, Check } from 'lucide-react';
 import LimitModal from './LimitModal';
-import { motion } from 'framer-motion';
-import { GripVertical } from 'lucide-react';
+import { motion, Reorder } from 'framer-motion';
 import SlideIn from './SlideIn';
 import CVPreviewPane from './CVPreviewPane';
 import { templates } from './CVPreview';
@@ -55,16 +54,7 @@ export default function Sections({
 
         setSelectedTemplate(newTemplateId);
     };
-    const [draggedSection, setDraggedSection] = useState<number | null>(null);
 
-    const handleDrop = (index: number) => {
-        if (draggedSection === null) return;
-        const newSections = [...sections];
-        const [removed] = newSections.splice(draggedSection, 1);
-        newSections.splice(index, 0, removed);
-        setSections(newSections);
-        setDraggedSection(null);
-    };
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -119,17 +109,27 @@ export default function Sections({
                         <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6 h-auto md:h-[800px] overflow-y-auto">
                             <h2 className="text-xl text-gray-900 font-semibold mb-4">Sections</h2>
 
-                            <div className="space-y-2 mb-6">
+                            <Reorder.Group
+                                axis="y"
+                                values={sections.filter(s => s.enabled)}
+                                onReorder={(reordered) => {
+                                    // Merge reordered enabled sections back with disabled ones, preserving disabled order at the end
+                                    const disabled = sections.filter(s => !s.enabled);
+                                    setSections([...reordered, ...disabled]);
+                                }}
+                                className="space-y-2 mb-6"
+                            >
                                 {sections.filter(s => s.enabled).map((section, index) => (
-                                    <SlideIn key={section.id} delay={index * 0.1}>
-                                    <div
-                                        draggable
-                                        onDragStart={() => setDraggedSection(index)}
-                                        onDragOver={(e) => e.preventDefault()}
-                                        onDrop={() => handleDrop(index)}
-                                        className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-white border-b-2 border-gray-100 last:border-0 hover:bg-gray-50 cursor-move"
+                                    <Reorder.Item
+                                        key={section.id}
+                                        value={section}
+                                        className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-white border-b-2 border-gray-100 last:border-0 hover:bg-gray-50 cursor-grab active:cursor-grabbing"
+                                        initial={{ opacity: 0, y: 12 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -8 }}
+                                        transition={{ type: 'spring', stiffness: 300, damping: 24, delay: index * 0.05 }}
                                     >
-                                        <div className="text-gray-400">≡</div>
+                                        <div className="text-gray-400 cursor-grab">≡</div>
                                         <span className="flex-1 font-medium text-base md:text-lg text-black">{section.name}</span>
                                         {!section.required && (
                                             <button
@@ -143,10 +143,9 @@ export default function Sections({
                                                 <X className="w-5 h-5" />
                                             </button>
                                         )}
-                                    </div>
-                                    </SlideIn>
+                                    </Reorder.Item>
                                 ))}
-                            </div>
+                            </Reorder.Group>
 
                             <div className="w-full mb-6">
                                 <h3 className="text-lg font-bold mb-3">Add Section</h3>

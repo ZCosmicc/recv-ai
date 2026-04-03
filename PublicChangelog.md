@@ -6,6 +6,8 @@ All user-facing updates and improvements to Recv. AI.
 ### ✨ Animations & Mobile Fixes
 - **Animated Navigation Menu:** The mobile hamburger menu now opens and closes with a smooth slide-down animation. The `☰` and `✕` icons rotate through each other instead of swapping instantly. Menu links also cascade in one by one for a polished feel.
 - **Smoother CV Builder:** When you add a new Experience, Education, Skill, Project, Certification, Language, or Custom Field entry in the CV Builder, it now slides in smoothly instead of just appearing. Deleting an entry also animates out gracefully.
+- **Better Section Reordering:** Dragging sections to reorder them in the CV Builder now works on **all devices including iPhones**. Sections also visually slide out of the way as you drag, making it much clearer where things will land.
+- **Consistent Cursor:** Hovering over any button, dropdown, or interactive element across the entire site now correctly shows the hand pointer — no more inconsistent mix of arrow and hand cursors depending on which element you hover.
 - **Mobile Layout Fixes:** Fixed cards in the Features and Pricing sections touching the screen edge on mobile. Also fixed the "Label" input in Custom Fields being squashed on narrow screens — it now stacks neatly above the Value input on mobile.
 
 ## [1.3.1] - 2026-04-02

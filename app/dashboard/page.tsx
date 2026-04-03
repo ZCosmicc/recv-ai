@@ -515,7 +515,7 @@ export default function Dashboard() {
             {/* Delete Account Modal */}
             {showDeleteAccount && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/40" onClick={() => setShowDeleteAccount(false)} />
+                    <div className="absolute inset-0 bg-black/40 cursor-pointer" onClick={() => setShowDeleteAccount(false)} />
                     <div className="relative bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-md p-6">
                         <div className="flex items-center gap-2 mb-4">
                             <AlertTriangle className="w-6 h-6 text-red-600" />

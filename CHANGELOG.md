@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 ### ✨ UI/UX Polish
 
+#### Sections Page — Framer Motion Reorder
+- **Replaced HTML5 Drag & Drop** with Framer Motion `Reorder.Group` / `Reorder.Item` on the enabled-sections list.
+- Fixes iOS Safari drag-and-drop (HTML5 DnD API is unsupported on all iOS browsers). Now uses Pointer Events which work universally.
+- Sections now visually **displace each other** as you drag — other rows slide out of the way in real time with spring physics.
+- Cursor changes to `grab → grabbing` on hold for better tactile feedback.
+- Removed now-unused `draggedSection` state, `handleDrop()` function, and `GripVertical` import.
+
 #### Animated Mobile Navbar
 - **Hamburger Icon Transition**: The `☰` ↔ `✕` icon swap now uses `AnimatePresence mode="wait"` — the outgoing icon rotates and fades out before the incoming one rotates in from the opposite direction. Button also has a spring `scale: 0.85` tap feedback.
 - **Menu Overlay Slide**: The full-screen mobile menu now slides down from `y: -16` + fades in on open, and reverses on close — eliminating the jarring instant appear/disappear.
@@ -24,6 +31,7 @@ All notable changes to this project will be documented in this file.
 
 - **Mobile: Features & Pricing card padding** — Feature cards and Pricing cards had no horizontal padding on mobile, causing them to touch the screen edges. Added `px-4 sm:px-6` to match the FAQ section.
 - **Mobile: Custom Fields label squashed** — The "Label" input in Personal Info custom fields used a fixed `w-1/3` in a flex row, severely squashing it on narrow screens. Replaced with a responsive CSS grid (`grid-cols-1 sm:grid-cols-[1fr_2fr]`) so Label stacks above Value on mobile (both full width) and sits side-by-side on desktop.
+- **Cursor Inconsistency** — Browsers default `<button>` elements to `cursor: default` (arrow) while `<a>` tags get `cursor: pointer` (hand), causing a mixed experience. Added a global CSS rule in `globals.css` targeting `button:not(:disabled)`, `select:not(:disabled)`, and `[role="button"]` so every interactive element site-wide now shows the hand cursor. Disabled buttons correctly show `cursor: not-allowed`. Also added `cursor-pointer` to dismissible modal backdrops in `SupportModal.tsx`, `dashboard/page.tsx`, and `admin/page.tsx`.
 
 ---
 

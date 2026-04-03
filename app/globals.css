@@ -27,6 +27,17 @@ label {
   color: #374151 !important;
 }
 
+/* Global cursor: pointer for all interactive elements */
+button:not(:disabled),
+select:not(:disabled),
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
 /* Fix date input text */
 input[type="month"],
 input[type="date"] {

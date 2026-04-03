@@ -191,7 +191,7 @@ export default function SupportModal({ isOpen, onClose, userEmail }: SupportModa
         <>
             {/* Lightbox */}
             {lightboxUrl && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80" onClick={() => setLightboxUrl(null)}>
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 cursor-pointer" onClick={() => setLightboxUrl(null)}>
                     <button className="absolute top-4 right-4 bg-white border-2 border-black p-1 z-10" onClick={() => setLightboxUrl(null)}>
                         <X className="w-5 h-5" />
                     </button>
@@ -202,7 +202,7 @@ export default function SupportModal({ isOpen, onClose, userEmail }: SupportModa
 
             <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4">
                 {/* Backdrop */}
-                <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={resetAndClose} />
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-sm cursor-pointer" onClick={resetAndClose} />
 
                 {/* Modal */}
                 <SlideIn className="relative w-full max-w-md bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-h-[90vh] flex flex-col">

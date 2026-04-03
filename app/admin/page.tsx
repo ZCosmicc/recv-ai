@@ -395,7 +395,7 @@ export default function AdminPage() {
             {/* Ticket Details Modal */}
             {selectedTicket && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/40" onClick={() => setSelectedTicket(null)} />
+                    <div className="absolute inset-0 bg-black/40 cursor-pointer" onClick={() => setSelectedTicket(null)} />
                     <div className="relative bg-white border-4 border-black shadow-neo max-w-2xl w-full max-h-[90vh] flex flex-col">
                         <div className="flex justify-between items-center p-4 border-b-4 border-black">
                             <h2 className="text-xl font-bold">Ticket Details</h2>
