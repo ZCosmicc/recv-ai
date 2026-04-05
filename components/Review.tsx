@@ -192,7 +192,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
 
     if (analyzing) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6">
+            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 px-4 text-center">
                 <div className="relative">
                     <div className="w-24 h-24 border-4 border-gray-200 rounded-full animate-spin border-t-primary"></div>
                     <Wand2 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-primary animate-pulse" />
@@ -205,7 +205,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
 
     if (!result) {
         return (
-            <div className="bg-white border-4 border-black shadow-neo p-4 md:p-8 max-w-2xl mx-auto text-center mt-6 md:mt-10">
+            <div className="bg-white border-4 border-black shadow-neo p-4 md:p-8 max-w-2xl mx-4 sm:mx-auto text-center mt-6 md:mt-10 mb-8">
                 <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-black">
                     <Star className="w-10 h-10 text-primary" />
                 </div>
@@ -251,7 +251,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
     }
 
     return (
-        <div className="px-4 sm:px-0 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="py-8 px-4 sm:px-0 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header / Score */}
             <div className="bg-white border-4 border-black shadow-neo mb-6 md:mb-8 p-4 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center">
                 <div className="relative w-40 h-40 flex-shrink-0">
