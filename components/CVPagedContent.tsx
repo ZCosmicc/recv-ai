@@ -281,7 +281,7 @@ function SectionEducation({ cvData, template }: { cvData: CVData; template: Temp
 }
 
 function SectionSkills({ cvData, template }: { cvData: CVData; template: TemplateName }) {
-    const skills = cvData.skills.filter(s => s.trim());
+    const skills = cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim());
     if (!skills.length) return null;
     if (template === 'creative' || template === 'executive') return null;
     if (template === 'minimal') return (
@@ -383,7 +383,7 @@ function SectionProjects({ cvData, template }: { cvData: CVData; template: Templ
 }
 
 function SectionCertification({ cvData, template }: { cvData: CVData; template: TemplateName }) {
-    const certs = cvData.certification.filter(c => c.trim());
+    const certs = cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim());
     if (!certs.length) return null;
     if (template === 'creative') return null;
     if (template === 'minimal') return (
@@ -417,7 +417,7 @@ function SectionCertification({ cvData, template }: { cvData: CVData; template: 
 }
 
 function SectionLanguage({ cvData, template }: { cvData: CVData; template: TemplateName }) {
-    const langs = cvData.language.filter(l => l.trim());
+    const langs = cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim());
     if (!langs.length) return null;
     if (template === 'creative' || template === 'executive') return null;
     if (template === 'minimal') return (
@@ -472,11 +472,11 @@ function Sidebar({ cvData, template }: { cvData: CVData; template: 'creative' | 
                     ))}
                 </div>
             )}
-            {cvData.skills.filter(s => s.trim()).length > 0 && (
+            {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).length > 0 && (
                 <div className="mb-6">
                     <h2 className="text-xs font-bold uppercase tracking-widest text-yellow-500 mb-3 border-b border-gray-700 pb-1">Expertise</h2>
                     <ul className="space-y-1">
-                        {cvData.skills.filter(s => s.trim()).map((s, i) => (
+                        {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((s, i) => (
                             <li key={i} className="text-gray-300 text-xs flex items-center">
                                 <span className="w-1.5 h-1.5 bg-yellow-600 mr-2 rotate-45 inline-block flex-shrink-0" />{s}
                             </li>
@@ -484,16 +484,16 @@ function Sidebar({ cvData, template }: { cvData: CVData; template: 'creative' | 
                     </ul>
                 </div>
             )}
-            {cvData.language.filter(l => l.trim()).length > 0 && (
+            {cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).length > 0 && (
                 <div className="mb-6">
                     <h2 className="text-xs font-bold uppercase tracking-widest text-yellow-500 mb-3 border-b border-gray-700 pb-1">Languages</h2>
-                    <ul className="space-y-1">{cvData.language.filter(l => l.trim()).map((l, i) => <li key={i} className="text-gray-300 text-xs">{l}</li>)}</ul>
+                    <ul className="space-y-1">{cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).map((l, i) => <li key={i} className="text-gray-300 text-xs">{l}</li>)}</ul>
                 </div>
             )}
-            {cvData.certification.filter(c => c.trim()).length > 0 && (
+            {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).length > 0 && (
                 <div>
                     <h2 className="text-xs font-bold uppercase tracking-widest text-yellow-500 mb-3 border-b border-gray-700 pb-1">Certifications</h2>
-                    <ul className="space-y-1">{cvData.certification.filter(c => c.trim()).map((c, i) => <li key={i} className="text-gray-300 text-xs">✓ {c}</li>)}</ul>
+                    <ul className="space-y-1">{cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((c, i) => <li key={i} className="text-gray-300 text-xs">✓ {c}</li>)}</ul>
                 </div>
             )}
         </div>
@@ -511,22 +511,22 @@ function Sidebar({ cvData, template }: { cvData: CVData; template: 'creative' | 
                     </div>
                 </div>
             )}
-            {cvData.skills.filter(s => s.trim()).length > 0 && (
+            {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).length > 0 && (
                 <div className="mb-5">
                     <h2 className="text-sm font-bold mb-2 pb-1 border-b border-purple-400">Skills</h2>
-                    <div className="space-y-1">{cvData.skills.filter(s => s.trim()).map((s, i) => <div key={i} className="bg-purple-700 px-2 py-0.5 rounded text-xs">{s}</div>)}</div>
+                    <div className="space-y-1">{cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((s, i) => <div key={i} className="bg-purple-700 px-2 py-0.5 rounded text-xs">{s}</div>)}</div>
                 </div>
             )}
-            {cvData.language.filter(l => l.trim()).length > 0 && (
+            {cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).length > 0 && (
                 <div className="mb-5">
                     <h2 className="text-sm font-bold mb-2 pb-1 border-b border-purple-400">Languages</h2>
-                    <div className="space-y-1 text-xs">{cvData.language.filter(l => l.trim()).map((l, i) => <p key={i}>• {l}</p>)}</div>
+                    <div className="space-y-1 text-xs">{cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).map((l, i) => <p key={i}>• {l}</p>)}</div>
                 </div>
             )}
-            {cvData.certification.filter(c => c.trim()).length > 0 && (
+            {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).length > 0 && (
                 <div>
                     <h2 className="text-sm font-bold mb-2 pb-1 border-b border-purple-400">Certifications</h2>
-                    <div className="space-y-1 text-xs">{cvData.certification.filter(c => c.trim()).map((c, i) => <p key={i}>✓ {c}</p>)}</div>
+                    <div className="space-y-1 text-xs">{cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((c, i) => <p key={i}>✓ {c}</p>)}</div>
                 </div>
             )}
         </div>

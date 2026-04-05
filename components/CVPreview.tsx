@@ -107,7 +107,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     return (
                         <div key={section.id} className="mb-6">
                             <h2 className="text-sm font-bold uppercase tracking-wider border-b border-black pb-1 mb-3 text-gray-900">Skills</h2>
-                            <p className="text-gray-900">{cvData.skills.filter(s => s.trim()).join(' • ')}</p>
+                            <p className="text-gray-900">{cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).join(' • ')}</p>
                         </div>
                     );
                 }
@@ -117,7 +117,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                         <div key={section.id} className="mb-6">
                             <h2 className="text-sm font-bold uppercase tracking-wider border-b border-black pb-1 mb-3 text-gray-900">Certifications</h2>
                             <ul className="list-disc list-inside space-y-1">
-                                {cvData.certification.filter(c => c.trim()).map((cert, idx) => (
+                                {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((cert, idx) => (
                                     <li key={idx} className="text-gray-900">{cert}</li>
                                 ))}
                             </ul>
@@ -129,7 +129,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     return (
                         <div key={section.id} className="mb-6">
                             <h2 className="text-sm font-bold uppercase tracking-wider border-b border-black pb-1 mb-3 text-gray-900">Languages</h2>
-                            <p className="text-gray-900">{cvData.language.filter(l => l.trim()).join(' • ')}</p>
+                            <p className="text-gray-900">{cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).join(' • ')}</p>
                         </div>
                     );
                 }
@@ -229,7 +229,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                         <div key={section.id} className="mb-6">
                             <h2 className="text-lg font-bold text-blue-600 mb-3 pb-2 border-b-2 border-blue-200">Skills</h2>
                             <div className="flex flex-wrap gap-2">
-                                {cvData.skills.filter(s => s.trim()).map((skill, idx) => (
+                                {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((skill, idx) => (
                                     <span key={idx} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
                                         {skill}
                                     </span>
@@ -244,7 +244,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                         <div key={section.id} className="mb-6">
                             <h2 className="text-lg font-bold text-blue-600 mb-3 pb-2 border-b-2 border-blue-200">Certifications</h2>
                             <ul className="space-y-1">
-                                {cvData.certification.filter(c => c.trim()).map((cert, idx) => (
+                                {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((cert, idx) => (
                                     <li key={idx} className="text-gray-700 flex items-start gap-2">
                                         <span className="text-blue-600 mt-1">✓</span>
                                         <span>{cert}</span>
@@ -260,7 +260,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                         <div key={section.id} className="mb-6">
                             <h2 className="text-lg font-bold text-blue-600 mb-3 pb-2 border-b-2 border-blue-200">Languages</h2>
                             <div className="flex flex-wrap gap-2">
-                                {cvData.language.filter(l => l.trim()).map((lang, idx) => (
+                                {cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).map((lang, idx) => (
                                     <span key={idx} className="px-3 py-1 bg-blue-50 text-gray-700 rounded text-sm">
                                         {lang}
                                     </span>
@@ -298,7 +298,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     <div className="mb-6">
                         <h2 className="text-lg font-bold mb-3 pb-2 border-b border-purple-400">Skills</h2>
                         <div className="space-y-2">
-                            {cvData.skills.filter(s => s.trim()).map((skill, idx) => (
+                            {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((skill, idx) => (
                                 <div key={idx} className="bg-purple-700 px-3 py-1 rounded text-xs">
                                     {skill}
                                 </div>
@@ -311,7 +311,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     <div className="mb-6">
                         <h2 className="text-lg font-bold mb-3 pb-2 border-b border-purple-400">Languages</h2>
                         <div className="space-y-1 text-xs">
-                            {cvData.language.filter(l => l.trim()).map((lang, idx) => (
+                            {cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).map((lang, idx) => (
                                 <p key={idx}>• {lang}</p>
                             ))}
                         </div>
@@ -322,7 +322,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     <div>
                         <h2 className="text-lg font-bold mb-3 pb-2 border-b border-purple-400">Certifications</h2>
                         <div className="space-y-1 text-xs">
-                            {cvData.certification.filter(c => c.trim()).map((cert, idx) => (
+                            {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((cert, idx) => (
                                 <p key={idx}>✓ {cert}</p>
                             ))}
                         </div>
@@ -505,7 +505,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     return (
                         <div key={section.id} className="mb-6">
                             <h2 className="text-base font-bold text-gray-900 mb-2 uppercase bg-gray-200 px-3 py-1">Skills</h2>
-                            <p className="text-gray-800 px-3">{cvData.skills.filter(s => s.trim()).join(', ')}</p>
+                            <p className="text-gray-800 px-3">{cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).join(', ')}</p>
                         </div>
                     );
                 }
@@ -515,7 +515,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                         <div key={section.id} className="mb-6">
                             <h2 className="text-base font-bold text-gray-900 mb-2 uppercase bg-gray-200 px-3 py-1">Certifications</h2>
                             <ul className="list-disc list-inside px-3 space-y-1">
-                                {cvData.certification.filter(c => c.trim()).map((cert, idx) => (
+                                {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((cert, idx) => (
                                     <li key={idx} className="text-gray-800">{cert}</li>
                                 ))}
                             </ul>
@@ -527,7 +527,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     return (
                         <div key={section.id} className="mb-6">
                             <h2 className="text-base font-bold text-gray-900 mb-2 uppercase bg-gray-200 px-3 py-1">Languages</h2>
-                            <p className="text-gray-800 px-3">{cvData.language.filter(l => l.trim()).join(', ')}</p>
+                            <p className="text-gray-800 px-3">{cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).join(', ')}</p>
                         </div>
                     );
                 }
@@ -564,7 +564,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     <div className="mb-8">
                         <h2 className="text-sm font-bold uppercase tracking-widest text-yellow-500 mb-4 border-b border-gray-700 pb-2">Expertise</h2>
                         <ul className="space-y-2">
-                            {cvData.skills.filter(s => s.trim()).map((skill, idx) => (
+                            {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((skill, idx) => (
                                 <li key={idx} className="text-gray-300 text-xs flex items-center">
                                     <span className="w-2 h-2 bg-yellow-600 mr-2 rotate-45"></span>
                                     {skill}
@@ -578,7 +578,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     <div className="mb-8">
                         <h2 className="text-sm font-bold uppercase tracking-widest text-yellow-500 mb-4 border-b border-gray-700 pb-2">Languages</h2>
                         <ul className="space-y-2">
-                            {cvData.language.filter(l => l.trim()).map((lang, idx) => (
+                            {cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).map((lang, idx) => (
                                 <li key={idx} className="text-gray-300 text-xs">{lang}</li>
                             ))}
                         </ul>
@@ -680,7 +680,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                     <span className="w-8 h-1 bg-gray-900"></span> Certifications
                                 </h2>
                                 <div className="grid grid-cols-2 gap-2">
-                                    {cvData.certification.filter(c => c.trim()).map((cert, idx) => (
+                                    {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((cert, idx) => (
                                         <div key={idx} className="text-gray-700 text-sm bg-white p-2 border-l-2 border-gray-900">
                                             {cert}
                                         </div>

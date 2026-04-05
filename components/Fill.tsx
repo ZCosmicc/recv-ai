@@ -14,7 +14,7 @@ import { downloadPDF } from '../utils/pdf';
 import { templates } from './CVPreview';
 import Navbar from './Navbar';
 import PlanCard from './PlanCard';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
 
 interface FillProps {
     cvData: CVData;
@@ -84,8 +84,7 @@ export default function Fill({
 
         setSelectedTemplate(newTemplateId);
     };
-    const [draggedItem, setDraggedItem] = useState<number | null>(null);
-    const [draggedItemType, setDraggedItemType] = useState<string | null>(null);
+
 
 
     return (
@@ -266,7 +265,7 @@ export default function Fill({
                                                             ...cvData,
                                                             personal: {
                                                                 ...cvData.personal,
-                                                                customFields: [...cvData.personal.customFields, { label: '', value: '' }]
+                                                                customFields: [...cvData.personal.customFields, { id: crypto.randomUUID(), label: '', value: '' }]
                                                             }
                                                         });
                                                     }}
@@ -312,33 +311,20 @@ export default function Fill({
                                         <Tooltip id="exp-tip" text="List work experience in reverse chronological order. Use bullet points and quantify achievements." />
                                     </div>
                                     <div className="space-y-4">
+                                        <Reorder.Group axis="y" values={cvData.experience} onReorder={(reordered) => setCvData({ ...cvData, experience: reordered })} className="space-y-4">
                                         <AnimatePresence initial={false}>
                                         {cvData.experience.map((exp, idx) => (
-                                            <motion.div
-                                                key={idx}
+                                            <Reorder.Item
+                                                key={exp.id || idx}
+                                                value={exp}
                                                 initial={{ opacity: 0, y: 16 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                draggable
-                                                onDragStart={() => {
-                                                    setDraggedItem(idx);
-                                                    setDraggedItemType('experience');
-                                                }}
-                                                onDragOver={(e) => e.preventDefault()}
-                                                onDrop={() => {
-                                                    if (draggedItem === null || draggedItemType !== 'experience') return;
-                                                    const newExp = [...cvData.experience];
-                                                    const [removed] = newExp.splice(draggedItem, 1);
-                                                    newExp.splice(idx, 0, removed);
-                                                    setCvData({ ...cvData, experience: newExp });
-                                                    setDraggedItem(null);
-                                                    setDraggedItemType(null);
-                                                }}
-                                                className="p-4 border-2 border-black space-y-3 cursor-move hover:bg-gray-50 transition-colors"
+                                                className="p-4 border-2 border-black space-y-3 cursor-grab active:cursor-grabbing hover:bg-gray-50 transition-colors bg-white relative"
                                             >
                                                 <div className="flex gap-2">
-                                                    <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0" />
+                                                    <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
                                                     <div className="flex-1 space-y-3">
                                                         <input
                                                             type="text"
@@ -480,11 +466,12 @@ export default function Fill({
                                                         <X className="w-5 h-5" />
                                                     </button>
                                                 </div>
-                                            </motion.div>
+                                            </Reorder.Item>
                                         ))}
                                         </AnimatePresence>
+                                        </Reorder.Group>
                                         <button
-                                            onClick={() => setCvData({ ...cvData, experience: [...cvData.experience, { title: '', company: '', startDate: '', endDate: '', description: '', current: false }] })}
+                                            onClick={() => setCvData({ ...cvData, experience: [...cvData.experience, { id: crypto.randomUUID(), title: '', company: '', startDate: '', endDate: '', description: '', current: false }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
                                             <Plus className="w-4 h-4 inline mr-2" />
@@ -498,33 +485,20 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Education</h2>
                                     <div className="space-y-4">
+                                        <Reorder.Group axis="y" values={cvData.education} onReorder={(reordered) => setCvData({ ...cvData, education: reordered })} className="space-y-4">
                                         <AnimatePresence initial={false}>
                                         {cvData.education.map((edu, idx) => (
-                                            <motion.div
-                                                key={idx}
+                                            <Reorder.Item
+                                                key={edu.id || idx}
+                                                value={edu}
                                                 initial={{ opacity: 0, y: 16 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                draggable
-                                                onDragStart={() => {
-                                                    setDraggedItem(idx);
-                                                    setDraggedItemType('education');
-                                                }}
-                                                onDragOver={(e) => e.preventDefault()}
-                                                onDrop={() => {
-                                                    if (draggedItem === null || draggedItemType !== 'education') return;
-                                                    const newEdu = [...cvData.education];
-                                                    const [removed] = newEdu.splice(draggedItem, 1);
-                                                    newEdu.splice(idx, 0, removed);
-                                                    setCvData({ ...cvData, education: newEdu });
-                                                    setDraggedItem(null);
-                                                    setDraggedItemType(null);
-                                                }}
-                                                className="p-4 border-2 border-black space-y-3 cursor-move hover:bg-gray-50 transition-colors"
+                                                className="p-4 border-2 border-black space-y-3 cursor-grab active:cursor-grabbing hover:bg-gray-50 transition-colors bg-white relative"
                                             >
                                                 <div className="flex gap-2">
-                                                    <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0" />
+                                                    <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
                                                     <div className="flex-1 space-y-3">
                                                         <div className="grid grid-cols-2 gap-2">
                                                             <select
@@ -584,11 +558,12 @@ export default function Fill({
                                                         <X className="w-5 h-5" />
                                                     </button>
                                                 </div>
-                                            </motion.div>
+                                            </Reorder.Item>
                                         ))}
                                         </AnimatePresence>
+                                        </Reorder.Group>
                                         <button
-                                            onClick={() => setCvData({ ...cvData, education: [...cvData.education, { degree: '', major: '', institution: '', year: '' }] })}
+                                            onClick={() => setCvData({ ...cvData, education: [...cvData.education, { id: crypto.randomUUID(), degree: '', major: '', institution: '', year: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
                                             <Plus className="w-4 h-4 inline mr-2" />
@@ -602,54 +577,42 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Skills</h2>
                                     <div className="space-y-3">
+                                        <Reorder.Group axis="y" values={cvData.skills} onReorder={(reordered) => setCvData({ ...cvData, skills: reordered })} className="space-y-3">
                                         <AnimatePresence initial={false}>
                                         {cvData.skills.map((skill, idx) => (
-                                            <motion.div
-                                                key={idx}
+                                            <Reorder.Item
+                                                key={skill.id || idx}
+                                                value={skill}
                                                 initial={{ opacity: 0, y: 12 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                draggable
-                                                onDragStart={() => {
-                                                    setDraggedItem(idx);
-                                                    setDraggedItemType('skills');
-                                                }}
-                                                onDragOver={(e) => e.preventDefault()}
-                                                onDrop={() => {
-                                                    if (draggedItem === null || draggedItemType !== 'skills') return;
-                                                    const newSkills = [...cvData.skills];
-                                                    const [removed] = newSkills.splice(draggedItem, 1);
-                                                    newSkills.splice(idx, 0, removed);
-                                                    setCvData({ ...cvData, skills: newSkills });
-                                                    setDraggedItem(null);
-                                                    setDraggedItemType(null);
-                                                }}
-                                                className="flex gap-2 cursor-move hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors"
+                                                className="flex gap-2 cursor-grab active:cursor-grabbing hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
                                             >
-                                                <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0" />
+                                                <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
                                                 <input
                                                     type="text"
                                                     placeholder="Skill"
-                                                    value={skill}
+                                                    value={skill.value}
                                                     onChange={(e) => {
                                                         const newSkills = [...cvData.skills];
-                                                        newSkills[idx] = e.target.value;
+                                                        newSkills[idx] = { ...newSkills[idx], value: e.target.value };
                                                         setCvData({ ...cvData, skills: newSkills });
                                                     }}
                                                     className="flex-1 px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
                                                 />
                                                 <button
-                                                    onClick={() => setCvData({ ...cvData, skills: cvData.skills.filter((f, i) => i !== idx) })}
+                                                    onClick={() => setCvData({ ...cvData, skills: cvData.skills.filter((_, i) => i !== idx) })}
                                                     className="text-red-500"
                                                 >
                                                     <X className="w-5 h-5" />
                                                 </button>
-                                            </motion.div>
+                                            </Reorder.Item>
                                         ))}
                                         </AnimatePresence>
+                                        </Reorder.Group>
                                         <button
-                                            onClick={() => setCvData({ ...cvData, skills: [...cvData.skills, ''] })}
+                                            onClick={() => setCvData({ ...cvData, skills: [...cvData.skills, { id: crypto.randomUUID(), value: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
                                             <Plus className="w-4 h-4 inline mr-2" />
@@ -663,33 +626,20 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Projects</h2>
                                     <div className="space-y-4">
+                                        <Reorder.Group axis="y" values={cvData.projects || []} onReorder={(reordered) => setCvData({ ...cvData, projects: reordered })} className="space-y-4">
                                         <AnimatePresence initial={false}>
                                         {(cvData.projects || []).map((project, idx) => (
-                                            <motion.div
-                                                key={idx}
+                                            <Reorder.Item
+                                                key={project.id || idx}
+                                                value={project}
                                                 initial={{ opacity: 0, y: 16 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                draggable
-                                                onDragStart={() => {
-                                                    setDraggedItem(idx);
-                                                    setDraggedItemType('projects');
-                                                }}
-                                                onDragOver={(e) => e.preventDefault()}
-                                                onDrop={() => {
-                                                    if (draggedItem === null || draggedItemType !== 'projects') return;
-                                                    const newProjects = [...cvData.projects];
-                                                    const [removed] = newProjects.splice(draggedItem, 1);
-                                                    newProjects.splice(idx, 0, removed);
-                                                    setCvData({ ...cvData, projects: newProjects });
-                                                    setDraggedItem(null);
-                                                    setDraggedItemType(null);
-                                                }}
-                                                className="p-4 border-2 border-black space-y-3 cursor-move hover:bg-gray-50 transition-colors"
+                                                className="p-4 border-2 border-black space-y-3 cursor-grab active:cursor-grabbing hover:bg-gray-50 transition-colors bg-white relative"
                                             >
                                                 <div className="flex gap-2">
-                                                    <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0" />
+                                                    <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
                                                     <div className="flex-1 space-y-3">
                                                         <input
                                                             type="text"
@@ -743,11 +693,12 @@ export default function Fill({
                                                         <X className="w-5 h-5" />
                                                     </button>
                                                 </div>
-                                            </motion.div>
+                                            </Reorder.Item>
                                         ))}
                                         </AnimatePresence>
+                                        </Reorder.Group>
                                         <button
-                                            onClick={() => setCvData({ ...cvData, projects: [...cvData.projects, { title: '', description: '', technologies: '', link: '' }] })}
+                                            onClick={() => setCvData({ ...cvData, projects: [...(cvData.projects || []), { id: crypto.randomUUID(), title: '', description: '', technologies: '', link: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
                                             <Plus className="w-4 h-4 inline mr-2" />
@@ -761,54 +712,42 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl font-semibold mb-4">Certifications</h2>
                                     <div className="space-y-3">
+                                        <Reorder.Group axis="y" values={cvData.certification} onReorder={(reordered) => setCvData({ ...cvData, certification: reordered })} className="space-y-3">
                                         <AnimatePresence initial={false}>
                                         {cvData.certification.map((cert, idx) => (
-                                            <motion.div
-                                                key={idx}
+                                            <Reorder.Item
+                                                key={cert.id || idx}
+                                                value={cert}
                                                 initial={{ opacity: 0, y: 12 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                draggable
-                                                onDragStart={() => {
-                                                    setDraggedItem(idx);
-                                                    setDraggedItemType('certification');
-                                                }}
-                                                onDragOver={(e) => e.preventDefault()}
-                                                onDrop={() => {
-                                                    if (draggedItem === null || draggedItemType !== 'certification') return;
-                                                    const newCert = [...cvData.certification];
-                                                    const [removed] = newCert.splice(draggedItem, 1);
-                                                    newCert.splice(idx, 0, removed);
-                                                    setCvData({ ...cvData, certification: newCert });
-                                                    setDraggedItem(null);
-                                                    setDraggedItemType(null);
-                                                }}
-                                                className="flex gap-2 cursor-move hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors"
+                                                className="flex gap-2 cursor-grab active:cursor-grabbing hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
                                             >
-                                                <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0" />
+                                                <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
                                                 <input
                                                     type="text"
                                                     placeholder="Certification"
-                                                    value={cert}
+                                                    value={cert.value}
                                                     onChange={(e) => {
                                                         const newCert = [...cvData.certification];
-                                                        newCert[idx] = e.target.value;
+                                                        newCert[idx] = { ...newCert[idx], value: e.target.value };
                                                         setCvData({ ...cvData, certification: newCert });
                                                     }}
                                                     className="flex-1 px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
                                                 />
                                                 <button
-                                                    onClick={() => setCvData({ ...cvData, certification: cvData.certification.filter((f, i) => i !== idx) })}
+                                                    onClick={() => setCvData({ ...cvData, certification: cvData.certification.filter((_, i) => i !== idx) })}
                                                     className="text-red-500"
                                                 >
                                                     <X className="w-5 h-5" />
                                                 </button>
-                                            </motion.div>
+                                            </Reorder.Item>
                                         ))}
                                         </AnimatePresence>
+                                        </Reorder.Group>
                                         <button
-                                            onClick={() => setCvData({ ...cvData, certification: [...cvData.certification, ''] })}
+                                            onClick={() => setCvData({ ...cvData, certification: [...cvData.certification, { id: crypto.randomUUID(), value: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
                                             <Plus className="w-4 h-4 inline mr-2" />
@@ -822,54 +761,42 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl font-semibold mb-4">Languages</h2>
                                     <div className="space-y-3">
+                                        <Reorder.Group axis="y" values={cvData.language} onReorder={(reordered) => setCvData({ ...cvData, language: reordered })} className="space-y-3">
                                         <AnimatePresence initial={false}>
                                         {cvData.language.map((lang, idx) => (
-                                            <motion.div
-                                                key={idx}
+                                            <Reorder.Item
+                                                key={lang.id || idx}
+                                                value={lang}
                                                 initial={{ opacity: 0, y: 12 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                draggable
-                                                onDragStart={() => {
-                                                    setDraggedItem(idx);
-                                                    setDraggedItemType('language');
-                                                }}
-                                                onDragOver={(e) => e.preventDefault()}
-                                                onDrop={() => {
-                                                    if (draggedItem === null || draggedItemType !== 'language') return;
-                                                    const newLang = [...cvData.language];
-                                                    const [removed] = newLang.splice(draggedItem, 1);
-                                                    newLang.splice(idx, 0, removed);
-                                                    setCvData({ ...cvData, language: newLang });
-                                                    setDraggedItem(null);
-                                                    setDraggedItemType(null);
-                                                }}
-                                                className="flex gap-2 cursor-move hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors"
+                                                className="flex gap-2 cursor-grab active:cursor-grabbing hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
                                             >
-                                                <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0" />
+                                                <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
                                                 <input
                                                     type="text"
                                                     placeholder="Language"
-                                                    value={lang}
+                                                    value={lang.value}
                                                     onChange={(e) => {
                                                         const newLang = [...cvData.language];
-                                                        newLang[idx] = e.target.value;
+                                                        newLang[idx] = { ...newLang[idx], value: e.target.value };
                                                         setCvData({ ...cvData, language: newLang });
                                                     }}
                                                     className="flex-1 px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
                                                 />
                                                 <button
-                                                    onClick={() => setCvData({ ...cvData, language: cvData.language.filter((f, i) => i !== idx) })}
+                                                    onClick={() => setCvData({ ...cvData, language: cvData.language.filter((_, i) => i !== idx) })}
                                                     className="text-red-500"
                                                 >
                                                     <X className="w-5 h-5" />
                                                 </button>
-                                            </motion.div>
+                                            </Reorder.Item>
                                         ))}
                                         </AnimatePresence>
+                                        </Reorder.Group>
                                         <button
-                                            onClick={() => setCvData({ ...cvData, language: [...cvData.language, ''] })}
+                                            onClick={() => setCvData({ ...cvData, language: [...cvData.language, { id: crypto.randomUUID(), value: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
                                             <Plus className="w-4 h-4 inline mr-2" />

@@ -1,4 +1,5 @@
 export interface CustomField {
+    id: string;
     label: string;
     value: string;
 }
@@ -12,6 +13,7 @@ export interface PersonalInfo {
 }
 
 export interface Experience {
+    id: string;
     title: string;
     company: string;
     startDate: string;
@@ -21,6 +23,7 @@ export interface Experience {
 }
 
 export interface Education {
+    id: string;
     degree: string;
     major: string;
     institution: string;
@@ -28,6 +31,7 @@ export interface Education {
 }
 
 export interface Project {
+    id: string;
     title: string;
     description: string;
     technologies: string;
@@ -41,15 +45,19 @@ export interface Section {
     enabled: boolean;
 }
 
+export interface SkillItem { id: string; value: string; }
+export interface CertItem { id: string; value: string; }
+export interface LangItem { id: string; value: string; }
+
 export interface CVData {
     personal: PersonalInfo;
     summary: string;
     experience: Experience[];
     education: Education[];
-    skills: string[];
+    skills: SkillItem[];
     projects: Project[];
-    certification: string[];
-    language: string[];
+    certification: CertItem[];
+    language: LangItem[];
 }
 
 export interface SavedData {

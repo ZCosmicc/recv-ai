@@ -28,13 +28,14 @@ const DUMMY_CV_DATA: CVData = {
         phone: '+1 (555) 123-4567',
         location: 'New York, NY',
         customFields: [
-            { label: 'LinkedIn', value: 'linkedin.com/in/alexmorgan' },
-            { label: 'Portfolio', value: 'alexmorgan.design' }
+            { id: 'custom-1', label: 'LinkedIn', value: 'linkedin.com/in/alexmorgan' },
+            { id: 'custom-2', label: 'Portfolio', value: 'alexmorgan.design' }
         ]
     },
     summary: 'Creative and detail-oriented professional with 5+ years of experience in digital design and project management. Proven track record of delivering high-quality visual solutions. Adept at leading cross-functional teams and managing projects from concept to completion.',
     experience: [
         {
+            id: 'exp-1',
             title: 'Senior Product Designer',
             company: 'Creative Studio',
             startDate: '2021-01-01',
@@ -43,6 +44,7 @@ const DUMMY_CV_DATA: CVData = {
             description: 'Leading a team of designers to create stunning visual assets for global brands.\nSpearheaded the redesign of the company website, increasing engagement by 40%.\nMentored junior designers and conducted code reviews to ensure high-quality output.'
         },
         {
+            id: 'exp-2',
             title: 'UX/UI Designer',
             company: 'Tech Solutions Inc.',
             startDate: '2019-06-01',
@@ -51,6 +53,7 @@ const DUMMY_CV_DATA: CVData = {
             description: 'Designed user-friendly interfaces for web and mobile applications.\nCollaborated with developers to implement designs and ensure pixel-perfect consistency.\nConducted user research and usability testing to gather feedback and improve designs.'
         },
         {
+            id: 'exp-3',
             title: 'Junior Graphic Designer',
             company: 'Design Co.',
             startDate: '2018-01-01',
@@ -61,35 +64,56 @@ const DUMMY_CV_DATA: CVData = {
     ],
     education: [
         {
+            id: 'edu-1',
             degree: 'Master of Arts',
             major: 'Interaction Design',
             institution: 'Royal College of Art',
             year: '2021-06-15'
         },
         {
+            id: 'edu-2',
             degree: 'Bachelor of Fine Arts',
             major: 'Graphic Design',
             institution: 'New York University',
             year: '2019-05-15'
         }
     ],
-    skills: ['Figma', 'Adobe XD', 'Photoshop', 'Illustrator', 'React', 'HTML/CSS', 'Tailwind CSS', 'Project Management', 'User Research'],
+    skills: [
+        { id: 'skill-1', value: 'Figma' },
+        { id: 'skill-2', value: 'Adobe XD' },
+        { id: 'skill-3', value: 'Photoshop' },
+        { id: 'skill-4', value: 'Illustrator' },
+        { id: 'skill-5', value: 'React' },
+        { id: 'skill-6', value: 'HTML/CSS' },
+        { id: 'skill-7', value: 'Tailwind CSS' },
+        { id: 'skill-8', value: 'Project Management' },
+        { id: 'skill-9', value: 'User Research' }
+    ],
     projects: [
         {
+            id: 'proj-1',
             title: 'E-Commerce Redesign',
             description: 'Led the UI/UX redesign of a major e-commerce platform, improving conversion rates by 15%.',
             technologies: 'Figma, React, Tailwind CSS',
             link: 'https://example.com/project1'
         },
         {
+            id: 'proj-2',
             title: 'Mobile Banking App',
             description: 'Designed a secure and intuitive mobile banking experience for a fintech startup.',
             technologies: 'Adobe XD, Flutter',
             link: 'https://example.com/project2'
         }
     ],
-    certification: ['Google UX Design Professional Certificate', 'Certified ScrumMaster (CSM)'],
-    language: ['English (Native)', 'Spanish (Professional)', 'French (Basic)']
+    certification: [
+        { id: 'cert-1', value: 'Google UX Design Professional Certificate' },
+        { id: 'cert-2', value: 'Certified ScrumMaster (CSM)' }
+    ],
+    language: [
+        { id: 'lang-1', value: 'English (Native)' },
+        { id: 'lang-2', value: 'Spanish (Professional)' },
+        { id: 'lang-3', value: 'French (Basic)' }
+    ]
 };
 
 interface ChooseTemplateProps {

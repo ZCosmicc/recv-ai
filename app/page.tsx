@@ -130,6 +130,17 @@ function BuilderContent() {
         const { data, error } = await supabase.from('cvs').select('*').eq('id', cvId).single();
         if (data) {
           const loadedData = data.data as any;
+          // Forward compatibility shim:
+          const ensureItemShape = (arr: any[], field: 'value' | 'label') =>
+              (arr || []).map(item =>
+                  typeof item === 'string'
+                      ? { id: crypto.randomUUID(), [field]: item }
+                      : item
+              );
+          loadedData.skills = ensureItemShape(loadedData.skills, 'value');
+          loadedData.certification = ensureItemShape(loadedData.certification, 'value');
+          loadedData.language = ensureItemShape(loadedData.language, 'value');
+          
           setCvData(loadedData as CVData);
 
           // Merge loaded sections with default sections to add any new sections
@@ -201,7 +212,18 @@ function BuilderContent() {
             });
 
             setSections(mergedSections);
-            setCvData(parsed.cvData);
+            const ensureItemShape = (arr: any[], field: 'value' | 'label') =>
+              (arr || []).map(item =>
+                  typeof item === 'string'
+                      ? { id: crypto.randomUUID(), [field]: item }
+                      : item
+              );
+            const parsedCvData = parsed.cvData as any;
+            parsedCvData.skills = ensureItemShape(parsedCvData.skills, 'value');
+            parsedCvData.certification = ensureItemShape(parsedCvData.certification, 'value');
+            parsedCvData.language = ensureItemShape(parsedCvData.language, 'value');
+            
+            setCvData(parsedCvData);
             // setAiCredits(parsed.aiCredits); 
           }
         } catch (error) {

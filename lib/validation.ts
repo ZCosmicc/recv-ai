@@ -50,6 +50,10 @@ const projectSchema = z.object({
 
 // --- Main Schemas ---
 
+const skillItemSchema = z.object({ id: z.string(), value: cleanString(100) });
+const certItemSchema = z.object({ id: z.string(), value: cleanString(200) });
+const langItemSchema = z.object({ id: z.string(), value: cleanString(100) });
+
 /**
  * Validation schema for /api/analyze route
  * Validates CV data structure for AI analysis
@@ -60,10 +64,10 @@ export const analyzeRequestSchema = z.object({
         summary: textString.optional().or(z.literal('')),
         experience: z.array(experienceSchema).optional(),
         education: z.array(educationSchema).optional(),
-        skills: z.array(cleanString(100)).optional(),
+        skills: z.array(skillItemSchema).optional(),
         projects: z.array(projectSchema).optional(),
-        certification: z.array(cleanString(200)).optional(),
-        language: z.array(cleanString(100)).optional()
+        certification: z.array(certItemSchema).optional(),
+        language: z.array(langItemSchema).optional()
     })
 });
 

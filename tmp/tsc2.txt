@@ -1,0 +1,2 @@
+﻿components/Fill.tsx(488,42): error TS17008: JSX element 'Reorder.Group' has no corresponding closing tag.
+components/Fill.tsx(561,47): error TS17002: Expected corresponding JSX closing tag for 'Reorder.Item'.

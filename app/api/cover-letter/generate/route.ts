@@ -135,7 +135,7 @@ export async function POST(req: Request) {
         const cvSummary = {
             name: cv.data.personal?.name || 'Applicant',
             summary: cv.data.summary,
-            skills: cv.data.skills,
+            skills: cv.data.skills?.map((s: any) => s.value ?? s),
             experience: cv.data.experience?.map((e: any) => ({
                 role: e.title || e.role,
                 company: e.company,

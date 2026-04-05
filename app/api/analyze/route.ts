@@ -83,7 +83,13 @@ export async function POST(req: Request) {
         const { cvData } = validationResult.data;
 
         // 1. Flatten CV Data for the prompt
-        const cvText = JSON.stringify(cvData, null, 2);
+        const normalizeForAI = (data: any) => ({
+            ...data,
+            skills: data.skills?.map((s: any) => s.value ?? s) ?? [],
+            certification: data.certification?.map((c: any) => c.value ?? c) ?? [],
+            language: data.language?.map((l: any) => l.value ?? l) ?? [],
+        });
+        const cvText = JSON.stringify(normalizeForAI(cvData), null, 2);
 
         // 2. Construct the prompt
         const prompt = `
@@ -125,7 +131,7 @@ export async function POST(req: Request) {
                 {
                     "section": "string",
                     "improvement_type": "string ('fix', 'remove', or 'warning')",
-                    "target_path": "string (REQUIRED for 'fix' and 'remove'. Format: 'section[index].field' or 'section[index]')",
+                    "target_path": "string (REQUIRED for 'fix' and 'remove'. Format: 'section[index].field' or 'section[index]')\n                    NOTE: skills, certification, and language items are objects with a 'value' field. Use target_path format: 'skills[0].value', not 'skills[0]'",
                     "feedback": "string",
                     "original": "string (Optional)",
                     "suggestion": "string (IF TYPE='fix': The exact replacement text. IF TYPE='remove': The reason for removal. IF TYPE='warning': The advice.)\n                    NOTE: If type is 'fix', the suggestion MUST be the content itself (e.g. 'Project Manager'). DO NOT say 'Change to Project Manager'.\n                    NOTE: If you want to delete something, use type 'remove'. DO NOT use type 'fix' with suggestion 'Remove this'."

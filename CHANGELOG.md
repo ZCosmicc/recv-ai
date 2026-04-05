@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.3] - 2026-04-05
+
+### 🏗️ Data Architecture & UI Architecture
+
+#### Object ID Migration for Reordering
+- **Data Structure Migration**: Transitioned `skills`, `certification`, and `language` arrays from basic strings to complex objects (`{ id, value }`) to support React key stability during animations.
+- **Supabase Backend Sync**: Backfilled an SQL migration (`migrate-cv-ids.sql`) to inject UUIDs into legacy user data records without losing content.
+- **Auto-Conversion Shim**: Implemented an automatic hydration layer in `page.tsx` that normalizes legacy string arrays to the new object standard on load, ensuring 100% backwards compatibility for existing resumes.
+- **AI Normalizer Update**: Adjusted `/api/analyze` and `/api/cover-letter/generate` routes to correctly parse and extract `.value` fields dynamically so the AI models don't get confused by the new metadata.
+
+#### Reorder UI Polishing
+- **Fill Page Components Migration**: Converted all HTML5 Drag & Drop arrays (Experience, Education, Skills, Projects, Certifications, Languages) to utilize `framer-motion`'s optimized `Reorder.Group/Item` components.
+- Fixes drag-and-drop bug on mobile devices for the Fill page where native dragging would stall.
+- Added visual drag handlers that show a clear grabbing cursor and smoothly displace adjacent items upon drag operations.
+- Update `Review.tsx` path resolving to handle arrays and property lookups universally (`{ idx, path, suggestion }`), accommodating `.value` targeting.
+- Implemented responsive edge padding `px-4 sm:px-0` for mobile viewers on the Review screen layout.
+- Added a `cursor: pointer` catch-all for all interactive standard elements for web navigation parity.
+
 ## [1.3.2] - 2026-04-04
 
 ### ✨ UI/UX Polish

@@ -109,7 +109,12 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
 
             const lastPart = parts[parts.length - 1];
             if (lastPart && current) {
-                current[lastPart] = suggestion;
+                // FALLBACK: If the AI path targets the object itself (e.g. skills[0]) instead of .value
+                if (typeof current[lastPart] === 'object' && current[lastPart] !== null && 'value' in current[lastPart]) {
+                    current[lastPart].value = suggestion;
+                } else {
+                    current[lastPart] = suggestion;
+                }
                 applied = true;
             }
 
@@ -246,7 +251,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
     }
 
     return (
-        <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="px-4 sm:px-0 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header / Score */}
             <div className="bg-white border-4 border-black shadow-neo mb-6 md:mb-8 p-4 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center">
                 <div className="relative w-40 h-40 flex-shrink-0">
