@@ -2,6 +2,12 @@
 
 All user-facing updates and improvements to Recv. AI.
 
+## [1.3.3] - 2026-04-05
+### 🚀 Drag & Drop Stability + Deep Fixes
+- **Perfected Drag Handling:** We completely eradicated an annoying visual bug in the CV Builder where dragged sections (like Experience or Education) would aggressively overlap or conflict with each other. Dragging any card now works perfectly cleanly, respecting boundaries seamlessly without visually glitching.
+- **Recovered Local Sessions:** We implemented an under-the-hood engine fallback to instantly fix older, offline-cached CVs that were locking up the interface or refusing to drag correctly. Moving forward, returning users won't experience dead cards.
+- **Smarter AI Cover Letter Connections:** Underwent a massive data-architecture upgrade that dramatically slims down how your resume speaks to our AI APIs without you having to re-enter anything, optimizing accuracy when your Cover Letters are generated.
+
 ## [1.3.2] - 2026-04-04
 ### ✨ Animations & Mobile Fixes
 - **Animated Navigation Menu:** The mobile hamburger menu now opens and closes with a smooth slide-down animation. The `☰` and `✕` icons rotate through each other instead of swapping instantly. Menu links also cascade in one by one for a polished feel.

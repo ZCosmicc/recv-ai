@@ -311,7 +311,7 @@ export default function Fill({
                                         <Tooltip id="exp-tip" text="List work experience in reverse chronological order. Use bullet points and quantify achievements." />
                                     </div>
                                     <div className="space-y-4">
-                                        <Reorder.Group axis="y" values={cvData.experience} onReorder={(reordered) => setCvData({ ...cvData, experience: reordered })} className="space-y-4">
+                                        <Reorder.Group axis="y" values={cvData.experience} onReorder={(reordered) => setCvData({ ...cvData, experience: reordered })} className="flex flex-col gap-4">
                                         <AnimatePresence initial={false}>
                                         {cvData.experience.map((exp, idx) => (
                                             <Reorder.Item
@@ -485,7 +485,7 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Education</h2>
                                     <div className="space-y-4">
-                                        <Reorder.Group axis="y" values={cvData.education} onReorder={(reordered) => setCvData({ ...cvData, education: reordered })} className="space-y-4">
+                                        <Reorder.Group axis="y" values={cvData.education} onReorder={(reordered) => setCvData({ ...cvData, education: reordered })} className="flex flex-col gap-4">
                                         <AnimatePresence initial={false}>
                                         {cvData.education.map((edu, idx) => (
                                             <Reorder.Item
@@ -577,7 +577,7 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Skills</h2>
                                     <div className="space-y-3">
-                                        <Reorder.Group axis="y" values={cvData.skills} onReorder={(reordered) => setCvData({ ...cvData, skills: reordered })} className="space-y-3">
+                                        <Reorder.Group axis="y" values={cvData.skills} onReorder={(reordered) => setCvData({ ...cvData, skills: reordered })} className="flex flex-col gap-3">
                                         <AnimatePresence initial={false}>
                                         {cvData.skills.map((skill, idx) => (
                                             <Reorder.Item
@@ -626,7 +626,7 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Projects</h2>
                                     <div className="space-y-4">
-                                        <Reorder.Group axis="y" values={cvData.projects || []} onReorder={(reordered) => setCvData({ ...cvData, projects: reordered })} className="space-y-4">
+                                        <Reorder.Group axis="y" values={cvData.projects || []} onReorder={(reordered) => setCvData({ ...cvData, projects: reordered })} className="flex flex-col gap-4">
                                         <AnimatePresence initial={false}>
                                         {(cvData.projects || []).map((project, idx) => (
                                             <Reorder.Item
@@ -712,7 +712,7 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl font-semibold mb-4">Certifications</h2>
                                     <div className="space-y-3">
-                                        <Reorder.Group axis="y" values={cvData.certification} onReorder={(reordered) => setCvData({ ...cvData, certification: reordered })} className="space-y-3">
+                                        <Reorder.Group axis="y" values={cvData.certification} onReorder={(reordered) => setCvData({ ...cvData, certification: reordered })} className="flex flex-col gap-3">
                                         <AnimatePresence initial={false}>
                                         {cvData.certification.map((cert, idx) => (
                                             <Reorder.Item
@@ -761,7 +761,7 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl font-semibold mb-4">Languages</h2>
                                     <div className="space-y-3">
-                                        <Reorder.Group axis="y" values={cvData.language} onReorder={(reordered) => setCvData({ ...cvData, language: reordered })} className="space-y-3">
+                                        <Reorder.Group axis="y" values={cvData.language} onReorder={(reordered) => setCvData({ ...cvData, language: reordered })} className="flex flex-col gap-3">
                                         <AnimatePresence initial={false}>
                                         {cvData.language.map((lang, idx) => (
                                             <Reorder.Item

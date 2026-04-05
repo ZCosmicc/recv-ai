@@ -15,9 +15,11 @@ All notable changes to this project will be documented in this file.
 #### Reorder UI Polishing
 - **Fill Page Components Migration**: Converted all HTML5 Drag & Drop arrays (Experience, Education, Skills, Projects, Certifications, Languages) to utilize `framer-motion`'s optimized `Reorder.Group/Item` components.
 - Fixes drag-and-drop bug on mobile devices for the Fill page where native dragging would stall.
+- Fixed a Framer Motion `overlap collision` layout bug caused by Tailwind `margin-top` (`space-y-*`); migrated to flex-box `gap-*` to preserve Reorder layout stability tracking.
+- Fixed a legacy persistent `localStorage` issue where cached items lacked UUIDs causing list shuffling bugs; added a dynamically-injecting ID hydration shim to `page.tsx`.
 - Added visual drag handlers that show a clear grabbing cursor and smoothly displace adjacent items upon drag operations.
 - Update `Review.tsx` path resolving to handle arrays and property lookups universally (`{ idx, path, suggestion }`), accommodating `.value` targeting.
-- Implemented responsive edge padding `px-4 sm:px-0` for mobile viewers on the Review screen layout.
+- Fixing responsive edge padding `px-4 sm:px-0` for mobile viewers on the Review screen layout.
 - Added a `cursor: pointer` catch-all for all interactive standard elements for web navigation parity.
 
 ## [1.3.2] - 2026-04-04

@@ -137,9 +137,16 @@ function BuilderContent() {
                       ? { id: crypto.randomUUID(), [field]: item }
                       : item
               );
+          const ensureItemId = (arr: any[]) =>
+              (arr || []).map(item => item.id ? item : { ...item, id: crypto.randomUUID() });
+              
           loadedData.skills = ensureItemShape(loadedData.skills, 'value');
           loadedData.certification = ensureItemShape(loadedData.certification, 'value');
           loadedData.language = ensureItemShape(loadedData.language, 'value');
+          
+          loadedData.experience = ensureItemId(loadedData.experience);
+          loadedData.education = ensureItemId(loadedData.education);
+          loadedData.projects = ensureItemId(loadedData.projects);
           
           setCvData(loadedData as CVData);
 
@@ -219,9 +226,16 @@ function BuilderContent() {
                       : item
               );
             const parsedCvData = parsed.cvData as any;
+            const ensureItemId = (arr: any[]) =>
+              (arr || []).map(item => item.id ? item : { ...item, id: crypto.randomUUID() });
+              
             parsedCvData.skills = ensureItemShape(parsedCvData.skills, 'value');
             parsedCvData.certification = ensureItemShape(parsedCvData.certification, 'value');
             parsedCvData.language = ensureItemShape(parsedCvData.language, 'value');
+            
+            parsedCvData.experience = ensureItemId(parsedCvData.experience);
+            parsedCvData.education = ensureItemId(parsedCvData.education);
+            parsedCvData.projects = ensureItemId(parsedCvData.projects);
             
             setCvData(parsedCvData);
             // setAiCredits(parsed.aiCredits); 
