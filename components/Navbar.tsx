@@ -87,7 +87,7 @@ export default function Navbar({ onNavigate, onSectionClick }: NavbarProps) {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.92 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                    className="flex items-center gap-1 font-bold text-sm bg-black/10 hover:bg-black/20 px-3 py-1 rounded"
+                    className="flex items-center gap-1 font-bold text-sm bg-black/10 hover:bg-black/20 px-1 py-1 rounded"
                 >
                     <span className="relative px-1 py-0.5">
                         {language === 'en' && (
@@ -167,7 +167,7 @@ export default function Navbar({ onNavigate, onSectionClick }: NavbarProps) {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.92 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                    className="flex items-center gap-1 font-bold text-xs bg-black/10 hover:bg-black/20 px-2 py-1 rounded"
+                    className="flex items-center gap-1 font-bold text-xs bg-black/10 hover:bg-black/20 px-1 py-1 rounded"
                 >
                     <span className="relative px-1 py-0.5">
                         {language === 'en' && (
