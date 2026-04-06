@@ -69,26 +69,26 @@ export async function POST(req: Request) {
             }
         );
 
-        // 7. Find user by ID prefix
-
-        // 7. Find user by ID prefix
-        // Since Postgres LIKE on UUID is tricky via client, we fetch IDs and match in JS.
-        // This is safe for < 10k users. optimize later if needed.
-        const { data: allProfiles, error: profileError } = await supabase
+        // 7. Find user by ID prefix using a targeted DB query
+        // [Security Fix #9] Uses ilike instead of fetching ALL profiles + JS filter.
+        // Also detects UUID prefix collisions to prevent wrong-user upgrades.
+        const { data: matchingProfiles, error: profileError } = await supabase
             .from('profiles')
-            .select('id, email, tier');
+            .select('id, email, tier')
+            .ilike('id', `${userIdPrefix}%`)
+            .limit(2); // Fetch up to 2 to detect collisions
 
-        if (profileError || !allProfiles) {
-            console.error('❌ Error fetching profiles');
-            return NextResponse.json({ error: 'Failed to fetch profiles' }, { status: 500 });
-        }
-
-        const profile = allProfiles.find(p => p.id.startsWith(userIdPrefix));
-
-        if (!profile) {
+        if (profileError || !matchingProfiles || matchingProfiles.length === 0) {
             console.error('❌ User not found');
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
+
+        if (matchingProfiles.length > 1) {
+            console.error('❌ Ambiguous order ID prefix — multiple users matched:', userIdPrefix);
+            return NextResponse.json({ error: 'Ambiguous order ID. Please contact support.' }, { status: 409 });
+        }
+
+        const profile = matchingProfiles[0];
 
         const userId = profile.id;
         console.log('✅ Payment verified, upgrading user to Pro');

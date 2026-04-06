@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
+import { z } from 'zod';
+
+// [Security Fix #6] UUID validation for ticket IDs
+const uuidSchema = z.string().uuid();
 
 function getServiceSupabase() {
     return createServiceClient(
@@ -48,8 +52,9 @@ export async function PATCH(req: Request) {
 
     const { ticketId, status } = await req.json();
     const validStatuses = ['open', 'in_progress', 'resolved'];
-    if (!ticketId || !validStatuses.includes(status)) {
-        return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    const ticketIdValidation = uuidSchema.safeParse(ticketId);
+    if (!ticketIdValidation.success || !validStatuses.includes(status)) {
+        return NextResponse.json({ error: 'Invalid ticketId or status' }, { status: 400 });
     }
 
     const serviceSupabase = getServiceSupabase();
@@ -69,8 +74,8 @@ export async function DELETE(req: Request) {
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
-    
-    if (!id) return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    const idValidation = uuidSchema.safeParse(id);
+    if (!idValidation.success) return NextResponse.json({ error: 'Invalid ticket ID format' }, { status: 400 });
 
     const serviceSupabase = getServiceSupabase();
     const { error } = await serviceSupabase

@@ -15,6 +15,24 @@ const generateSchema = z.object({
     language: z.enum(['en', 'id']).default('en'),
 });
 
+// [Security Fix #8] Lightweight server-side HTML sanitizer for AI-generated cover letters.
+// Only allows safe paragraph-level tags. Strips scripts, event handlers, and javascript: URIs.
+// No external package needed — keeps the dependency tree clean.
+function sanitizeCoverLetterHtml(html: string): string {
+    return html
+        // Strip <script> blocks entirely
+        .replace(/<script[\s\S]*?<\/script>/gi, '')
+        // Strip <style> blocks entirely
+        .replace(/<style[\s\S]*?<\/style>/gi, '')
+        // Remove inline event handlers (onclick, onerror, onload, etc.)
+        .replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '')
+        // Remove javascript: protocol in href/src attributes
+        .replace(/(?:href|src)\s*=\s*["']?\s*javascript:[^"'\s>]*/gi, '')
+        // Strip any HTML tags NOT in our allowed list:
+        // Allowed: p, br, strong, em, b, i, ul, ol, li
+        .replace(/<(?!\/?(?:p|br|strong|em|b|i|ul|ol|li)\b)[^>]*>/gi, '');
+}
+
 export async function POST(req: Request) {
     try {
         const supabase = await createClient();
@@ -179,7 +197,9 @@ export async function POST(req: Request) {
             model: 'llama-3.3-70b-versatile',
         });
 
-        const generatedContent = completion.choices[0]?.message?.content || '';
+        const rawContent = completion.choices[0]?.message?.content || '';
+        // Sanitize AI output before storing — defends against XSS via prompt injection
+        const generatedContent = sanitizeCoverLetterHtml(rawContent);
 
         // 6. Save (Update or Insert)
         let savedLetter;

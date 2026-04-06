@@ -15,6 +15,14 @@ function getServiceSupabase() {
 
 export async function POST(req: Request) {
     try {
+        // [Security Fix #1] Require authentication — prevents unauthenticated users from
+        // flooding Supabase storage with arbitrary files at zero cost.
+        const supabase = await createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized. Please log in to attach screenshots.' }, { status: 401 });
+        }
+
         const formData = await req.formData();
         const file = formData.get('file') as File | null;
 
@@ -32,10 +40,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'File size must be under 5MB' }, { status: 400 });
         }
 
-        // Get user for folder path (guests use 'guest')
-        const supabase = await createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        const folder = user?.id ?? 'guest';
+        const folder = user.id;
 
         const timestamp = Date.now();
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
@@ -54,10 +59,11 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
         }
 
-        // Get a signed URL valid for 1 year (for admin viewing)
+        // [Security Fix #10] Signed URL valid for 90 days (reduced from 1 year)
+        // Shorter lifespan limits exposure if a URL leaks from admin panel logs.
         const { data: signedData } = await serviceSupabase.storage
             .from('support-screenshots')
-            .createSignedUrl(path, 60 * 60 * 24 * 365);
+            .createSignedUrl(path, 60 * 60 * 24 * 90);
 
         return NextResponse.json({ url: signedData?.signedUrl ?? '' });
     } catch (err) {

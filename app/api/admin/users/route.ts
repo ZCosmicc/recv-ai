@@ -51,9 +51,18 @@ export async function GET(req: Request) {
     return NextResponse.json({ users });
 }
 
+// [Security Fix #5] Allowlist of valid tier values — prevents arbitrary strings
+// from being written to the tier column even via a compromised admin account.
+const VALID_TIERS = ['free', 'pro'] as const;
+type ValidTier = typeof VALID_TIERS[number];
+
 export async function PATCH(req: Request) {
     const supabase = await createClient();
     const { userId, tier } = await req.json();
+
+    if (!userId || !tier || !VALID_TIERS.includes(tier)) {
+        return NextResponse.json({ error: 'Invalid userId or tier value' }, { status: 400 });
+    }
 
     // Admin Check
     const { data: { user } } = await supabase.auth.getUser();

@@ -31,19 +31,33 @@ export async function POST(req: Request) {
 
         const serviceSupabase = getServiceSupabase();
 
-        // Rate limit: logged-in users can only submit 1 ticket per 24h
-        if (user) {
-            const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-            const { count } = await serviceSupabase
-                .from('support_tickets')
-                .select('id', { count: 'exact', head: true })
-                .eq('user_id', user.id)
-                .gte('created_at', since);
+        // [Security Fix #4] Rate limit: 1 ticket per 24h, enforced by email for both
+        // logged-in users AND guests — prevents unauthenticated ticket spam.
+        const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        const { count: recentCount } = await serviceSupabase
+            .from('support_tickets')
+            .select('id', { count: 'exact', head: true })
+            .eq('email', email)
+            .gte('created_at', since);
 
-            if ((count ?? 0) >= 1) {
+        if ((recentCount ?? 0) >= 1) {
+            return NextResponse.json(
+                { error: 'rate_limited', message: "A ticket from this email was already submitted today. Please check back tomorrow." },
+                { status: 429 }
+            );
+        }
+
+        // [Security Fix #7] Validate that screenshot URLs are from our own Supabase storage.
+        // Prevents users from injecting arbitrary external URLs stored as 'screenshots'.
+        if (screenshot_urls && screenshot_urls.length > 0) {
+            const supabaseStorageBase = process.env.NEXT_PUBLIC_SUPABASE_URL;
+            const hasInvalidUrl = screenshot_urls.some(
+                (url) => !url.startsWith(`${supabaseStorageBase}/storage/v1/`)
+            );
+            if (hasInvalidUrl) {
                 return NextResponse.json(
-                    { error: 'rate_limited', message: "You've already submitted a ticket today. Please check back tomorrow." },
-                    { status: 429 }
+                    { error: 'Invalid screenshot URL. Only Supabase-hosted images are accepted.' },
+                    { status: 400 }
                 );
             }
         }
