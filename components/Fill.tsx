@@ -81,32 +81,34 @@ export default function Fill({
     // --- Undo Delete ---
     const pendingDeleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const activeUndoToastIdRef = useRef<string | null>(null);
-    // Use a ref so the undo callback always reads the latest value (avoids stale closure)
+    // Keep a ref that always points to the latest cvData so the undo callback
+    // (which is a frozen closure passed to addToast) can read the current state.
+    const cvDataRef = useRef(cvData);
+    cvDataRef.current = cvData;
+    // Stores only the deleted item info — no snapshot
     const pendingDeleteRef = useRef<{
         field: string;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         item: any;
         idx: number;
         label: string;
-        // Snapshot of cvData at the time of deletion, so undo restores correctly
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        snapshotCvData: any;
     } | null>(null);
 
     const handleUndoDelete = React.useCallback(() => {
         const pd = pendingDeleteRef.current;
         if (!pd) return;
         if (pendingDeleteTimerRef.current) clearTimeout(pendingDeleteTimerRef.current);
-        // Restore item into the snapshot (pre-delete data)
+        // Read the CURRENT cvData (not a snapshot) and splice the item back in
+        const currentData = cvDataRef.current;
         let newCvData: CVData;
         if (pd.field === 'customFields') {
-            const arr = [...pd.snapshotCvData.personal.customFields];
+            const arr = [...currentData.personal.customFields];
             arr.splice(pd.idx, 0, pd.item);
-            newCvData = { ...pd.snapshotCvData, personal: { ...pd.snapshotCvData.personal, customFields: arr } };
+            newCvData = { ...currentData, personal: { ...currentData.personal, customFields: arr } };
         } else {
-            const arr = [...(pd.snapshotCvData[pd.field as keyof CVData] as unknown[])];
+            const arr = [...(currentData[pd.field as keyof CVData] as unknown[])];
             arr.splice(pd.idx, 0, pd.item);
-            newCvData = { ...pd.snapshotCvData, [pd.field]: arr };
+            newCvData = { ...currentData, [pd.field]: arr };
         }
         setCvData(newCvData);
         pendingDeleteRef.current = null;
@@ -124,8 +126,6 @@ export default function Fill({
             removeToast(activeUndoToastIdRef.current);
             activeUndoToastIdRef.current = null;
         }
-        // Snapshot BEFORE deletion so undo can restore fully
-        const snapshotCvData = { ...cvData };
         // Remove immediately from cvData
         let newCvData: CVData;
         if (field === 'customFields') {
@@ -135,8 +135,8 @@ export default function Fill({
             newCvData = { ...cvData, [field]: arr.filter((_, i) => i !== idx) };
         }
         setCvData(newCvData);
-        // Store in ref so undo callback always reads the latest
-        pendingDeleteRef.current = { field, item, idx, label, snapshotCvData };
+        // Store deleted item in ref (undo reads current cvData from cvDataRef)
+        pendingDeleteRef.current = { field, item, idx, label };
         // Open 5s undo window
         const toastId = addToast(
             `${label} deleted.`,
@@ -148,6 +148,7 @@ export default function Fill({
         pendingDeleteTimerRef.current = setTimeout(() => {
             pendingDeleteRef.current = null;
             activeUndoToastIdRef.current = null;
+
         }, 5000);
     };
 
