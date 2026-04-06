@@ -1,6 +1,6 @@
 # UI/UX Improvement Plan — Recv.AI
 
-> Last updated: 2026-04-06 11:45 PM
+> Last updated: 2026-04-07 12:14 AM
 
 ## Overview
 
@@ -103,19 +103,37 @@ const removeToast = (id) => {
 #### Toast Stacking (`components/Toast.tsx`)
 Added `offsetIndex?: number` prop. Each toast renders at `top: ${96 + offsetIndex * 80}px` via inline style, so they stack vertically without overlap.
 
-#### Stale Closure Fix (`components/Fill.tsx`)
+#### Stale Closure Fix (`components/Fill.tsx`) — Attempt 1 (WRONG ❌)
 The undo button didn't work because `handleUndoDelete` captured `pendingDelete` as `null` in its closure at the time it was passed to `addToast`. The action callback "froze" the state value.
 
-**Fix:** Replaced `pendingDelete` state with `pendingDeleteRef` (a ref). The undo callback reads from the ref, which always has the latest value. Also stores a **snapshot** of `cvData` at deletion time so undo restores the exact pre-delete state:
+**First fix (had a snapshot bug):** Replaced `pendingDelete` state with `pendingDeleteRef` (a ref) and stored a `snapshotCvData` (shallow copy of `cvData` at deletion time) so undo would restore from it.
+
+**Problem with snapshots:** Deleting B then A would snapshot `[A,B]` then `[A]`. Undo spliced A back into snapshot `[A]` → produced `[A, A]`. Rapid delete+undo cycles compounded duplicates (3, 4, 6+ items).
+
+#### Stale Closure Fix — Attempt 2 (CORRECT ✅)
+Removed `snapshotCvData` entirely. Instead, use a **`cvDataRef`** that always points to the latest `cvData`:
+
 ```tsx
-const pendingDeleteRef = useRef<{ field, item, idx, label, snapshotCvData } | null>(null);
+// Always synced to latest cvData on every render
+const cvDataRef = useRef(cvData);
+cvDataRef.current = cvData;
+
+// Stores only the deleted item — NO snapshot
+const pendingDeleteRef = useRef<{ field, item, idx, label } | null>(null);
 
 const handleUndoDelete = React.useCallback(() => {
-  const pd = pendingDeleteRef.current; // always current
+  const pd = pendingDeleteRef.current;
   if (!pd) return;
-  // restore from snapshot...
+  // Read CURRENT cvData from ref, not a frozen snapshot
+  const currentData = cvDataRef.current;
+  const arr = [...(currentData[pd.field] as unknown[])];
+  arr.splice(pd.idx, 0, pd.item);
+  setCvData({ ...currentData, [pd.field]: arr });
+  // cleanup...
 }, [setCvData, removeToast]);
 ```
+
+Key insight: `cvDataRef.current` is updated on every render (`cvDataRef.current = cvData`), so when the frozen `handleUndoDelete` callback runs inside the toast, it reads the **live** current state, not a stale copy.
 
 #### Toast Spam Fix (`app/page.tsx`)
 Auto-save was calling `addToast` on every save cycle, stacking "Saving changes..." / "Changes saved!" infinitely.
@@ -124,6 +142,23 @@ Auto-save was calling `addToast` on every save cycle, stacking "Saving changes..
 
 #### Delete Toast Color
 Changed `type="info"` (blue) → `type="error"` (red) for the delete undo toast.
+
+#### Save Toast Overwrite Fix (`app/page.tsx`)
+Even after the spam fix, the **result** toast ("Changes saved!") was not tracked by `saveToastIdRef`. Each save cycle added a new one without removing the old one, causing the green toasts to pile up (visible in screenshot: 4–5 "Changes saved!" stacked).
+
+**Fix:** `saveToastIdRef` now also tracks the result toast (`addToast('Changes saved!', 'success')` return value). The next save cycle removes whatever toast is currently tracked — whether it's a "Saving changes..." or "Changes saved!" — before adding a new one. At most 1 save-related toast is visible at any time.
+
+#### Mobile Toast Sizing (`components/Toast.tsx`)
+Toast was too large on mobile — thick 4px border, large padding, and full-width text blocked significant screen real estate.
+
+**Fix:** Responsive classes:
+- Padding: `px-3 py-2` → `md:px-6 md:py-4`
+- Border: `border-2` → `md:border-4`
+- Text: `text-xs` → `md:text-base`
+- Right offset: `right-3` → `md:right-6`
+- Max width: `max-w-[90vw]` on mobile to prevent overflow
+- Stacking gap: `56px` on mobile vs original `80px`
+- Icon/close button: proportionally smaller with `md:` breakpoints
 
 ---
 
@@ -197,6 +232,8 @@ Changed `type="info"` (blue) → `type="error"` (red) for the delete undo toast.
 | `58bae4c` | Session B (attempt 1): LayoutGroup isolation |
 | `d1397b4` | Bug fixes: layoutDependency attempt + toast queue + offsetIndex |
 | `1a1ebf4` | Correct fixes: drag-state layout + undo ref + toast dedup |
+| `f7e600a` | Fix undo duplication: cvDataRef instead of snapshot |
+| `(next)` | Save toast overwrite + mobile toast sizing |
 
 ---
 
@@ -207,6 +244,6 @@ Changed `type="info"` (blue) → `type="error"` (red) for the delete undo toast.
 | 1 | Mobile footer layout | ✅ Done | 🟢 Easy |
 | 2 | Language toggle animation | ✅ Done | 🟢 Easy |
 | 3 | Fill page animation bleed | ✅ Done (3rd attempt) | 🟡 Medium |
-| 4 | Undo delete toast | ✅ Done (revised) | 🟡 Medium |
+| 4 | Undo delete toast | ✅ Done (3rd attempt) | 🟡 Medium |
 | 4.5 | Mobile drag scroll conflict | ⏳ Pending | 🟡 Medium |
 | 5 | Review page live preview | ⏳ Pending | 🔴 Complex |

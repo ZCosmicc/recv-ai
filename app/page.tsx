@@ -375,16 +375,16 @@ function BuilderContent() {
       .eq('id', cvId);
 
     setIsSaving(false);
-    // Remove the "Saving changes..." toast
+    // Remove the "Saving changes..." toast before showing result
     if (saveToastIdRef.current) {
       removeToast(saveToastIdRef.current);
       saveToastIdRef.current = null;
     }
     if (error) {
-      addToast('Error saving CV', 'error');
+      saveToastIdRef.current = addToast('Error saving CV', 'error');
     } else {
       lastSavedData.current = JSON.stringify({ cvData, sections, selectedTemplate }); // Update ref on success
-      addToast('Changes saved!', 'success');
+      saveToastIdRef.current = addToast('Changes saved!', 'success');
     }
   };
 
