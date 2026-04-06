@@ -22,6 +22,11 @@ All notable changes to this project will be documented in this file.
 - Fixing responsive edge padding `px-4 sm:px-0` for mobile viewers on the Review screen layout.
 - Added a `cursor: pointer` catch-all for all interactive standard elements for web navigation parity.
 
+### ✨ UI/UX Polish
+
+- **Mobile Footer Layout Fix**: Converted the copyright line from a `flex` container (which caused the heart SVG to strand on its own line on narrow screens) to an inline text flow with `align-middle` SVG. Reduced footer link row gap from `gap-8` to `gap-4 sm:gap-8` so all 4 links (Privacy, Terms, Contact, Instagram) fit on one row on mobile without orphaning.
+- **Language Toggle Animation**: Upgraded both the desktop and mobile EN|ID toggle buttons from plain `<button>` to `motion.button` with spring physics (`stiffness: 400, damping: 25`). Added a `motion.span` sliding background pill that springs between the EN and ID positions on switch, and `motion.span` opacity transitions on each label — consistent with the rest of the app's Framer Motion system.
+
 ### 🛡️ Security Hardening
 
 Conducted a full security audit against all features added since v1.2.2. Previous rating: 8.5/10. Post-fix rating: **9.2/10**.
