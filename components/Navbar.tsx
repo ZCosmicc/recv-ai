@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { Menu, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -82,6 +82,7 @@ export default function Navbar({ onNavigate, onSectionClick }: NavbarProps) {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-8 font-bold text-sm">
                 {/* Language Switcher — Desktop */}
+                <LayoutGroup id="lang-toggle-desktop">
                 <motion.button
                     onClick={toggleLanguage}
                     whileHover={{ scale: 1.05 }}
@@ -111,6 +112,7 @@ export default function Navbar({ onNavigate, onSectionClick }: NavbarProps) {
                         <motion.span animate={{ opacity: language === 'id' ? 1 : 0.45 }} transition={{ duration: 0.2 }} className="relative z-10">ID</motion.span>
                     </span>
                 </motion.button>
+                </LayoutGroup>
 
                 <a href="#" className="hover:underline decoration-2 underline-offset-4" onClick={handleHomeClick}>{t.nav.home}</a>
 
@@ -162,6 +164,7 @@ export default function Navbar({ onNavigate, onSectionClick }: NavbarProps) {
             {/* Mobile: Language Switcher + Hamburger */}
             <div className="flex md:hidden items-center gap-3">
                 {/* Language Switcher (Mobile) */}
+                <LayoutGroup id="lang-toggle-mobile">
                 <motion.button
                     onClick={toggleLanguage}
                     whileHover={{ scale: 1.05 }}
@@ -191,6 +194,7 @@ export default function Navbar({ onNavigate, onSectionClick }: NavbarProps) {
                         <motion.span animate={{ opacity: language === 'id' ? 1 : 0.45 }} transition={{ duration: 0.2 }} className="relative z-10">ID</motion.span>
                     </span>
                 </motion.button>
+                </LayoutGroup>
 
                 {/* Hamburger Button */}
                 <motion.button

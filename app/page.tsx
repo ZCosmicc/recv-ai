@@ -66,7 +66,17 @@ function BuilderContent() {
     type: 'info'
   });
   const [isSaving, setIsSaving] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
+  const [toasts, setToasts] = useState<{ id: string; message: string; type: ToastType; duration?: number; action?: { label: string; onClick: () => void } }[]>([]);
+
+  const addToast = React.useCallback((message: string, type: ToastType, duration?: number, action?: { label: string; onClick: () => void }) => {
+    const id = crypto.randomUUID();
+    setToasts(prev => [...prev, { id, message, type, duration, action }]);
+    return id;
+  }, []);
+
+  const removeToast = React.useCallback((id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  }, []);
 
   // Initial Load Logic
   useEffect(() => {
@@ -338,7 +348,7 @@ function BuilderContent() {
     setIsSaving(true);
 
     // If explicit save or user wants alerts for auto-save
-    if (isAutoSave) setToast({ message: 'Saving changes...', type: 'info' });
+    if (isAutoSave) addToast('Saving changes...', 'info', 3000);
 
     const fullPayload = {
       ...cvData,
@@ -357,10 +367,10 @@ function BuilderContent() {
 
     setIsSaving(false);
     if (error) {
-      setToast({ message: 'Error saving CV', type: 'error' });
+      addToast('Error saving CV', 'error');
     } else {
       lastSavedData.current = JSON.stringify({ cvData, sections, selectedTemplate }); // Update ref on success
-      setToast({ message: 'Changes saved!', type: 'success' });
+      addToast('Changes saved!', 'success');
     }
   };
 
@@ -510,6 +520,8 @@ function BuilderContent() {
         onSave={handleSaveToCloud}
         isSaving={isSaving}
         tier={tier}
+        addToast={addToast}
+        removeToast={removeToast}
       />
     );
   } else if (step === 'review') {
@@ -544,13 +556,17 @@ function BuilderContent() {
         message={alertModal.message}
         type={alertModal.type}
       />
-      {toast && (
+      {toasts.map((t, i) => (
         <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
+          key={t.id}
+          message={t.message}
+          type={t.type}
+          duration={t.duration}
+          action={t.action}
+          onClose={() => removeToast(t.id)}
+          offsetIndex={i}
         />
-      )}
+      ))}
     </>
   );
 }

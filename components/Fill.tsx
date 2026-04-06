@@ -14,7 +14,6 @@ import { downloadPDF } from '../utils/pdf';
 import { templates } from './CVPreview';
 import Navbar from './Navbar';
 import PlanCard from './PlanCard';
-import Toast from './Toast';
 import { motion, AnimatePresence, Reorder, LayoutGroup } from 'framer-motion';
 
 interface FillProps {
@@ -31,6 +30,8 @@ interface FillProps {
     onSave?: () => void;
     isSaving?: boolean;
     tier?: 'guest' | 'free' | 'pro';
+    addToast: (message: string, type: import('./Toast').ToastType, duration?: number, action?: { label: string; onClick: () => void }) => string;
+    removeToast: (id: string) => void;
 }
 
 const Tooltip = ({ id, text }: { id: string; text: string }) => {
@@ -69,13 +70,16 @@ export default function Fill({
     isCloud,
     onSave,
     isSaving,
-    tier = 'guest'
+    tier = 'guest',
+    addToast,
+    removeToast,
 }: FillProps) {
     const [showLimitModal, setShowLimitModal] = useState(false);
     const [activeSection, setActiveSection] = useState('contact');
 
     // --- Undo Delete ---
     const pendingDeleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const activeUndoToastIdRef = useRef<string | null>(null);
     const [pendingDelete, setPendingDelete] = useState<{
         field: string;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -83,10 +87,14 @@ export default function Fill({
         idx: number;
         label: string;
     } | null>(null);
-    const [showUndoToast, setShowUndoToast] = useState(false);
 
     const handleSoftDelete = (field: string, item: unknown, idx: number, label: string) => {
         if (pendingDeleteTimerRef.current) clearTimeout(pendingDeleteTimerRef.current);
+        // Dismiss any previous undo toast immediately
+        if (activeUndoToastIdRef.current) {
+            removeToast(activeUndoToastIdRef.current);
+            activeUndoToastIdRef.current = null;
+        }
         // Remove immediately from cvData
         let newCvData: CVData;
         if (field === 'customFields') {
@@ -97,12 +105,18 @@ export default function Fill({
         }
         setCvData(newCvData);
         // Open 5s undo window
+        const toastId = addToast(
+            `${label} deleted.`,
+            'error',
+            5000,
+            { label: 'Undo', onClick: handleUndoDelete }
+        );
+        activeUndoToastIdRef.current = toastId;
         pendingDeleteTimerRef.current = setTimeout(() => {
             setPendingDelete(null);
-            setShowUndoToast(false);
+            activeUndoToastIdRef.current = null;
         }, 5000);
         setPendingDelete({ field, item, idx, label });
-        setShowUndoToast(true);
     };
 
     const handleUndoDelete = () => {
@@ -120,7 +134,10 @@ export default function Fill({
         }
         setCvData(newCvData);
         setPendingDelete(null);
-        setShowUndoToast(false);
+        if (activeUndoToastIdRef.current) {
+            removeToast(activeUndoToastIdRef.current);
+            activeUndoToastIdRef.current = null;
+        }
         pendingDeleteTimerRef.current = null;
     };
 
@@ -267,6 +284,7 @@ export default function Fill({
                                                     animate={{ opacity: 1, y: 0 }}
                                                     exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                                                     transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                                                    layoutDependency={cvData.personal.customFields}
                                                     className="mb-2"
                                                 >
                                                     {/* Mobile: stacked. sm+: side-by-side row */}
@@ -370,6 +388,7 @@ export default function Fill({
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                                                layoutDependency={cvData.experience}
                                                 className="p-4 border-2 border-black space-y-3 cursor-grab active:cursor-grabbing hover:bg-gray-50 transition-colors bg-white relative"
                                             >
                                                 <div className="flex gap-2">
@@ -546,6 +565,7 @@ export default function Fill({
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                                                layoutDependency={cvData.education}
                                                 className="p-4 border-2 border-black space-y-3 cursor-grab active:cursor-grabbing hover:bg-gray-50 transition-colors bg-white relative"
                                             >
                                                 <div className="flex gap-2">
@@ -640,6 +660,7 @@ export default function Fill({
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                                                layoutDependency={cvData.skills}
                                                 className="flex gap-2 cursor-grab active:cursor-grabbing hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
                                             >
                                                 <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
@@ -691,6 +712,7 @@ export default function Fill({
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                                                layoutDependency={cvData.projects}
                                                 className="p-4 border-2 border-black space-y-3 cursor-grab active:cursor-grabbing hover:bg-gray-50 transition-colors bg-white relative"
                                             >
                                                 <div className="flex gap-2">
@@ -779,6 +801,7 @@ export default function Fill({
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                                                layoutDependency={cvData.certification}
                                                 className="flex gap-2 cursor-grab active:cursor-grabbing hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
                                             >
                                                 <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
@@ -830,6 +853,7 @@ export default function Fill({
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                                                layoutDependency={cvData.language}
                                                 className="flex gap-2 cursor-grab active:cursor-grabbing hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
                                             >
                                                 <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
@@ -943,19 +967,6 @@ export default function Fill({
                 />
             </div>
 
-            {showUndoToast && pendingDelete && (
-                <Toast
-                    message={`${pendingDelete.label} deleted.`}
-                    type="info"
-                    duration={5000}
-                    onClose={() => {
-                        setShowUndoToast(false);
-                        setPendingDelete(null);
-                        if (pendingDeleteTimerRef.current) clearTimeout(pendingDeleteTimerRef.current);
-                    }}
-                    action={{ label: 'Undo', onClick: handleUndoDelete }}
-                />
-            )}
             <LimitModal
                 isOpen={showLimitModal}
                 onClose={() => setShowLimitModal(false)}

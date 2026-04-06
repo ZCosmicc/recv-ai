@@ -9,9 +9,10 @@ interface ToastProps {
     onClose: () => void;
     duration?: number;
     action?: { label: string; onClick: () => void };
+    offsetIndex?: number; // 0 = top slot (96px), 1 = 80px below, etc.
 }
 
-export default function Toast({ message, type, onClose, duration = 3000, action }: ToastProps) {
+export default function Toast({ message, type, onClose, duration = 3000, action, offsetIndex = 0 }: ToastProps) {
     useEffect(() => {
         const timer = setTimeout(() => {
             onClose();
@@ -44,7 +45,10 @@ export default function Toast({ message, type, onClose, duration = 3000, action 
     };
 
     return (
-        <div className={`fixed top-24 right-6 z-[100] flex items-center gap-3 px-6 py-4 border-4 border-black shadow-neo animate-in slide-in-from-right duration-300 ${getBgColor()}`}>
+        <div
+            className={`fixed right-6 z-[100] flex items-center gap-3 px-6 py-4 border-4 border-black shadow-neo animate-in slide-in-from-right duration-300 ${getBgColor()}`}
+            style={{ top: `${96 + offsetIndex * 80}px` }}
+        >
             <div className={`border-2 border-black p-1 ${getIconColor()}`}>
                 {getIcon()}
             </div>
