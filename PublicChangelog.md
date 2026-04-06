@@ -8,6 +8,11 @@ All user-facing updates and improvements to Recv. AI.
 - **Recovered Local Sessions:** We implemented an under-the-hood engine fallback to instantly fix older, offline-cached CVs that were locking up the interface or refusing to drag correctly. Moving forward, returning users won't experience dead cards.
 - **Smarter AI Cover Letter Connections:** Underwent a massive data-architecture upgrade that dramatically slims down how your resume speaks to our AI APIs without you having to re-enter anything, optimizing accuracy when your Cover Letters are generated.
 
+### 🛡️ Security & Trust
+- **Routine Security Audit:** We conducted a thorough security review of all new features added over the past few months. Several improvements were made behind the scenes to further protect your data, account, and emails. Your experience doesn't change — it's just safer.
+- **Email Protection Upgraded:** We've strengthened our email domain security settings (DMARC) so it's even harder for bad actors to impersonate Recv. AI in your inbox. Any suspicious email pretending to be from us will now be automatically flagged as spam by your mail provider.
+
+
 ## [1.3.2] - 2026-04-04
 ### ✨ Animations & Mobile Fixes
 - **Animated Navigation Menu:** The mobile hamburger menu now opens and closes with a smooth slide-down animation. The `☰` and `✕` icons rotate through each other instead of swapping instantly. Menu links also cascade in one by one for a polished feel.
