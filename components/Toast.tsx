@@ -8,9 +8,10 @@ interface ToastProps {
     type: ToastType;
     onClose: () => void;
     duration?: number;
+    action?: { label: string; onClick: () => void };
 }
 
-export default function Toast({ message, type, onClose, duration = 3000 }: ToastProps) {
+export default function Toast({ message, type, onClose, duration = 3000, action }: ToastProps) {
     useEffect(() => {
         const timer = setTimeout(() => {
             onClose();
@@ -47,7 +48,17 @@ export default function Toast({ message, type, onClose, duration = 3000 }: Toast
             <div className={`border-2 border-black p-1 ${getIconColor()}`}>
                 {getIcon()}
             </div>
-            <p className="font-bold text-black">{message}</p>
+            <div className="flex items-center gap-1">
+                <p className="font-bold text-black">{message}</p>
+                {action && (
+                    <button
+                        onClick={() => { action.onClick(); onClose(); }}
+                        className="font-bold underline hover:no-underline text-primary ml-2 whitespace-nowrap"
+                    >
+                        {action.label}
+                    </button>
+                )}
+            </div>
             <button onClick={onClose} className="ml-4 text-gray-500 hover:text-black">
                 <X className="w-4 h-4" />
             </button>

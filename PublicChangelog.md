@@ -2,13 +2,18 @@
 
 All user-facing updates and improvements to Recv. AI.
 
+## [1.3.4] - 2026-04-06
+### ✨ UI & Animation Polish
+- **Fixed Mobile Footer:** The footer copyright text was awkwardly breaking across multiple lines on phones. It now reads cleanly in a single line on all screen sizes, and the Privacy / Terms / Contact / Instagram links all sit neatly on one row.
+- **Language Toggle Polish:** The EN | ID language switcher in the top navigation bar now has a smooth animated pill that slides between the two options when you switch — consistent with the rest of the app's feel.
+- **Smarter CV Builder Animations:** Fixed a confusing visual glitch in the CV Builder where adding a new card in one section (e.g. Certifications) would also trigger animations in completely unrelated sections below it (e.g. Languages). Each section now animates independently — only the section you're actively editing moves.
+- **Undo Delete:** Accidentally deleted an Experience entry, Skill, Certification, or any other card in the CV Builder? No more panic! Deleting anything now shows a quick **"Deleted. Undo"** notification at the top of the screen. You have 5 seconds to take it back — your data will be restored exactly where it was.
+
 ## [1.3.3] - 2026-04-05
 ### 🚀 Drag & Drop Stability + Deep Fixes
 - **Perfected Drag Handling:** We completely eradicated an annoying visual bug in the CV Builder where dragged sections (like Experience or Education) would aggressively overlap or conflict with each other. Dragging any card now works perfectly cleanly, respecting boundaries seamlessly without visually glitching.
 - **Recovered Local Sessions:** We implemented an under-the-hood engine fallback to instantly fix older, offline-cached CVs that were locking up the interface or refusing to drag correctly. Moving forward, returning users won't experience dead cards.
 - **Smarter AI Cover Letter Connections:** Underwent a massive data-architecture upgrade that dramatically slims down how your resume speaks to our AI APIs without you having to re-enter anything, optimizing accuracy when your Cover Letters are generated.
-- **Fixed Mobile Footer:** The footer copyright text was awkwardly breaking across multiple lines on phones. It now reads cleanly in a single line on all screen sizes, and the Privacy / Terms / Contact / Instagram links all sit neatly on one row.
-- **Language Toggle Polish:** The EN | ID language switcher in the top navigation bar now has a smooth animated pill that slides between the two options when you switch — consistent with the rest of the app's feel.
 
 ### 🛡️ Security & Trust
 - **Routine Security Audit:** We conducted a thorough security review of all new features added over the past few months. Several improvements were made behind the scenes to further protect your data, account, and emails. Your experience doesn't change — it's just safer.

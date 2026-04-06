@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import {
     ChevronLeft, Trash2, Info, GripVertical, X, Plus, Sparkles, Download, Menu, Crown, Lock, Loader2, Check
@@ -14,7 +14,8 @@ import { downloadPDF } from '../utils/pdf';
 import { templates } from './CVPreview';
 import Navbar from './Navbar';
 import PlanCard from './PlanCard';
-import { motion, AnimatePresence, Reorder } from 'framer-motion';
+import Toast from './Toast';
+import { motion, AnimatePresence, Reorder, LayoutGroup } from 'framer-motion';
 
 interface FillProps {
     cvData: CVData;
@@ -72,6 +73,56 @@ export default function Fill({
 }: FillProps) {
     const [showLimitModal, setShowLimitModal] = useState(false);
     const [activeSection, setActiveSection] = useState('contact');
+
+    // --- Undo Delete ---
+    const pendingDeleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [pendingDelete, setPendingDelete] = useState<{
+        field: string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        item: any;
+        idx: number;
+        label: string;
+    } | null>(null);
+    const [showUndoToast, setShowUndoToast] = useState(false);
+
+    const handleSoftDelete = (field: string, item: unknown, idx: number, label: string) => {
+        if (pendingDeleteTimerRef.current) clearTimeout(pendingDeleteTimerRef.current);
+        // Remove immediately from cvData
+        let newCvData: CVData;
+        if (field === 'customFields') {
+            newCvData = { ...cvData, personal: { ...cvData.personal, customFields: cvData.personal.customFields.filter((_, i) => i !== idx) } };
+        } else {
+            const arr = cvData[field as keyof CVData] as unknown[];
+            newCvData = { ...cvData, [field]: arr.filter((_, i) => i !== idx) };
+        }
+        setCvData(newCvData);
+        // Open 5s undo window
+        pendingDeleteTimerRef.current = setTimeout(() => {
+            setPendingDelete(null);
+            setShowUndoToast(false);
+        }, 5000);
+        setPendingDelete({ field, item, idx, label });
+        setShowUndoToast(true);
+    };
+
+    const handleUndoDelete = () => {
+        if (!pendingDelete) return;
+        if (pendingDeleteTimerRef.current) clearTimeout(pendingDeleteTimerRef.current);
+        let newCvData: CVData;
+        if (pendingDelete.field === 'customFields') {
+            const arr = [...cvData.personal.customFields];
+            arr.splice(pendingDelete.idx, 0, pendingDelete.item);
+            newCvData = { ...cvData, personal: { ...cvData.personal, customFields: arr } };
+        } else {
+            const arr = [...(cvData[pendingDelete.field as keyof CVData] as unknown[])];
+            arr.splice(pendingDelete.idx, 0, pendingDelete.item);
+            newCvData = { ...cvData, [pendingDelete.field]: arr };
+        }
+        setCvData(newCvData);
+        setPendingDelete(null);
+        setShowUndoToast(false);
+        pendingDeleteTimerRef.current = null;
+    };
 
     const handleTemplateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newTemplateId = e.target.value;
@@ -245,10 +296,7 @@ export default function Fill({
                                                             />
                                                         </div>
                                                         <button
-                                                            onClick={() => {
-                                                                const newFields = cvData.personal.customFields.filter((f, i) => i !== idx);
-                                                                setCvData({ ...cvData, personal: { ...cvData.personal, customFields: newFields } });
-                                                            }}
+                                                            onClick={() => handleSoftDelete('customFields', field, idx, 'Custom field')}
                                                             className="text-red-500 font-bold border-2 border-transparent hover:border-black p-1 mt-1 flex-shrink-0"
                                                         >
                                                             <X className="w-5 h-5" />
@@ -306,11 +354,12 @@ export default function Fill({
 
                             {sections.find(s => s.id === 'experience' && s.enabled) && (
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
-                                    <div className="flex items-center gap-2 mb-4">
+                                        <div className="flex items-center gap-2 mb-4">
                                         <h2 className="text-xl text-gray-900 font-semibold">Experience</h2>
                                         <Tooltip id="exp-tip" text="List work experience in reverse chronological order. Use bullet points and quantify achievements." />
                                     </div>
                                     <div className="space-y-4">
+                                        <LayoutGroup id="experience-section">
                                         <Reorder.Group axis="y" values={cvData.experience} onReorder={(reordered) => setCvData({ ...cvData, experience: reordered })} className="flex flex-col gap-4">
                                         <AnimatePresence initial={false}>
                                         {cvData.experience.map((exp, idx) => (
@@ -460,7 +509,7 @@ export default function Fill({
                                                         />
                                                     </div>
                                                     <button
-                                                        onClick={() => setCvData({ ...cvData, experience: cvData.experience.filter((f, i) => i !== idx) })}
+                                                    onClick={() => handleSoftDelete('experience', exp, idx, 'Experience')}
                                                         className="text-red-500"
                                                     >
                                                         <X className="w-5 h-5" />
@@ -470,6 +519,7 @@ export default function Fill({
                                         ))}
                                         </AnimatePresence>
                                         </Reorder.Group>
+                                        </LayoutGroup>
                                         <button
                                             onClick={() => setCvData({ ...cvData, experience: [...cvData.experience, { id: crypto.randomUUID(), title: '', company: '', startDate: '', endDate: '', description: '', current: false }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -485,6 +535,7 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Education</h2>
                                     <div className="space-y-4">
+                                        <LayoutGroup id="education-section">
                                         <Reorder.Group axis="y" values={cvData.education} onReorder={(reordered) => setCvData({ ...cvData, education: reordered })} className="flex flex-col gap-4">
                                         <AnimatePresence initial={false}>
                                         {cvData.education.map((edu, idx) => (
@@ -552,7 +603,7 @@ export default function Fill({
                                                         />
                                                     </div>
                                                     <button
-                                                        onClick={() => setCvData({ ...cvData, education: cvData.education.filter((f, i) => i !== idx) })}
+                                                    onClick={() => handleSoftDelete('education', edu, idx, 'Education')}
                                                         className="text-red-500"
                                                     >
                                                         <X className="w-5 h-5" />
@@ -562,6 +613,7 @@ export default function Fill({
                                         ))}
                                         </AnimatePresence>
                                         </Reorder.Group>
+                                        </LayoutGroup>
                                         <button
                                             onClick={() => setCvData({ ...cvData, education: [...cvData.education, { id: crypto.randomUUID(), degree: '', major: '', institution: '', year: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -577,6 +629,7 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Skills</h2>
                                     <div className="space-y-3">
+                                        <LayoutGroup id="skills-section">
                                         <Reorder.Group axis="y" values={cvData.skills} onReorder={(reordered) => setCvData({ ...cvData, skills: reordered })} className="flex flex-col gap-3">
                                         <AnimatePresence initial={false}>
                                         {cvData.skills.map((skill, idx) => (
@@ -602,7 +655,7 @@ export default function Fill({
                                                     className="flex-1 px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
                                                 />
                                                 <button
-                                                    onClick={() => setCvData({ ...cvData, skills: cvData.skills.filter((_, i) => i !== idx) })}
+                                                    onClick={() => handleSoftDelete('skills', skill, idx, 'Skill')}
                                                     className="text-red-500"
                                                 >
                                                     <X className="w-5 h-5" />
@@ -611,6 +664,7 @@ export default function Fill({
                                         ))}
                                         </AnimatePresence>
                                         </Reorder.Group>
+                                        </LayoutGroup>
                                         <button
                                             onClick={() => setCvData({ ...cvData, skills: [...cvData.skills, { id: crypto.randomUUID(), value: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -626,6 +680,7 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Projects</h2>
                                     <div className="space-y-4">
+                                        <LayoutGroup id="projects-section">
                                         <Reorder.Group axis="y" values={cvData.projects || []} onReorder={(reordered) => setCvData({ ...cvData, projects: reordered })} className="flex flex-col gap-4">
                                         <AnimatePresence initial={false}>
                                         {(cvData.projects || []).map((project, idx) => (
@@ -687,7 +742,7 @@ export default function Fill({
                                                         />
                                                     </div>
                                                     <button
-                                                        onClick={() => setCvData({ ...cvData, projects: cvData.projects.filter((f, i) => i !== idx) })}
+                                                    onClick={() => handleSoftDelete('projects', project, idx, 'Project')}
                                                         className="text-red-500"
                                                     >
                                                         <X className="w-5 h-5" />
@@ -697,6 +752,7 @@ export default function Fill({
                                         ))}
                                         </AnimatePresence>
                                         </Reorder.Group>
+                                        </LayoutGroup>
                                         <button
                                             onClick={() => setCvData({ ...cvData, projects: [...(cvData.projects || []), { id: crypto.randomUUID(), title: '', description: '', technologies: '', link: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -712,6 +768,7 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl font-semibold mb-4">Certifications</h2>
                                     <div className="space-y-3">
+                                        <LayoutGroup id="certification-section">
                                         <Reorder.Group axis="y" values={cvData.certification} onReorder={(reordered) => setCvData({ ...cvData, certification: reordered })} className="flex flex-col gap-3">
                                         <AnimatePresence initial={false}>
                                         {cvData.certification.map((cert, idx) => (
@@ -737,7 +794,7 @@ export default function Fill({
                                                     className="flex-1 px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
                                                 />
                                                 <button
-                                                    onClick={() => setCvData({ ...cvData, certification: cvData.certification.filter((_, i) => i !== idx) })}
+                                                    onClick={() => handleSoftDelete('certification', cert, idx, 'Certification')}
                                                     className="text-red-500"
                                                 >
                                                     <X className="w-5 h-5" />
@@ -746,6 +803,7 @@ export default function Fill({
                                         ))}
                                         </AnimatePresence>
                                         </Reorder.Group>
+                                        </LayoutGroup>
                                         <button
                                             onClick={() => setCvData({ ...cvData, certification: [...cvData.certification, { id: crypto.randomUUID(), value: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -761,6 +819,7 @@ export default function Fill({
                                 <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl font-semibold mb-4">Languages</h2>
                                     <div className="space-y-3">
+                                        <LayoutGroup id="language-section">
                                         <Reorder.Group axis="y" values={cvData.language} onReorder={(reordered) => setCvData({ ...cvData, language: reordered })} className="flex flex-col gap-3">
                                         <AnimatePresence initial={false}>
                                         {cvData.language.map((lang, idx) => (
@@ -786,16 +845,17 @@ export default function Fill({
                                                     className="flex-1 px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
                                                 />
                                                 <button
-                                                    onClick={() => setCvData({ ...cvData, language: cvData.language.filter((_, i) => i !== idx) })}
+                                                onClick={() => handleSoftDelete('language', lang, idx, 'Language')}
                                                     className="text-red-500"
                                                 >
                                                     <X className="w-5 h-5" />
                                                 </button>
                                             </Reorder.Item>
                                         ))}
-                                        </AnimatePresence>
-                                        </Reorder.Group>
-                                        <button
+                        </AnimatePresence>
+                        </Reorder.Group>
+                        </LayoutGroup>
+                        <button
                                             onClick={() => setCvData({ ...cvData, language: [...cvData.language, { id: crypto.randomUUID(), value: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
@@ -883,6 +943,19 @@ export default function Fill({
                 />
             </div>
 
+            {showUndoToast && pendingDelete && (
+                <Toast
+                    message={`${pendingDelete.label} deleted.`}
+                    type="info"
+                    duration={5000}
+                    onClose={() => {
+                        setShowUndoToast(false);
+                        setPendingDelete(null);
+                        if (pendingDeleteTimerRef.current) clearTimeout(pendingDeleteTimerRef.current);
+                    }}
+                    action={{ label: 'Undo', onClick: handleUndoDelete }}
+                />
+            )}
             <LimitModal
                 isOpen={showLimitModal}
                 onClose={() => setShowLimitModal(false)}

@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.4] - 2026-04-06
+
+### ✨ UI/UX Polish
+
+- **Mobile Footer Layout Fix**: Converted the copyright line from a `flex` container (which caused the heart SVG to strand on its own line on narrow screens) to an inline text flow with `align-middle` SVG. Reduced footer link row gap from `gap-8` to `gap-4 sm:gap-8` so all 4 links (Privacy, Terms, Contact, Instagram) fit on one row on mobile without orphaning.
+- **Language Toggle Animation**: Upgraded both the desktop and mobile EN|ID toggle buttons from plain `<button>` to `motion.button` with spring physics (`stiffness: 400, damping: 25`). Added a `motion.span` sliding background pill that springs between the EN and ID positions on switch, and `motion.span` opacity transitions on each label — consistent with the rest of the app's Framer Motion system.
+- **Fill Page Animation Isolation**: Wrapped each section's `Reorder.Group` in its own `<LayoutGroup id="...">` (Experience, Education, Skills, Projects, Certifications, Languages). Previously, adding a card in one section caused every `Reorder.Item` on the entire page to play a simultaneous layout animation (because `Reorder.Item` carries an implicit `layout` prop that propagates through the shared layout tree). Now each section is a self-contained animation boundary — only the section being changed animates.
+- **Undo Delete Toast**: Replaced all instant card deletions across the Fill page (Experience, Education, Skills, Projects, Certifications, Languages, Custom Fields) with a soft-delete + 5-second undo pattern. Deleting a card removes it immediately (exit animation fires), shows a `"[Item] deleted. Undo"` toast, and re-inserts the item at its original index if Undo is clicked. The `Toast` component was extended with an optional `action` prop to support inline action buttons. Only one pending delete is active at a time — starting a new delete commits the previous one.
+
 ## [1.3.3] - 2026-04-05
 
 ### 🏗️ Data Architecture & UI Architecture
@@ -21,11 +30,6 @@ All notable changes to this project will be documented in this file.
 - Update `Review.tsx` path resolving to handle arrays and property lookups universally (`{ idx, path, suggestion }`), accommodating `.value` targeting.
 - Fixing responsive edge padding `px-4 sm:px-0` for mobile viewers on the Review screen layout.
 - Added a `cursor: pointer` catch-all for all interactive standard elements for web navigation parity.
-
-### ✨ UI/UX Polish
-
-- **Mobile Footer Layout Fix**: Converted the copyright line from a `flex` container (which caused the heart SVG to strand on its own line on narrow screens) to an inline text flow with `align-middle` SVG. Reduced footer link row gap from `gap-8` to `gap-4 sm:gap-8` so all 4 links (Privacy, Terms, Contact, Instagram) fit on one row on mobile without orphaning.
-- **Language Toggle Animation**: Upgraded both the desktop and mobile EN|ID toggle buttons from plain `<button>` to `motion.button` with spring physics (`stiffness: 400, damping: 25`). Added a `motion.span` sliding background pill that springs between the EN and ID positions on switch, and `motion.span` opacity transitions on each label — consistent with the rest of the app's Framer Motion system.
 
 ### 🛡️ Security Hardening
 
