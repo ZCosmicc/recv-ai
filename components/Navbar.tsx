@@ -87,28 +87,29 @@ export default function Navbar({ onNavigate, onSectionClick }: NavbarProps) {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.92 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                    className="relative flex items-center gap-1 font-bold text-sm bg-black/10 hover:bg-black/20 px-3 py-1 rounded overflow-hidden"
+                    className="flex items-center gap-1 font-bold text-sm bg-black/10 hover:bg-black/20 px-3 py-1 rounded"
                 >
-                    {/* Sliding active pill */}
-                    <motion.span
-                        className="absolute inset-y-0.5 rounded bg-white/20"
-                        animate={language === 'en'
-                            ? { left: '4px', right: '55%' }
-                            : { left: '55%', right: '4px' }
-                        }
-                        transition={{ type: 'spring', stiffness: 420, damping: 28 }}
-                    />
-                    <motion.span
-                        animate={{ opacity: language === 'en' ? 1 : 0.45 }}
-                        transition={{ duration: 0.2 }}
-                        className="relative z-10"
-                    >EN</motion.span>
-                    <span className="text-white/50 relative z-10">|</span>
-                    <motion.span
-                        animate={{ opacity: language === 'id' ? 1 : 0.45 }}
-                        transition={{ duration: 0.2 }}
-                        className="relative z-10"
-                    >ID</motion.span>
+                    <span className="relative px-1 py-0.5">
+                        {language === 'en' && (
+                            <motion.span
+                                layoutId="lang-pill-desktop"
+                                className="absolute inset-0 rounded bg-white/25"
+                                transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+                            />
+                        )}
+                        <motion.span animate={{ opacity: language === 'en' ? 1 : 0.45 }} transition={{ duration: 0.2 }} className="relative z-10">EN</motion.span>
+                    </span>
+                    <span className="text-white/50">|</span>
+                    <span className="relative px-1 py-0.5">
+                        {language === 'id' && (
+                            <motion.span
+                                layoutId="lang-pill-desktop"
+                                className="absolute inset-0 rounded bg-white/25"
+                                transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+                            />
+                        )}
+                        <motion.span animate={{ opacity: language === 'id' ? 1 : 0.45 }} transition={{ duration: 0.2 }} className="relative z-10">ID</motion.span>
+                    </span>
                 </motion.button>
 
                 <a href="#" className="hover:underline decoration-2 underline-offset-4" onClick={handleHomeClick}>{t.nav.home}</a>
@@ -166,28 +167,29 @@ export default function Navbar({ onNavigate, onSectionClick }: NavbarProps) {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.92 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                    className="relative flex items-center gap-1 font-bold text-xs bg-black/10 hover:bg-black/20 px-2 py-1 rounded overflow-hidden"
+                    className="flex items-center gap-1 font-bold text-xs bg-black/10 hover:bg-black/20 px-2 py-1 rounded"
                 >
-                    {/* Sliding active pill */}
-                    <motion.span
-                        className="absolute inset-y-0.5 rounded bg-white/20"
-                        animate={language === 'en'
-                            ? { left: '3px', right: '55%' }
-                            : { left: '55%', right: '3px' }
-                        }
-                        transition={{ type: 'spring', stiffness: 420, damping: 28 }}
-                    />
-                    <motion.span
-                        animate={{ opacity: language === 'en' ? 1 : 0.45 }}
-                        transition={{ duration: 0.2 }}
-                        className="relative z-10"
-                    >EN</motion.span>
-                    <span className="text-white/50 relative z-10">|</span>
-                    <motion.span
-                        animate={{ opacity: language === 'id' ? 1 : 0.45 }}
-                        transition={{ duration: 0.2 }}
-                        className="relative z-10"
-                    >ID</motion.span>
+                    <span className="relative px-1 py-0.5">
+                        {language === 'en' && (
+                            <motion.span
+                                layoutId="lang-pill-mobile"
+                                className="absolute inset-0 rounded bg-white/25"
+                                transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+                            />
+                        )}
+                        <motion.span animate={{ opacity: language === 'en' ? 1 : 0.45 }} transition={{ duration: 0.2 }} className="relative z-10">EN</motion.span>
+                    </span>
+                    <span className="text-white/50">|</span>
+                    <span className="relative px-1 py-0.5">
+                        {language === 'id' && (
+                            <motion.span
+                                layoutId="lang-pill-mobile"
+                                className="absolute inset-0 rounded bg-white/25"
+                                transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+                            />
+                        )}
+                        <motion.span animate={{ opacity: language === 'id' ? 1 : 0.45 }} transition={{ duration: 0.2 }} className="relative z-10">ID</motion.span>
+                    </span>
                 </motion.button>
 
                 {/* Hamburger Button */}
