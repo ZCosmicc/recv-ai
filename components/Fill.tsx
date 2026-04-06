@@ -76,17 +76,46 @@ export default function Fill({
 }: FillProps) {
     const [showLimitModal, setShowLimitModal] = useState(false);
     const [activeSection, setActiveSection] = useState('contact');
+    const [draggingSection, setDraggingSection] = useState<string | null>(null);
 
     // --- Undo Delete ---
     const pendingDeleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const activeUndoToastIdRef = useRef<string | null>(null);
-    const [pendingDelete, setPendingDelete] = useState<{
+    // Use a ref so the undo callback always reads the latest value (avoids stale closure)
+    const pendingDeleteRef = useRef<{
         field: string;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         item: any;
         idx: number;
         label: string;
+        // Snapshot of cvData at the time of deletion, so undo restores correctly
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        snapshotCvData: any;
     } | null>(null);
+
+    const handleUndoDelete = React.useCallback(() => {
+        const pd = pendingDeleteRef.current;
+        if (!pd) return;
+        if (pendingDeleteTimerRef.current) clearTimeout(pendingDeleteTimerRef.current);
+        // Restore item into the snapshot (pre-delete data)
+        let newCvData: CVData;
+        if (pd.field === 'customFields') {
+            const arr = [...pd.snapshotCvData.personal.customFields];
+            arr.splice(pd.idx, 0, pd.item);
+            newCvData = { ...pd.snapshotCvData, personal: { ...pd.snapshotCvData.personal, customFields: arr } };
+        } else {
+            const arr = [...(pd.snapshotCvData[pd.field as keyof CVData] as unknown[])];
+            arr.splice(pd.idx, 0, pd.item);
+            newCvData = { ...pd.snapshotCvData, [pd.field]: arr };
+        }
+        setCvData(newCvData);
+        pendingDeleteRef.current = null;
+        if (activeUndoToastIdRef.current) {
+            removeToast(activeUndoToastIdRef.current);
+            activeUndoToastIdRef.current = null;
+        }
+        pendingDeleteTimerRef.current = null;
+    }, [setCvData, removeToast]);
 
     const handleSoftDelete = (field: string, item: unknown, idx: number, label: string) => {
         if (pendingDeleteTimerRef.current) clearTimeout(pendingDeleteTimerRef.current);
@@ -95,6 +124,8 @@ export default function Fill({
             removeToast(activeUndoToastIdRef.current);
             activeUndoToastIdRef.current = null;
         }
+        // Snapshot BEFORE deletion so undo can restore fully
+        const snapshotCvData = { ...cvData };
         // Remove immediately from cvData
         let newCvData: CVData;
         if (field === 'customFields') {
@@ -104,6 +135,8 @@ export default function Fill({
             newCvData = { ...cvData, [field]: arr.filter((_, i) => i !== idx) };
         }
         setCvData(newCvData);
+        // Store in ref so undo callback always reads the latest
+        pendingDeleteRef.current = { field, item, idx, label, snapshotCvData };
         // Open 5s undo window
         const toastId = addToast(
             `${label} deleted.`,
@@ -113,32 +146,9 @@ export default function Fill({
         );
         activeUndoToastIdRef.current = toastId;
         pendingDeleteTimerRef.current = setTimeout(() => {
-            setPendingDelete(null);
+            pendingDeleteRef.current = null;
             activeUndoToastIdRef.current = null;
         }, 5000);
-        setPendingDelete({ field, item, idx, label });
-    };
-
-    const handleUndoDelete = () => {
-        if (!pendingDelete) return;
-        if (pendingDeleteTimerRef.current) clearTimeout(pendingDeleteTimerRef.current);
-        let newCvData: CVData;
-        if (pendingDelete.field === 'customFields') {
-            const arr = [...cvData.personal.customFields];
-            arr.splice(pendingDelete.idx, 0, pendingDelete.item);
-            newCvData = { ...cvData, personal: { ...cvData.personal, customFields: arr } };
-        } else {
-            const arr = [...(cvData[pendingDelete.field as keyof CVData] as unknown[])];
-            arr.splice(pendingDelete.idx, 0, pendingDelete.item);
-            newCvData = { ...cvData, [pendingDelete.field]: arr };
-        }
-        setCvData(newCvData);
-        setPendingDelete(null);
-        if (activeUndoToastIdRef.current) {
-            removeToast(activeUndoToastIdRef.current);
-            activeUndoToastIdRef.current = null;
-        }
-        pendingDeleteTimerRef.current = null;
     };
 
     const handleTemplateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -284,7 +294,6 @@ export default function Fill({
                                                     animate={{ opacity: 1, y: 0 }}
                                                     exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                                                     transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                    layoutDependency={cvData.personal.customFields}
                                                     className="mb-2"
                                                 >
                                                     {/* Mobile: stacked. sm+: side-by-side row */}
@@ -388,7 +397,9 @@ export default function Fill({
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                layoutDependency={cvData.experience}
+                                                layout={draggingSection === 'experience' ? true : undefined}
+                                                onDragStart={() => setDraggingSection('experience')}
+                                                onDragEnd={() => setDraggingSection(null)}
                                                 className="p-4 border-2 border-black space-y-3 cursor-grab active:cursor-grabbing hover:bg-gray-50 transition-colors bg-white relative"
                                             >
                                                 <div className="flex gap-2">
@@ -565,7 +576,9 @@ export default function Fill({
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                layoutDependency={cvData.education}
+                                                layout={draggingSection === 'education' ? true : undefined}
+                                                onDragStart={() => setDraggingSection('education')}
+                                                onDragEnd={() => setDraggingSection(null)}
                                                 className="p-4 border-2 border-black space-y-3 cursor-grab active:cursor-grabbing hover:bg-gray-50 transition-colors bg-white relative"
                                             >
                                                 <div className="flex gap-2">
@@ -660,7 +673,9 @@ export default function Fill({
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                layoutDependency={cvData.skills}
+                                                layout={draggingSection === 'skills' ? true : undefined}
+                                                onDragStart={() => setDraggingSection('skills')}
+                                                onDragEnd={() => setDraggingSection(null)}
                                                 className="flex gap-2 cursor-grab active:cursor-grabbing hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
                                             >
                                                 <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
@@ -712,7 +727,9 @@ export default function Fill({
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                layoutDependency={cvData.projects}
+                                                layout={draggingSection === 'projects' ? true : undefined}
+                                                onDragStart={() => setDraggingSection('projects')}
+                                                onDragEnd={() => setDraggingSection(null)}
                                                 className="p-4 border-2 border-black space-y-3 cursor-grab active:cursor-grabbing hover:bg-gray-50 transition-colors bg-white relative"
                                             >
                                                 <div className="flex gap-2">
@@ -801,7 +818,9 @@ export default function Fill({
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                layoutDependency={cvData.certification}
+                                                layout={draggingSection === 'certification' ? true : undefined}
+                                                onDragStart={() => setDraggingSection('certification')}
+                                                onDragEnd={() => setDraggingSection(null)}
                                                 className="flex gap-2 cursor-grab active:cursor-grabbing hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
                                             >
                                                 <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
@@ -853,7 +872,9 @@ export default function Fill({
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                layoutDependency={cvData.language}
+                                                layout={draggingSection === 'language' ? true : undefined}
+                                                onDragStart={() => setDraggingSection('language')}
+                                                onDragEnd={() => setDraggingSection(null)}
                                                 className="flex gap-2 cursor-grab active:cursor-grabbing hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
                                             >
                                                 <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />

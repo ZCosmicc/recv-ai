@@ -78,6 +78,9 @@ function BuilderContent() {
     setToasts(prev => prev.filter(t => t.id !== id));
   }, []);
 
+  // Track save-related toast so we can replace (not stack) them
+  const saveToastIdRef = React.useRef<string | null>(null);
+
   // Initial Load Logic
   useEffect(() => {
     const loadData = async (sessionUser?: any) => {
@@ -348,7 +351,13 @@ function BuilderContent() {
     setIsSaving(true);
 
     // If explicit save or user wants alerts for auto-save
-    if (isAutoSave) addToast('Saving changes...', 'info', 3000);
+    if (isAutoSave) {
+      // Remove previous save toast to prevent stacking
+      if (saveToastIdRef.current) {
+        removeToast(saveToastIdRef.current);
+      }
+      saveToastIdRef.current = addToast('Saving changes...', 'info', 3000);
+    }
 
     const fullPayload = {
       ...cvData,
@@ -366,6 +375,11 @@ function BuilderContent() {
       .eq('id', cvId);
 
     setIsSaving(false);
+    // Remove the "Saving changes..." toast
+    if (saveToastIdRef.current) {
+      removeToast(saveToastIdRef.current);
+      saveToastIdRef.current = null;
+    }
     if (error) {
       addToast('Error saving CV', 'error');
     } else {
