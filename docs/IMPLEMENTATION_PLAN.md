@@ -252,7 +252,7 @@ Keep Framer Motion but remove `initial`/`animate`/`exit` from `Reorder.Item` and
 
 ---
 
-### #5 — Review Page — Live CV Preview with AI Highlights ⏳ PENDING
+### #5 — Review Page — Live CV Preview with AI Highlights ✅ DONE
 
 **Problem / Vision:** The Review page shows AI score and improvements on one side, but the CV preview is hidden off-screen. The user wants a split-pane layout where the preview is visible and AI-flagged fields are highlighted.
 
@@ -284,6 +284,7 @@ Keep Framer Motion but remove `initial`/`animate`/`exit` from `Reorder.Item` and
 | `f7e600a` | Fix undo duplication: cvDataRef instead of snapshot |
 | `2b92703` | Save toast overwrite + mobile toast sizing (also includes layoutRoot attempt 4) |
 | `40d41e6` | v1.3.5: Mobile drag grip handles, CSS card-enter (attempt 5), toast stacking fix, independent toast timers |
+| `c28033c` | v1.4.0: Review page live preview with split-pane layout and AI highlighted fields |
 
 ---
 
@@ -296,4 +297,4 @@ Keep Framer Motion but remove `initial`/`animate`/`exit` from `Reorder.Item` and
 | 3 | Fill page animation bleed | ⚠️ Ongoing (5 attempts, CSS approach applied) | 🟡 Medium |
 | 4 | Undo delete toast | ✅ Done (3rd attempt) | 🟡 Medium |
 | 4.5 | Mobile drag scroll conflict | ✅ Done (Fill + Sections) | 🟡 Medium |
-| 5 | Review page live preview | ⏳ Pending | 🔴 Complex |
+| 5 | Review page live preview | ✅ Done | 🔴 Complex |
