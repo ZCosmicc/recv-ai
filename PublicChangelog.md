@@ -2,6 +2,12 @@
 
 All user-facing updates and improvements to Recv. AI.
 
+## [1.3.5] - 2026-04-13
+### 🐛 Bug Fixes & Polish
+- **Mobile Drag Fixed — Scroll Without Accidentally Reordering:** On phones and tablets, swiping up or down on a CV card in the builder was sometimes triggering the reorder drag instead of scrolling the page. This has been fixed — dragging to reorder now only activates when you grab the **grip handle** (⠿) on the left side of each card. Scrolling the rest of the card works naturally again.
+- **Notification Toasts No Longer Overlap:** When multiple notifications appeared at once (for example, after deleting several items quickly), they were stacking on top of each other and becoming unreadable. They now stack neatly in a clean column with proper spacing between them.
+- **Each Notification Has Its Own Timer:** Previously, notifications would all expire at the same time — the newer ones would reset the clock for the older ones. Now each notification independently counts down from the moment it appears, so older ones disappear first as expected.
+
 ## [1.3.4] - 2026-04-06
 ### ✨ UI & Animation Polish
 - **Fixed Mobile Footer:** The footer copyright text was awkwardly breaking across multiple lines on phones. It now reads cleanly in a single line on all screen sizes, and the Privacy / Terms / Contact / Instagram links all sit neatly on one row.

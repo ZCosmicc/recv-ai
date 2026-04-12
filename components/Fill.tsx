@@ -14,7 +14,7 @@ import { downloadPDF } from '../utils/pdf';
 import { templates } from './CVPreview';
 import Navbar from './Navbar';
 import PlanCard from './PlanCard';
-import { motion, AnimatePresence, Reorder, LayoutGroup } from 'framer-motion';
+import { motion, AnimatePresence, Reorder, useDragControls } from 'framer-motion';
 
 interface FillProps {
     cvData: CVData;
@@ -57,6 +57,45 @@ const Tooltip = ({ id, text }: { id: string; text: string }) => {
     );
 };
 
+// ─── Drag-handle-only wrapper ────────────────────────────────────────────────
+// useDragControls must be called at the top level of a component, so we lift
+// it into its own wrapper rather than calling it inside Fill's render.
+
+// Enter animation is now handled by the CSS .card-enter class (globals.css).
+// FM still owns exit (via AnimatePresence) and layout/drag displacement.
+type DraggableReorderItemProps = {
+    value: unknown;
+    className?: string;
+    layout?: true;
+    children: (bag: { startDrag: (e: React.PointerEvent) => void }) => React.ReactNode;
+} & Pick<React.ComponentProps<typeof Reorder.Item>, 'exit' | 'transition'>;
+
+const DraggableReorderItem = ({
+    value,
+    className,
+    exit,
+    transition,
+    layout,
+    children,
+}: DraggableReorderItemProps) => {
+    const dragControls = useDragControls();
+    return (
+        <Reorder.Item
+            value={value}
+            dragListener={false}
+            dragControls={dragControls}
+            className={className}
+            exit={exit}
+            transition={transition}
+            layout={layout}
+        >
+            {children({ startDrag: (e) => dragControls.start(e) })}
+        </Reorder.Item>
+    );
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
+
 export default function Fill({
     cvData,
     setCvData,
@@ -76,7 +115,6 @@ export default function Fill({
 }: FillProps) {
     const [showLimitModal, setShowLimitModal] = useState(false);
     const [activeSection, setActiveSection] = useState('contact');
-    const [draggingSection, setDraggingSection] = useState<string | null>(null);
 
     // --- Undo Delete ---
     const pendingDeleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -381,30 +419,32 @@ export default function Fill({
                             )}
 
                             {sections.find(s => s.id === 'experience' && s.enabled) && (
-                                <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
+                                <motion.div layoutRoot className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                         <div className="flex items-center gap-2 mb-4">
                                         <h2 className="text-xl text-gray-900 font-semibold">Experience</h2>
                                         <Tooltip id="exp-tip" text="List work experience in reverse chronological order. Use bullet points and quantify achievements." />
                                     </div>
                                     <div className="space-y-4">
-                                        <LayoutGroup id="experience-section">
                                         <Reorder.Group axis="y" values={cvData.experience} onReorder={(reordered) => setCvData({ ...cvData, experience: reordered })} className="flex flex-col gap-4">
                                         <AnimatePresence initial={false}>
                                         {cvData.experience.map((exp, idx) => (
-                                            <Reorder.Item
+                                            <DraggableReorderItem
                                                 key={exp.id || idx}
                                                 value={exp}
-                                                initial={{ opacity: 0, y: 16 }}
-                                                animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                layout={draggingSection === 'experience' ? true : undefined}
-                                                onDragStart={() => setDraggingSection('experience')}
-                                                onDragEnd={() => setDraggingSection(null)}
-                                                className="p-4 border-2 border-black space-y-3 cursor-grab active:cursor-grabbing hover:bg-gray-50 transition-colors bg-white relative"
+                                                layout
+                                                className="p-4 border-2 border-black space-y-3 hover:bg-gray-50 transition-colors bg-white relative"
                                             >
-                                                <div className="flex gap-2">
-                                                    <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
+                                            {({ startDrag }) => (
+                                                <div className="card-enter flex gap-2">
+                                                    <div
+                                                        onPointerDown={startDrag}
+                                                        style={{ touchAction: 'none', cursor: 'grab' }}
+                                                        className="flex-shrink-0 mt-2 text-gray-400 hover:text-gray-600"
+                                                    >
+                                                        <GripVertical className="w-5 h-5" />
+                                                    </div>
                                                     <div className="flex-1 space-y-3">
                                                         <input
                                                             type="text"
@@ -546,11 +586,11 @@ export default function Fill({
                                                         <X className="w-5 h-5" />
                                                     </button>
                                                 </div>
-                                            </Reorder.Item>
+                                            )}
+                                            </DraggableReorderItem>
                                         ))}
                                         </AnimatePresence>
                                         </Reorder.Group>
-                                        </LayoutGroup>
                                         <button
                                             onClick={() => setCvData({ ...cvData, experience: [...cvData.experience, { id: crypto.randomUUID(), title: '', company: '', startDate: '', endDate: '', description: '', current: false }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -559,31 +599,33 @@ export default function Fill({
                                             Add Experience
                                         </button>
                                     </div>
-                                </div>
+                                </motion.div>
                             )}
 
                             {sections.find(s => s.id === 'education' && s.enabled) && (
-                                <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
+                                <motion.div layoutRoot className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Education</h2>
                                     <div className="space-y-4">
-                                        <LayoutGroup id="education-section">
                                         <Reorder.Group axis="y" values={cvData.education} onReorder={(reordered) => setCvData({ ...cvData, education: reordered })} className="flex flex-col gap-4">
                                         <AnimatePresence initial={false}>
                                         {cvData.education.map((edu, idx) => (
-                                            <Reorder.Item
+                                            <DraggableReorderItem
                                                 key={edu.id || idx}
                                                 value={edu}
-                                                initial={{ opacity: 0, y: 16 }}
-                                                animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                layout={draggingSection === 'education' ? true : undefined}
-                                                onDragStart={() => setDraggingSection('education')}
-                                                onDragEnd={() => setDraggingSection(null)}
-                                                className="p-4 border-2 border-black space-y-3 cursor-grab active:cursor-grabbing hover:bg-gray-50 transition-colors bg-white relative"
+                                                layout
+                                                className="p-4 border-2 border-black space-y-3 hover:bg-gray-50 transition-colors bg-white relative"
                                             >
-                                                <div className="flex gap-2">
-                                                    <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
+                                            {({ startDrag }) => (
+                                                <div className="card-enter flex gap-2">
+                                                    <div
+                                                        onPointerDown={startDrag}
+                                                        style={{ touchAction: 'none', cursor: 'grab' }}
+                                                        className="flex-shrink-0 mt-2 text-gray-400 hover:text-gray-600"
+                                                    >
+                                                        <GripVertical className="w-5 h-5" />
+                                                    </div>
                                                     <div className="flex-1 space-y-3">
                                                         <div className="grid grid-cols-2 gap-2">
                                                             <select
@@ -643,11 +685,11 @@ export default function Fill({
                                                         <X className="w-5 h-5" />
                                                     </button>
                                                 </div>
-                                            </Reorder.Item>
+                                            )}
+                                            </DraggableReorderItem>
                                         ))}
                                         </AnimatePresence>
                                         </Reorder.Group>
-                                        </LayoutGroup>
                                         <button
                                             onClick={() => setCvData({ ...cvData, education: [...cvData.education, { id: crypto.randomUUID(), degree: '', major: '', institution: '', year: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -656,30 +698,32 @@ export default function Fill({
                                             Add Education
                                         </button>
                                     </div>
-                                </div>
+                                </motion.div>
                             )}
 
                             {sections.find(s => s.id === 'skills' && s.enabled) && (
-                                <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
+                                <motion.div layoutRoot className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Skills</h2>
                                     <div className="space-y-3">
-                                        <LayoutGroup id="skills-section">
                                         <Reorder.Group axis="y" values={cvData.skills} onReorder={(reordered) => setCvData({ ...cvData, skills: reordered })} className="flex flex-col gap-3">
                                         <AnimatePresence initial={false}>
                                         {cvData.skills.map((skill, idx) => (
-                                            <Reorder.Item
+                                            <DraggableReorderItem
                                                 key={skill.id || idx}
                                                 value={skill}
-                                                initial={{ opacity: 0, y: 12 }}
-                                                animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                layout={draggingSection === 'skills' ? true : undefined}
-                                                onDragStart={() => setDraggingSection('skills')}
-                                                onDragEnd={() => setDraggingSection(null)}
-                                                className="flex gap-2 cursor-grab active:cursor-grabbing hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
+                                                layout
+                                                className="flex gap-2 items-center hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
                                             >
-                                                <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
+                                            {({ startDrag }) => (<div className="card-enter flex gap-2 items-center w-full">
+                                                <div
+                                                    onPointerDown={startDrag}
+                                                    style={{ touchAction: 'none', cursor: 'grab' }}
+                                                    className="flex-shrink-0 mt-0 text-gray-400 hover:text-gray-600"
+                                                >
+                                                    <GripVertical className="w-5 h-5" />
+                                                </div>
                                                 <input
                                                     type="text"
                                                     placeholder="Skill"
@@ -697,11 +741,11 @@ export default function Fill({
                                                 >
                                                     <X className="w-5 h-5" />
                                                 </button>
-                                            </Reorder.Item>
+                                            </div>)}
+                                            </DraggableReorderItem>
                                         ))}
                                         </AnimatePresence>
                                         </Reorder.Group>
-                                        </LayoutGroup>
                                         <button
                                             onClick={() => setCvData({ ...cvData, skills: [...cvData.skills, { id: crypto.randomUUID(), value: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -710,31 +754,33 @@ export default function Fill({
                                             Add Skill
                                         </button>
                                     </div>
-                                </div>
+                                </motion.div>
                             )}
 
                             {sections.find(s => s.id === 'projects' && s.enabled) && (
-                                <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
+                                <motion.div layoutRoot className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl text-gray-900 font-semibold mb-4">Projects</h2>
                                     <div className="space-y-4">
-                                        <LayoutGroup id="projects-section">
                                         <Reorder.Group axis="y" values={cvData.projects || []} onReorder={(reordered) => setCvData({ ...cvData, projects: reordered })} className="flex flex-col gap-4">
                                         <AnimatePresence initial={false}>
                                         {(cvData.projects || []).map((project, idx) => (
-                                            <Reorder.Item
+                                            <DraggableReorderItem
                                                 key={project.id || idx}
                                                 value={project}
-                                                initial={{ opacity: 0, y: 16 }}
-                                                animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                layout={draggingSection === 'projects' ? true : undefined}
-                                                onDragStart={() => setDraggingSection('projects')}
-                                                onDragEnd={() => setDraggingSection(null)}
-                                                className="p-4 border-2 border-black space-y-3 cursor-grab active:cursor-grabbing hover:bg-gray-50 transition-colors bg-white relative"
+                                                layout
+                                                className="p-4 border-2 border-black space-y-3 hover:bg-gray-50 transition-colors bg-white relative"
                                             >
-                                                <div className="flex gap-2">
-                                                    <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
+                                            {({ startDrag }) => (
+                                                <div className="card-enter flex gap-2">
+                                                    <div
+                                                        onPointerDown={startDrag}
+                                                        style={{ touchAction: 'none', cursor: 'grab' }}
+                                                        className="flex-shrink-0 mt-2 text-gray-400 hover:text-gray-600"
+                                                    >
+                                                        <GripVertical className="w-5 h-5" />
+                                                    </div>
                                                     <div className="flex-1 space-y-3">
                                                         <input
                                                             type="text"
@@ -788,11 +834,11 @@ export default function Fill({
                                                         <X className="w-5 h-5" />
                                                     </button>
                                                 </div>
-                                            </Reorder.Item>
+                                            )}
+                                            </DraggableReorderItem>
                                         ))}
                                         </AnimatePresence>
                                         </Reorder.Group>
-                                        </LayoutGroup>
                                         <button
                                             onClick={() => setCvData({ ...cvData, projects: [...(cvData.projects || []), { id: crypto.randomUUID(), title: '', description: '', technologies: '', link: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -801,30 +847,32 @@ export default function Fill({
                                             Add Project
                                         </button>
                                     </div>
-                                </div>
+                                </motion.div>
                             )}
 
                             {sections.find(s => s.id === 'certification' && s.enabled) && (
-                                <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
+                                <motion.div layoutRoot className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl font-semibold mb-4">Certifications</h2>
                                     <div className="space-y-3">
-                                        <LayoutGroup id="certification-section">
                                         <Reorder.Group axis="y" values={cvData.certification} onReorder={(reordered) => setCvData({ ...cvData, certification: reordered })} className="flex flex-col gap-3">
                                         <AnimatePresence initial={false}>
                                         {cvData.certification.map((cert, idx) => (
-                                            <Reorder.Item
+                                            <DraggableReorderItem
                                                 key={cert.id || idx}
                                                 value={cert}
-                                                initial={{ opacity: 0, y: 12 }}
-                                                animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                layout={draggingSection === 'certification' ? true : undefined}
-                                                onDragStart={() => setDraggingSection('certification')}
-                                                onDragEnd={() => setDraggingSection(null)}
-                                                className="flex gap-2 cursor-grab active:cursor-grabbing hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
+                                                layout
+                                                className="flex gap-2 items-center hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
                                             >
-                                                <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
+                                            {({ startDrag }) => (<div className="card-enter flex gap-2 items-center w-full">
+                                                <div
+                                                    onPointerDown={startDrag}
+                                                    style={{ touchAction: 'none', cursor: 'grab' }}
+                                                    className="flex-shrink-0 text-gray-400 hover:text-gray-600"
+                                                >
+                                                    <GripVertical className="w-5 h-5" />
+                                                </div>
                                                 <input
                                                     type="text"
                                                     placeholder="Certification"
@@ -842,11 +890,11 @@ export default function Fill({
                                                 >
                                                     <X className="w-5 h-5" />
                                                 </button>
-                                            </Reorder.Item>
+                                            </div>)}
+                                            </DraggableReorderItem>
                                         ))}
                                         </AnimatePresence>
                                         </Reorder.Group>
-                                        </LayoutGroup>
                                         <button
                                             onClick={() => setCvData({ ...cvData, certification: [...cvData.certification, { id: crypto.randomUUID(), value: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
@@ -855,30 +903,32 @@ export default function Fill({
                                             Add Certification
                                         </button>
                                     </div>
-                                </div>
+                                </motion.div>
                             )}
 
                             {sections.find(s => s.id === 'language' && s.enabled) && (
-                                <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
+                                <motion.div layoutRoot className="bg-white border-4 border-black shadow-neo p-4 md:p-6">
                                     <h2 className="text-xl font-semibold mb-4">Languages</h2>
                                     <div className="space-y-3">
-                                        <LayoutGroup id="language-section">
                                         <Reorder.Group axis="y" values={cvData.language} onReorder={(reordered) => setCvData({ ...cvData, language: reordered })} className="flex flex-col gap-3">
                                         <AnimatePresence initial={false}>
                                         {cvData.language.map((lang, idx) => (
-                                            <Reorder.Item
+                                            <DraggableReorderItem
                                                 key={lang.id || idx}
                                                 value={lang}
-                                                initial={{ opacity: 0, y: 12 }}
-                                                animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }}
                                                 transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                                                layout={draggingSection === 'language' ? true : undefined}
-                                                onDragStart={() => setDraggingSection('language')}
-                                                onDragEnd={() => setDraggingSection(null)}
-                                                className="flex gap-2 cursor-grab active:cursor-grabbing hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
+                                                layout
+                                                className="flex gap-2 items-center hover:bg-gray-100 p-2 border-2 border-transparent hover:border-gray-200 transition-colors bg-white relative"
                                             >
-                                                <GripVertical className="w-5 h-5 text-gray-400 mt-2 flex-shrink-0 cursor-grab active:cursor-grabbing hover:text-gray-600" />
+                                            {({ startDrag }) => (<div className="card-enter flex gap-2 items-center w-full">
+                                                <div
+                                                    onPointerDown={startDrag}
+                                                    style={{ touchAction: 'none', cursor: 'grab' }}
+                                                    className="flex-shrink-0 text-gray-400 hover:text-gray-600"
+                                                >
+                                                    <GripVertical className="w-5 h-5" />
+                                                </div>
                                                 <input
                                                     type="text"
                                                     placeholder="Language"
@@ -891,17 +941,17 @@ export default function Fill({
                                                     className="flex-1 px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
                                                 />
                                                 <button
-                                                onClick={() => handleSoftDelete('language', lang, idx, 'Language')}
+                                                    onClick={() => handleSoftDelete('language', lang, idx, 'Language')}
                                                     className="text-red-500"
                                                 >
                                                     <X className="w-5 h-5" />
                                                 </button>
-                                            </Reorder.Item>
+                                            </div>)}
+                                            </DraggableReorderItem>
                                         ))}
-                        </AnimatePresence>
-                        </Reorder.Group>
-                        </LayoutGroup>
-                        <button
+                                        </AnimatePresence>
+                                        </Reorder.Group>
+                                        <button
                                             onClick={() => setCvData({ ...cvData, language: [...cvData.language, { id: crypto.randomUUID(), value: '' }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
@@ -909,7 +959,7 @@ export default function Fill({
                                             Add Language
                                         </button>
                                     </div>
-                                </div>
+                                </motion.div>
                             )}
 
                             <div className="bg-white border-4 border-black shadow-neo p-4 md:p-6">

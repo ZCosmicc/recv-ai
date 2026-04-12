@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Check, AlertCircle, X } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'info';
@@ -9,16 +9,20 @@ interface ToastProps {
     onClose: () => void;
     duration?: number;
     action?: { label: string; onClick: () => void };
-    offsetIndex?: number; // 0 = top slot (96px), 1 = 80px below, etc.
 }
 
-export default function Toast({ message, type, onClose, duration = 3000, action, offsetIndex = 0 }: ToastProps) {
+export default function Toast({ message, type, onClose, duration = 3000, action }: ToastProps) {
+    // Keep a ref to always call the latest onClose without restarting the timer.
+    // Without this, adding a new toast causes React to pass a new onClose reference
+    // to all existing toasts, which resets their timers and makes them all expire together.
+    const onCloseRef = useRef(onClose);
+    onCloseRef.current = onClose;
+
     useEffect(() => {
-        const timer = setTimeout(() => {
-            onClose();
-        }, duration);
+        const timer = setTimeout(() => onCloseRef.current(), duration);
         return () => clearTimeout(timer);
-    }, [duration, onClose]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // Run exactly once on mount — each Toast has a unique key so this is safe
 
     const getBgColor = () => {
         switch (type) {
@@ -46,8 +50,7 @@ export default function Toast({ message, type, onClose, duration = 3000, action,
 
     return (
         <div
-            className={`fixed right-3 md:right-6 z-[100] flex items-center gap-2 md:gap-3 px-3 py-2 md:px-6 md:py-4 border-2 md:border-4 border-black shadow-neo animate-in slide-in-from-right duration-300 max-w-[90vw] md:max-w-none ${getBgColor()}`}
-            style={{ top: `${72 + offsetIndex * 56}px` }}
+            className={`flex items-center gap-2 md:gap-3 px-3 py-2 md:px-6 md:py-4 border-2 md:border-4 border-black shadow-neo animate-in slide-in-from-right duration-300 max-w-[90vw] md:max-w-sm ${getBgColor()}`}
         >
             <div className={`border md:border-2 border-black p-0.5 md:p-1 flex-shrink-0 ${getIconColor()}`}>
                 {getIcon()}

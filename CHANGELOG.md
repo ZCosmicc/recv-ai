@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.5] - 2026-04-13
+
+### ✨ UI/UX Polish
+
+- **Mobile Drag-and-Drop — Grip Handle Only**: On mobile, touching and swiping a CV card was accidentally triggering drag-to-reorder even when the user intended to scroll the page. Added `dragListener={false}` to all `Reorder.Item` wrappers and introduced a `DraggableReorderItem` component that uses `useDragControls` — drag now only initiates from the vertical grip handle (`⠿`) icon, not the entire card surface. Applied across all 6 sections in `Fill.tsx` (Experience, Education, Skills, Projects, Certifications, Languages). Same fix applied to the section reorder list in `Sections.tsx` via a `DraggableSectionItem` wrapper.
+- **Card Enter Animation Isolation (Attempt 5)**: Replaced Framer Motion `initial`/`animate` props on all section card items with a pure-CSS `@keyframes card-enter` animation. CSS animations fire exactly once on node mount and cannot be re-triggered by React re-renders, which reduces (though does not fully eliminate) spurious cross-section animation bleed when adding cards. Framer Motion still owns `exit` (removal) and `layout` (drag displacement). ⚠️ Full bleed fix still in investigation.
+
+### 🐛 Bug Fixes
+
+- **Toast Stacking on Desktop**: Multiple simultaneous toasts (e.g. quickly deleting several cards) were overlapping each other on desktop. Root cause: each `<Toast>` was `position: fixed` individually with a manually calculated `top` offset based on a `56px` gap — too small for the larger desktop toast height (~72px with `py-4`). Fixed by wrapping all toasts in a single `fixed` flex-column container (`flex-col gap-3`) so they stack based on actual rendered height. `offsetIndex` prop removed from `Toast.tsx`.
+- **Toast Independent Exit Timers**: When a new toast appeared, all existing toasts had their countdown timers reset — causing them to linger until the newest toast expired. Root cause: `onClose` was an inline function recreated on every render; when the `toasts` array changed, React passed new `onClose` references to all existing `<Toast>` instances, triggering `useEffect` re-runs that cancelled and restarted each timer. Fixed by storing `onClose` in a `useRef` (always updated to latest) and running the `setTimeout` effect only once on mount (`[]` deps). Each toast now counts down independently from the moment it appears.
+
 ## [1.3.4] - 2026-04-06
 
 ### ✨ UI/UX Polish

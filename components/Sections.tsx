@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Trash2, X, Plus, Sparkles, Crown, Lock, Loader2, Check } from 'lucide-react';
 import LimitModal from './LimitModal';
-import { motion, Reorder } from 'framer-motion';
+import { motion, Reorder, useDragControls } from 'framer-motion';
 import SlideIn from './SlideIn';
 import CVPreviewPane from './CVPreviewPane';
 import { templates } from './CVPreview';
@@ -26,6 +26,35 @@ interface SectionsProps {
     tier?: 'guest' | 'free' | 'pro';
     aiCredits?: number;
 }
+
+// ─── Drag-handle-only wrapper for sections ───────────────────────────────────
+type DraggableSectionItemProps = {
+    value: unknown;
+    className?: string;
+    children: (bag: { startDrag: (e: React.PointerEvent) => void }) => React.ReactNode;
+} & Pick<React.ComponentProps<typeof Reorder.Item>, 'initial' | 'animate' | 'exit' | 'transition'>;
+
+const DraggableSectionItem = ({
+    value, className, initial, animate, exit, transition, children,
+}: DraggableSectionItemProps) => {
+    const dragControls = useDragControls();
+    return (
+        <Reorder.Item
+            value={value}
+            dragListener={false}
+            dragControls={dragControls}
+            className={className}
+            initial={initial}
+            animate={animate}
+            exit={exit}
+            transition={transition}
+        >
+            {children({ startDrag: (e) => dragControls.start(e) })}
+        </Reorder.Item>
+    );
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
 
 export default function Sections({
     sections,
@@ -120,16 +149,21 @@ export default function Sections({
                                 className="space-y-2 mb-6"
                             >
                                 {sections.filter(s => s.enabled).map((section, index) => (
-                                    <Reorder.Item
+                                    <DraggableSectionItem
                                         key={section.id}
                                         value={section}
-                                        className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-white border-b-2 border-gray-100 last:border-0 hover:bg-gray-50 cursor-grab active:cursor-grabbing"
+                                        className="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-white border-b-2 border-gray-100 last:border-0 hover:bg-gray-50"
                                         initial={{ opacity: 0, y: 12 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -8 }}
                                         transition={{ type: 'spring', stiffness: 300, damping: 24, delay: index * 0.05 }}
                                     >
-                                        <div className="text-gray-400 cursor-grab">≡</div>
+                                    {({ startDrag }) => (<>
+                                        <div
+                                            onPointerDown={startDrag}
+                                            style={{ touchAction: 'none', cursor: 'grab' }}
+                                            className="text-gray-400 hover:text-gray-600 select-none"
+                                        >≡</div>
                                         <span className="flex-1 font-medium text-base md:text-lg text-black">{section.name}</span>
                                         {!section.required && (
                                             <button
@@ -143,7 +177,8 @@ export default function Sections({
                                                 <X className="w-5 h-5" />
                                             </button>
                                         )}
-                                    </Reorder.Item>
+                                    </>)}
+                                    </DraggableSectionItem>
                                 ))}
                             </Reorder.Group>
 

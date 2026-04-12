@@ -100,6 +100,26 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   .animate-blink {
     animation: blink 0.8s step-end infinite;
   }
+
+  /* ── Card enter animation (replaces Framer Motion initial/animate) ──────────
+     CSS @keyframes fire exactly once when the class is first applied to a
+     freshly-mounted DOM node. React/Framer Motion re-renders cannot re-trigger
+     them, which eliminates cross-section animation bleed on the Fill page.
+  ── */
+  @keyframes card-enter {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .card-enter {
+    animation: card-enter 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
 }
 
 body {

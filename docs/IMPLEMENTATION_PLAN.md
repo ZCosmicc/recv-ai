@@ -1,10 +1,10 @@
 # UI/UX Improvement Plan — Recv.AI
 
-> Last updated: 2026-04-07 12:14 AM
+> Last updated: 2026-04-13 12:24 AM
 
 ## Overview
 
-8 items reported across 3 difficulty tiers. Items #1–#4 shipped. Items #4.5 and #5 pending.
+8 items reported across 3 difficulty tiers. Items #1–#4 shipped. Items #4.5 ✅ Done. Item #3 ⚠️ Ongoing (5 attempts). Item #5 pending.
 
 ---
 
@@ -20,7 +20,7 @@
 
 ### ~~#2 — Language Toggle Animation~~ ✅ DONE
 
-**Problem:** The EN/ID language switcher in the navbar had no Framer Motion animation — it was the only interactive element without the v1.3.1 physics treatment.
+**Problem:** The EN/ID language switcher in the navbar had no Framer Motion animation — it was the only interactive element without the v1.3.1 physics treatment.Le
 
 **Fix applied:**
 - Wrapped toggle button in `motion.button` with spring physics (`stiffness: 400, damping: 25`)
@@ -29,7 +29,7 @@
 
 ---
 
-## ~~Session B — Fill Page Animation Isolation~~ ✅ DONE (Revised)
+## ~~Session B — Fill Page Animation Isolation~~ ✅ DONE (Revised + 4th attempt)
 
 ### ~~#3 — Fill Page Section Animation Bleed~~ ✅ DONE
 
@@ -43,27 +43,23 @@ Wrapped each section's `Reorder.Group` in `<LayoutGroup id="section-name">`. Thi
 #### Attempt 2 — `layoutDependency` (WRONG ❌)
 Added `layoutDependency={cvData.<section>}` to each `Reorder.Item`, hoping it would tell Framer Motion to only re-measure layout when that specific value changes. This prop was **silently ignored** — it compiled without error but had zero effect. It's not a supported prop on `Reorder.Item` in the installed Framer Motion version.
 
-#### Attempt 3 — Drag-state-gated `layout` (CORRECT ✅)
-`Reorder.Item` internally enables `layout` to animate displacement during drag-and-drop. The fix: **only enable `layout` during an active drag**, and leave it `undefined` otherwise.
+#### Attempt 3 — Drag-state-gated `layout` (WRONG ❌)
+Set `layout={draggingSection === 'section' ? true : undefined}` on every `Reorder.Item`. This reduced bleed during passive state but did NOT fix it when adding items — because `LayoutGroup` wrappers were still connecting all sections' layout scopes together, and `Reorder.Item` still participates in the parent measurement pass even with `layout={undefined}`.
 
-**Fix applied in `components/Fill.tsx`:**
-```tsx
-const [draggingSection, setDraggingSection] = useState<string | null>(null);
+#### Attempt 4 — `layoutRoot` isolation (WRONG ❌)
+Converted all 6 section card `<div>` → `<motion.div layoutRoot>` and removed all `<LayoutGroup>` wrappers. The theory was that each section would become a sealed Framer Motion layout tree, preventing cross-section measurement propagation.
 
-// On each Reorder.Item:
-<Reorder.Item
-  layout={draggingSection === 'experience' ? true : undefined}
-  onDragStart={() => setDraggingSection('experience')}
-  onDragEnd={() => setDraggingSection(null)}
-  ...
->
-```
+**What `layoutRoot` does NOT fix:** the bleed is not a *layout position animation* — it is the `initial → animate` **enter transition** re-firing on already-mounted items. `layoutRoot` only scopes layout measurements; it has no effect on whether `initial`/`animate` re-triggers on existing nodes. The root cause is that Framer Motion's `Reorder.Item` (or `AnimatePresence`) re-evaluates children's initial states when the parent `Reorder.Group` receives a new `values` reference, even if the array contents are identical.
 
-Applied to all 6 `Reorder.Item` sections: experience, education, skills, projects, certification, language.
+#### ~~Attempt 5 — CSS `@keyframes` enter animation~~ ✅ DONE
 
-**Fix applied in `components/Navbar.tsx`:**
-- Wrapped both desktop and mobile language toggles in `<LayoutGroup id="lang-toggle-desktop/mobile">` to isolate the `layoutId` pill from the global layout cascade
-- Added `LayoutGroup` to the import from `framer-motion`
+Removed `initial`/`animate` from all 6 `DraggableReorderItem` usages in `Fill.tsx`. Wrapped each item's render-prop content in `<div className="card-enter">`. Added `@keyframes card-enter` + `.card-enter` to `app/globals.css`.
+
+CSS `@keyframes` fire **exactly once** when first applied to a freshly-mounted DOM node — React/Framer Motion re-renders cannot retrigger them. This physically prevents cross-section animation bleed.
+
+**Files modified:**
+- `app/globals.css` — added `@keyframes card-enter` + `.card-enter` class
+- `components/Fill.tsx` — stripped `initial`/`animate` from `DraggableReorderItemProps` type and component; added `card-enter` wrapper div in all 6 sections; kept `exit` + `layout` on FM
 
 ---
 
@@ -164,42 +160,95 @@ Toast was too large on mobile — thick 4px border, large padding, and full-widt
 
 ## Session C.2 — Remaining Items
 
-### #4.5 — Mobile Drag Scroll Conflict ⏳ PENDING
+### ~~#4.5 — Mobile Drag Scroll Conflict~~ ✅ DONE
 
-**Problem:** On mobile, touching and swiping down on any card in the Fill page accidentally triggers drag-and-drop reorder, even when the user's intent is to scroll the page. `Reorder.Item` listens to ALL pointer events on the entire card surface.
+**Problem:** On mobile, touching and swiping down on any card accidentally triggers drag-and-drop reorder even when the user's intent is to scroll. `Reorder.Item` listened to ALL pointer events on the entire card surface.
 
-**Approach:** `useDragControls` + `dragListener={false}`
-- `dragListener={false}` disables automatic drag detection on the `Reorder.Item` body
-- `dragControls.start(e)` on the grip icon's `onPointerDown` manually starts the drag
-- `style={{ touchAction: 'none' }}` on the grip div tells the browser to surrender touch control only for that small handle area
+**Fix applied:**
+- `dragListener={false}` on all `Reorder.Item` — card body no longer initiates drag
+- `useDragControls` hook lifted into a `DraggableReorderItem` wrapper component (defined before the `Fill`/`Sections` function so the hook call is valid at component level)
+- Each `<GripVertical>` icon wrapped in `<div onPointerDown={startDrag} style={{ touchAction: 'none', cursor: 'grab' }}>` — only the grip handle can start a drag
+- `cursor-grab active:cursor-grabbing` removed from card `className`
 
-**Files to modify:**
-#### [MODIFY] `components/Fill.tsx`
-1. Add `useDragControls` to the framer-motion import
-2. Define a `DraggableReorderItem` wrapper component **before** the `Fill` function so it can call `useDragControls()` as a proper hook:
-   ```tsx
-   const DraggableReorderItem = ({ value, className, initial, animate, exit, transition, layout, onDragStart, onDragEnd, children }) => {
-       const dragControls = useDragControls();
-       return (
-           <Reorder.Item
-             value={value}
-             dragListener={false}
-             dragControls={dragControls}
-             layout={layout}
-             onDragStart={onDragStart}
-             onDragEnd={onDragEnd}
-             ...
-           >
-               {children({ onPointerDown: (e) => dragControls.start(e) })}
-           </Reorder.Item>
-       );
-   };
-   ```
-3. Replace all 6 `<Reorder.Item>` blocks with `<DraggableReorderItem>` using a render prop
-4. Wrap each `<GripVertical />` in a `<div onPointerDown={onPointerDown} style={{ touchAction: 'none', cursor: 'grab' }}>` so only the handle initiates drag
-5. Remove `cursor-grab active:cursor-grabbing` from the card's `className` (no longer needed on the full card)
+**Files modified:**
+- `components/Fill.tsx` — all 6 sections (Experience, Education, Skills, Projects, Certification, Language) converted to `DraggableReorderItem`
+- `components/Sections.tsx` — section reorder list converted to `DraggableSectionItem` (same pattern)
 
-> **Note:** The 6 sections have two structural patterns: Experience/Education/Projects wrap their content in an inner `<div className="flex gap-2">`, so the grip is a child of that div. Skills/Certifications/Languages use the `Reorder.Item` itself as the flex row.
+---
+
+---
+
+## Session D — Animation Bleed Attempt 5
+
+### #3 (cont.) — Fill Page Animation Bleed ⚠️ Ongoing (Attempt 5 did not fully fix)
+
+**Confirmed problem:** Pressing "Add Experience" causes existing cards in Education, Skills, Projects etc. to re-play their `initial → animate` entrance animation (`opacity: 0, y: 16 → opacity: 1, y: 0`). They should not animate at all — they were already mounted and visible.
+
+**Why this happens (current best theory):** When `setCvData` is called, React re-renders `Fill`. Framer Motion's `Reorder.Group` or the surrounding `AnimatePresence` appears to re-evaluate its children's animation state when the parent re-renders, even though `cvData.education` is the same array reference. This causes the `initial` pose to be re-applied to already-mounted `Reorder.Item` nodes, triggering a spurious enter animation.
+
+> The `layoutRoot` fix (Attempt 4) narrowed the scope of layout measurements but **did not address** enter animation re-triggering, because `layoutRoot` only affects layout/position animations, not `initial`/`animate` transition state.
+
+---
+
+#### Option A — CSS `@keyframes` for enter animation (USER's IDEA ✅ Recommended)
+
+**The user's core insight:** give each section its own animation identity so cross-section triggering is impossible. The refined version isn't about unique class names per section — it's about **removing the enter animation from Framer Motion's control entirely** and handing it to pure CSS.
+
+CSS `@keyframes` animations fire **exactly once**, when a class is first applied to a freshly-mounted DOM node. They are physically incapable of re-triggering on an already-mounted element just because a React parent re-rendered. No Framer Motion re-render cycle can touch them.
+
+```css
+/* app/globals.css */
+@keyframes card-enter {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.card-enter {
+  animation: card-enter 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+```
+
+```tsx
+// Inside DraggableReorderItem — wrap content in the animated div
+{({ startDrag }) => (
+  <div className="card-enter">
+    {/* grip + card content */}
+  </div>
+)}
+```
+
+**Changes required:**
+- `app/globals.css` — add `@keyframes card-enter` + `.card-enter` class
+- `components/Fill.tsx` — remove `initial` and `animate` from all 6 `DraggableReorderItem` calls; add `<div className="card-enter">` inside each item's render prop
+- Keep `exit` on `DraggableReorderItem` (FM still handles removal via `AnimatePresence` — only exit needs FM)
+- Keep `layout` on items (FM still handles drag-reorder displacement — this is a separate system from enter animations)
+
+**Trade-off:** Enter animation uses CSS `cubic-bezier` spring approximation instead of FM spring physics. Visually near-identical. Exit animation stays as FM spring. Drag reorder stays as FM layout.
+
+> Unique class names per section are **not needed** — CSS animation isolation is per-DOM-node by design. One shared `.card-enter` class is enough.
+
+---
+
+#### Option B — FM-native: move `initial`/`animate` to inner `motion.div` (Alternative)
+
+Keep Framer Motion but remove `initial`/`animate`/`exit` from `Reorder.Item` and put them on a `motion.div` wrapper inside the item. `Reorder.Item` becomes layout-only:
+
+```tsx
+<DraggableReorderItem value={exp} layout className="...">
+  {({ startDrag }) => (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+    >
+      {/* content */}
+    </motion.div>
+  )}
+</DraggableReorderItem>
+```
+
+**Problem:** `exit` animations require the element to be a **direct child of `<AnimatePresence>`**. Moving exit to an inner `motion.div` breaks the removal animation. Solvable with a nested `<AnimatePresence>` inside the item but that creates an isolated animation context which may not unmount correctly.
+
+**Verdict:** Option A is cleaner — no edge cases, zero FM involvement in the enter path.
 
 ---
 
@@ -233,7 +282,8 @@ Toast was too large on mobile — thick 4px border, large padding, and full-widt
 | `d1397b4` | Bug fixes: layoutDependency attempt + toast queue + offsetIndex |
 | `1a1ebf4` | Correct fixes: drag-state layout + undo ref + toast dedup |
 | `f7e600a` | Fix undo duplication: cvDataRef instead of snapshot |
-| `(next)` | Save toast overwrite + mobile toast sizing |
+| `2b92703` | Save toast overwrite + mobile toast sizing (also includes layoutRoot attempt 4) |
+| `40d41e6` | v1.3.5: Mobile drag grip handles, CSS card-enter (attempt 5), toast stacking fix, independent toast timers |
 
 ---
 
@@ -243,7 +293,7 @@ Toast was too large on mobile — thick 4px border, large padding, and full-widt
 |---|------|--------|------------|
 | 1 | Mobile footer layout | ✅ Done | 🟢 Easy |
 | 2 | Language toggle animation | ✅ Done | 🟢 Easy |
-| 3 | Fill page animation bleed | ✅ Done (3rd attempt) | 🟡 Medium |
+| 3 | Fill page animation bleed | ⚠️ Ongoing (5 attempts, CSS approach applied) | 🟡 Medium |
 | 4 | Undo delete toast | ✅ Done (3rd attempt) | 🟡 Medium |
-| 4.5 | Mobile drag scroll conflict | ⏳ Pending | 🟡 Medium |
+| 4.5 | Mobile drag scroll conflict | ✅ Done (Fill + Sections) | 🟡 Medium |
 | 5 | Review page live preview | ⏳ Pending | 🔴 Complex |
