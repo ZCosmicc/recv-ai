@@ -15,6 +15,8 @@ interface CVPreviewPaneProps {
     pageIdPrefix?: string;
     /** target path of the field to highlight (e.g. experience[0].description) */
     highlightedPath?: string | null;
+    /** all target paths of the fields that have been suggested for improvement */
+    suggestedPaths?: string[];
 }
 
 export default function CVPreviewPane({
@@ -25,6 +27,7 @@ export default function CVPreviewPane({
     className = '',
     pageIdPrefix = 'preview-page',
     highlightedPath = null,
+    suggestedPaths = [],
 }: CVPreviewPaneProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
@@ -128,6 +131,7 @@ export default function CVPreviewPane({
                             tier={tier}
                             pageIdPrefix={pageIdPrefix}
                             highlightedPath={highlightedPath}
+                            suggestedPaths={suggestedPaths}
                         />
                     </div>
                 </div>

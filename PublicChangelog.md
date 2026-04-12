@@ -5,9 +5,13 @@ All user-facing updates and improvements to Recv. AI.
 ## [1.4.0] - 2026-04-13
 ### ✨ New Features
 - **Review Page CV Live Preview**: We completely redesigned the AI Analysis page! It now features a split-pane layout with a sticky Live View of your CV right next to the AI Feedback. You no longer have to blindly guess what the AI is talking about or bounce back to the editor—you see everything exactly as it'll look on your actual CV, instantly.
-- **Interactive AI Highlighting**: When you hover your mouse over an AI suggestion card on the Review page, you'll see a bright yellow highlight lock onto the exact field it's referencing in your Live Preview CV. It feels *magical*.
+- **Glanceable AI Highlights**: Immediately spot exactly what the AI wants you to fix. Suggested improvements now emit a soft, faded yellow highlight across your CV preview, making it extremely mobile-friendly to locate suggestions at a glance.
+- **Interactive Highlighting**: When you hover your mouse over an AI suggestion card on the Review page, you'll see a bright yellow highlight lock onto the exact field it's referencing in your Live Preview CV. It feels *magical*.
 
-## [1.3.5] - 2026-04-13
+### 🐛 Bug Fixes & Polish
+- **Removed Ghost Pages**: We eradicated a visual bug where the CV preview would occasionally tack on an entirely blank A4 page at the very end of your document due to empty underlying sections triggering the engine. Your pagination previews should now be precise.
+
+## [1.3.5] - 2026-04-12
 ### 🐛 Bug Fixes & Polish
 - **Mobile Drag Fixed — Scroll Without Accidentally Reordering:** On phones and tablets, swiping up or down on a CV card in the builder was sometimes triggering the reorder drag instead of scrolling the page. This has been fixed — dragging to reorder now only activates when you grab the **grip handle** (⠿) on the left side of each card. Scrolling the rest of the card works naturally again.
 - **Notification Toasts No Longer Overlap:** When multiple notifications appeared at once (for example, after deleting several items quickly), they were stacking on top of each other and becoming unreadable. They now stack neatly in a clean column with proper spacing between them.

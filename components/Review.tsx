@@ -439,8 +439,8 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                 </div>
             </div>
 
-            {/* Right Panel - Sticky Preview (Desktop) */}
-            <div className="hidden lg:block lg:w-[450px] xl:w-[500px] sticky top-8 self-start border-4 border-black shadow-neo bg-white p-4">
+                {/* Right Panel - Sticky Preview (Desktop) */}
+                <div className="hidden lg:block lg:w-[450px] xl:w-[500px] sticky top-8 self-start border-4 border-black shadow-neo bg-white p-4">
                     <h3 className="font-bold text-xl mb-4 flex items-center gap-2 border-b-4 border-black pb-2 text-primary">
                         <Wand2 className="w-5 h-5 text-purple-600" /> Live Preview
                     </h3>
@@ -451,6 +451,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                             selectedTemplate={selectedTemplate}
                             tier={tier}
                             highlightedPath={hoveredPath}
+                            suggestedPaths={result.improvements.filter((_, idx) => !ignoredItems.has(idx) && _.target_path).map(i => i.target_path as string)}
                         />
                     </div>
                 </div>
@@ -468,6 +469,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                         selectedTemplate={selectedTemplate}
                         tier={tier}
                         highlightedPath={hoveredPath}
+                        suggestedPaths={result.improvements.filter((_, idx) => !ignoredItems.has(idx) && _.target_path).map(i => i.target_path as string)}
                     />
                 </div>
             </div>

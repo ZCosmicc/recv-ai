@@ -7,10 +7,15 @@ All notable changes to this project will be documented in this file.
 ### ✨ Features (UI/UX)
 
 - **Review Page Split-Pane Layout & Live Preview**: Redesigned the `Review` page to provide an interactive, split-pane layout to enhance the CV optimization workflow. In Desktop view, the AI Analysis runs on the left panel while a newly integrated, scaling `CVPreviewPane` sits sticky on the right. In Mobile view, it stacks naturally into a cohesive experience.
-- **AI Suggestion Hover Highlighting**: Hovering over an AI improvement suggestion card (which contains the AI's exact `target_path` for the CV data structure) dynamically highlights the targeted field on the Live CV Preview. Adapted `CVPagedContent` rendering engines across all `minimal`, `modern`, `corporate`, `creative`, and `executive` templates to extract highlighting constraints and inject dynamic CSS rings (`ring-2 ring-yellow-400 bg-yellow-200/50`) synchronously with the user's cursor interaction.
+- **Always-On Suggestion Highlighting**: All AI suggestions are now automatically highlighted on the CV preview with a soft, faded yellow ring (`bg-yellow-100/40`), ensuring mobile accessibility and immediate visibility. 
+- **Interactive AI Highlighting**: Hovering over an AI improvement suggestion card (which contains the AI's exact `target_path` for the CV data structure) dynamically intensifies the highlight on the targeted field (`bg-yellow-200/80`) synchronously with the user's cursor interaction.
 - **Deep Structural TS Fixing**: Addressed inference strictness within structural mapping to cleanly connect deeply nested string data (Skills, Certifications, Languages) during rendering.
 
-## [1.3.5] - 2026-04-13
+### 🐛 Bug Fixes
+
+- **Ghost Page Pagination Removal**: Fixed an edge-case logic bug in the custom A4 CV paginator engine (`CVPagedContent.tsx`) where trailing invisible/empty elements (e.g. an active Certifications section with 0 entries) would erroneously contribute padding values (`offsetHeight + 12`) to the boundary calculator. This previously forced the engine to spontaneously spool up an entirely blank final page if the margin exceeded the bounding limit.
+
+## [1.3.5] - 2026-04-12
 
 ### ✨ UI/UX Polish
 
