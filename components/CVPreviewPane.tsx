@@ -13,6 +13,8 @@ interface CVPreviewPaneProps {
     className?: string;
     /** unique prefix so multiple panes on the same page don't conflict */
     pageIdPrefix?: string;
+    /** target path of the field to highlight (e.g. experience[0].description) */
+    highlightedPath?: string | null;
 }
 
 export default function CVPreviewPane({
@@ -22,6 +24,7 @@ export default function CVPreviewPane({
     tier = 'free',
     className = '',
     pageIdPrefix = 'preview-page',
+    highlightedPath = null,
 }: CVPreviewPaneProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
@@ -124,6 +127,7 @@ export default function CVPreviewPane({
                             selectedTemplate={selectedTemplate}
                             tier={tier}
                             pageIdPrefix={pageIdPrefix}
+                            highlightedPath={highlightedPath}
                         />
                     </div>
                 </div>

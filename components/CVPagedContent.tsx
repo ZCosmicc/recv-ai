@@ -38,7 +38,11 @@ interface CVPagedContentProps {
     selectedTemplate: string | null;
     tier?: 'guest' | 'free' | 'pro';
     pageIdPrefix?: string;
+    highlightedPath?: string | null;
 }
+
+const getHL = (path: string, hp?: string | null) => 
+    path === hp ? ' ring-2 ring-yellow-400 bg-yellow-200/50 rounded px-1 -mx-1 transition-colors duration-300 ' : ' transition-colors duration-300 ';
 
 function fmt(d: string) {
     if (!d) return '';
@@ -77,24 +81,25 @@ function DescriptionText({ text, className = '' }: { text: string; className?: s
 
 // ─── Section renderers ─────────────────────────────────────────────────────
 
-function SectionSummary({ cvData, template }: { cvData: CVData; template: TemplateName }) {
+function SectionSummary({ cvData, template, highlightedPath }: { cvData: CVData; template: TemplateName; highlightedPath?: string | null }) {
     if (!cvData.summary) return null;
+    const hp = highlightedPath;
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Summary</h2>
-            <p className="text-gray-900 leading-relaxed text-xs">{cvData.summary}</p>
+            <p className={`text-gray-900 leading-relaxed text-xs ${getHL('summary', hp)}`}>{cvData.summary}</p>
         </div>
     );
     if (template === 'corporate') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold text-gray-900 mb-2 uppercase bg-gray-200 px-2 py-1">Professional Summary</h2>
-            <p className="text-gray-800 leading-relaxed px-2 text-xs">{cvData.summary}</p>
+            <p className={`text-gray-800 leading-relaxed px-2 text-xs ${getHL('summary', hp)}`}>{cvData.summary}</p>
         </div>
     );
     if (template === 'creative') return (
         <div className="mb-5">
             <h2 className="text-sm font-bold text-purple-700 mb-2">Professional Summary</h2>
-            <p className="text-gray-700 leading-relaxed text-xs">{cvData.summary}</p>
+            <p className={`text-gray-700 leading-relaxed text-xs ${getHL('summary', hp)}`}>{cvData.summary}</p>
         </div>
     );
     if (template === 'executive') return (
@@ -102,30 +107,31 @@ function SectionSummary({ cvData, template }: { cvData: CVData; template: Templa
             <h2 className="text-sm font-serif font-bold text-gray-900 mb-3 uppercase tracking-wider flex items-center gap-2">
                 <span className="w-6 h-0.5 bg-gray-900 inline-block" /> Profile
             </h2>
-            <p className="text-gray-700 leading-relaxed text-justify text-xs">{cvData.summary}</p>
+            <p className={`text-gray-700 leading-relaxed text-justify text-xs ${getHL('summary', hp)}`}>{cvData.summary}</p>
         </div>
     );
     return (
         <div className="mb-5">
             <h2 className="text-sm font-bold text-blue-600 mb-2 pb-1 border-b-2 border-blue-200">Summary</h2>
-            <p className="text-gray-700 leading-relaxed text-xs">{cvData.summary}</p>
+            <p className={`text-gray-700 leading-relaxed text-xs ${getHL('summary', hp)}`}>{cvData.summary}</p>
         </div>
     );
 }
 
-function SectionExperience({ cvData, template }: { cvData: CVData; template: TemplateName }) {
+function SectionExperience({ cvData, template, highlightedPath }: { cvData: CVData; template: TemplateName; highlightedPath?: string | null }) {
     if (!cvData.experience.length) return null;
+    const hp = highlightedPath;
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Experience</h2>
             {cvData.experience.map((exp, i) => (
                 <div key={i} className="mb-3">
-                    {exp.title && <h3 className="font-bold text-gray-900 text-xs">{exp.title}</h3>}
-                    {exp.company && <p className="text-gray-800 italic text-xs">{exp.company}</p>}
+                    {exp.title && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`experience[${i}].title`, hp)}`}>{exp.title}</h3>}
+                    {exp.company && <p className={`text-gray-800 italic text-xs ${getHL(`experience[${i}].company`, hp)}`}>{exp.company}</p>}
                     {(exp.startDate || exp.endDate || exp.current) && (
-                        <p className="text-gray-700 text-xs">{fmt(exp.startDate)} – {exp.current ? 'Present' : fmt(exp.endDate)}</p>
+                        <p className="text-gray-700 text-xs"><span className={getHL(`experience[${i}].startDate`, hp)}>{fmt(exp.startDate)}</span> – <span className={getHL(`experience[${i}].endDate`, hp)}>{exp.current ? 'Present' : fmt(exp.endDate)}</span></p>
                     )}
-                    {exp.description && <DescriptionText text={exp.description} className="text-gray-900 mt-1" />}
+                    {exp.description && <DescriptionText text={exp.description} className={`text-gray-900 mt-1 ${getHL(`experience[${i}].description`, hp)}`} />}
                 </div>
             ))}
         </div>
@@ -138,14 +144,14 @@ function SectionExperience({ cvData, template }: { cvData: CVData; template: Tem
                     <div key={i}>
                         <div className="flex justify-between items-start">
                             <div>
-                                {exp.title && <h3 className="font-bold text-gray-900 text-xs">{exp.title}</h3>}
-                                {exp.company && <p className="text-gray-700 italic text-xs">{exp.company}</p>}
+                                {exp.title && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`experience[${i}].title`, hp)}`}>{exp.title}</h3>}
+                                {exp.company && <p className={`text-gray-700 italic text-xs ${getHL(`experience[${i}].company`, hp)}`}>{exp.company}</p>}
                             </div>
                             {(exp.startDate || exp.endDate || exp.current) && (
-                                <p className="text-gray-600 text-xs">{fmt(exp.startDate)} – {exp.current ? 'Present' : fmt(exp.endDate)}</p>
+                                <p className="text-gray-600 text-xs"><span className={getHL(`experience[${i}].startDate`, hp)}>{fmt(exp.startDate)}</span> – <span className={getHL(`experience[${i}].endDate`, hp)}>{exp.current ? 'Present' : fmt(exp.endDate)}</span></p>
                             )}
                         </div>
-                        {exp.description && <DescriptionText text={exp.description} className="text-gray-800 mt-1" />}
+                        {exp.description && <DescriptionText text={exp.description} className={`text-gray-800 mt-1 ${getHL(`experience[${i}].description`, hp)}`} />}
                     </div>
                 ))}
             </div>
@@ -156,12 +162,12 @@ function SectionExperience({ cvData, template }: { cvData: CVData; template: Tem
             <h2 className="text-sm font-bold text-purple-700 mb-3">Experience</h2>
             {cvData.experience.map((exp, i) => (
                 <div key={i} className="mb-3">
-                    {exp.title && <h3 className="font-bold text-gray-900 text-xs">{exp.title}</h3>}
-                    {exp.company && <p className="text-purple-600 font-medium text-xs">{exp.company}</p>}
+                    {exp.title && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`experience[${i}].title`, hp)}`}>{exp.title}</h3>}
+                    {exp.company && <p className={`text-purple-600 font-medium text-xs ${getHL(`experience[${i}].company`, hp)}`}>{exp.company}</p>}
                     {(exp.startDate || exp.endDate || exp.current) && (
-                        <p className="text-gray-500 text-xs">{fmt(exp.startDate)} – {exp.current ? 'Present' : fmt(exp.endDate)}</p>
+                         <p className="text-gray-500 text-xs"><span className={getHL(`experience[${i}].startDate`, hp)}>{fmt(exp.startDate)}</span> – <span className={getHL(`experience[${i}].endDate`, hp)}>{exp.current ? 'Present' : fmt(exp.endDate)}</span></p>
                     )}
-                    {exp.description && <DescriptionText text={exp.description} className="text-gray-700 mt-1" />}
+                    {exp.description && <DescriptionText text={exp.description} className={`text-gray-700 mt-1 ${getHL(`experience[${i}].description`, hp)}`} />}
                 </div>
             ))}
         </div>
@@ -176,13 +182,13 @@ function SectionExperience({ cvData, template }: { cvData: CVData; template: Tem
                     <div key={i} className="relative">
                         <div className="absolute -left-[25px] top-1 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full" />
                         <div className="flex justify-between items-baseline mb-1">
-                            {exp.title && <h3 className="font-bold text-gray-900 text-xs">{exp.title}</h3>}
+                            {exp.title && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`experience[${i}].title`, hp)}`}>{exp.title}</h3>}
                             {(exp.startDate || exp.endDate || exp.current) && (
-                                <p className="text-gray-500 text-xs font-bold uppercase">{fmt(exp.startDate)} – {exp.current ? 'Present' : fmt(exp.endDate)}</p>
+                                <p className="text-gray-500 text-xs font-bold uppercase"><span className={getHL(`experience[${i}].startDate`, hp)}>{fmt(exp.startDate)}</span> – <span className={getHL(`experience[${i}].endDate`, hp)}>{exp.current ? 'Present' : fmt(exp.endDate)}</span></p>
                             )}
                         </div>
-                        {exp.company && <p className="text-gray-600 font-serif italic text-xs mb-1">{exp.company}</p>}
-                        {exp.description && <DescriptionText text={exp.description} className="text-gray-700" />}
+                        {exp.company && <p className={`text-gray-600 font-serif italic text-xs mb-1 ${getHL(`experience[${i}].company`, hp)}`}>{exp.company}</p>}
+                        {exp.description && <DescriptionText text={exp.description} className={`text-gray-700 ${getHL(`experience[${i}].description`, hp)}`} />}
                     </div>
                 ))}
             </div>
@@ -193,28 +199,29 @@ function SectionExperience({ cvData, template }: { cvData: CVData; template: Tem
             <h2 className="text-sm font-bold text-blue-600 mb-2 pb-1 border-b-2 border-blue-200">Experience</h2>
             {cvData.experience.map((exp, i) => (
                 <div key={i} className="mb-3 pl-3 border-l-2 border-blue-300">
-                    {exp.title && <h3 className="font-bold text-gray-900 text-xs">{exp.title}</h3>}
-                    {exp.company && <p className="text-blue-600 font-medium text-xs">{exp.company}</p>}
+                    {exp.title && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`experience[${i}].title`, hp)}`}>{exp.title}</h3>}
+                    {exp.company && <p className={`text-blue-600 font-medium text-xs ${getHL(`experience[${i}].company`, hp)}`}>{exp.company}</p>}
                     {(exp.startDate || exp.endDate || exp.current) && (
-                        <p className="text-gray-500 text-xs">{fmt(exp.startDate)} – {exp.current ? 'Present' : fmt(exp.endDate)}</p>
+                        <p className="text-gray-500 text-xs"><span className={getHL(`experience[${i}].startDate`, hp)}>{fmt(exp.startDate)}</span> – <span className={getHL(`experience[${i}].endDate`, hp)}>{exp.current ? 'Present' : fmt(exp.endDate)}</span></p>
                     )}
-                    {exp.description && <DescriptionText text={exp.description} className="text-gray-700 mt-1" />}
+                    {exp.description && <DescriptionText text={exp.description} className={`text-gray-700 mt-1 ${getHL(`experience[${i}].description`, hp)}`} />}
                 </div>
             ))}
         </div>
     );
 }
 
-function SectionEducation({ cvData, template }: { cvData: CVData; template: TemplateName }) {
+function SectionEducation({ cvData, template, highlightedPath }: { cvData: CVData; template: TemplateName; highlightedPath?: string | null }) {
     if (!cvData.education.length) return null;
+    const hp = highlightedPath;
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Education</h2>
             {cvData.education.map((edu, i) => (
                 <div key={i} className="mb-2">
-                    {edu.degree && <h3 className="font-bold text-gray-900 text-xs">{edu.degree}{edu.major && ` in ${edu.major}`}</h3>}
-                    {edu.institution && <p className="text-gray-800 italic text-xs">{edu.institution}</p>}
-                    {edu.year && <p className="text-gray-700 text-xs">{fmt(edu.year)}</p>}
+                    {edu.degree && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`education[${i}].degree`, hp)}`}>{edu.degree}{edu.major && <span className={getHL(`education[${i}].major`, hp)}>{` in ${edu.major}`}</span>}</h3>}
+                    {edu.institution && <p className={`text-gray-800 italic text-xs ${getHL(`education[${i}].institution`, hp)}`}>{edu.institution}</p>}
+                    {edu.year && <p className={`text-gray-700 text-xs ${getHL(`education[${i}].year`, hp)}`}>{fmt(edu.year)}</p>}
                 </div>
             ))}
         </div>
@@ -226,10 +233,10 @@ function SectionEducation({ cvData, template }: { cvData: CVData; template: Temp
                 {cvData.education.map((edu, i) => (
                     <div key={i} className="flex justify-between items-start">
                         <div>
-                            {edu.degree && <h3 className="font-bold text-gray-900 text-xs">{edu.degree}{edu.major && ` in ${edu.major}`}</h3>}
-                            {edu.institution && <p className="text-gray-700 text-xs">{edu.institution}</p>}
+                            {edu.degree && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`education[${i}].degree`, hp)}`}>{edu.degree}{edu.major && <span className={getHL(`education[${i}].major`, hp)}>{` in ${edu.major}`}</span>}</h3>}
+                            {edu.institution && <p className={`text-gray-700 text-xs ${getHL(`education[${i}].institution`, hp)}`}>{edu.institution}</p>}
                         </div>
-                        {edu.year && <p className="text-gray-600 text-xs">{fmt(edu.year)}</p>}
+                        {edu.year && <p className={`text-gray-600 text-xs ${getHL(`education[${i}].year`, hp)}`}>{fmt(edu.year)}</p>}
                     </div>
                 ))}
             </div>
@@ -240,9 +247,9 @@ function SectionEducation({ cvData, template }: { cvData: CVData; template: Temp
             <h2 className="text-sm font-bold text-purple-700 mb-3">Education</h2>
             {cvData.education.map((edu, i) => (
                 <div key={i} className="mb-2">
-                    {edu.degree && <h3 className="font-bold text-gray-900 text-xs">{edu.degree}{edu.major && ` in ${edu.major}`}</h3>}
-                    {edu.institution && <p className="text-purple-600 text-xs">{edu.institution}</p>}
-                    {edu.year && <p className="text-gray-500 text-xs">{fmt(edu.year)}</p>}
+                    {edu.degree && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`education[${i}].degree`, hp)}`}>{edu.degree}{edu.major && <span className={getHL(`education[${i}].major`, hp)}>{` in ${edu.major}`}</span>}</h3>}
+                    {edu.institution && <p className={`text-purple-600 text-xs ${getHL(`education[${i}].institution`, hp)}`}>{edu.institution}</p>}
+                    {edu.year && <p className={`text-gray-500 text-xs ${getHL(`education[${i}].year`, hp)}`}>{fmt(edu.year)}</p>}
                 </div>
             ))}
         </div>
@@ -255,11 +262,11 @@ function SectionEducation({ cvData, template }: { cvData: CVData; template: Temp
             <div className="grid gap-3">
                 {cvData.education.map((edu, i) => (
                     <div key={i} className="bg-white p-3 shadow-sm border-l-4 border-yellow-500">
-                        {edu.degree && <h3 className="font-bold text-gray-900 text-xs">{edu.degree}</h3>}
-                        {edu.major && <p className="text-gray-600 text-xs">{edu.major}</p>}
+                        {edu.degree && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`education[${i}].degree`, hp)}`}>{edu.degree}</h3>}
+                        {edu.major && <p className={`text-gray-600 text-xs ${getHL(`education[${i}].major`, hp)}`}>{edu.major}</p>}
                         <div className="flex justify-between mt-1 pt-1 border-t border-gray-100 text-xs text-gray-500 uppercase font-bold">
-                            <span>{edu.institution}</span>
-                            {edu.year && <span>{new Date(edu.year).getFullYear()}</span>}
+                            <span className={getHL(`education[${i}].institution`, hp)}>{edu.institution}</span>
+                            {edu.year && <span className={getHL(`education[${i}].year`, hp)}>{new Date(edu.year).getFullYear()}</span>}
                         </div>
                     </div>
                 ))}
@@ -271,53 +278,68 @@ function SectionEducation({ cvData, template }: { cvData: CVData; template: Temp
             <h2 className="text-sm font-bold text-blue-600 mb-2 pb-1 border-b-2 border-blue-200">Education</h2>
             {cvData.education.map((edu, i) => (
                 <div key={i} className="mb-2">
-                    {edu.degree && <h3 className="font-bold text-gray-900 text-xs">{edu.degree}{edu.major && ` in ${edu.major}`}</h3>}
-                    {edu.institution && <p className="text-blue-600 text-xs">{edu.institution}</p>}
-                    {edu.year && <p className="text-gray-500 text-xs">{fmt(edu.year)}</p>}
+                    {edu.degree && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`education[${i}].degree`, hp)}`}>{edu.degree}{edu.major && <span className={getHL(`education[${i}].major`, hp)}>{` in ${edu.major}`}</span>}</h3>}
+                    {edu.institution && <p className={`text-blue-600 text-xs ${getHL(`education[${i}].institution`, hp)}`}>{edu.institution}</p>}
+                    {edu.year && <p className={`text-gray-500 text-xs ${getHL(`education[${i}].year`, hp)}`}>{fmt(edu.year)}</p>}
                 </div>
             ))}
         </div>
     );
 }
 
-function SectionSkills({ cvData, template }: { cvData: CVData; template: TemplateName }) {
-    const skills = cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim());
-    if (!skills.length) return null;
+function SectionSkills({ cvData, template, highlightedPath }: { cvData: CVData; template: TemplateName; highlightedPath?: string | null }) {
+    const skills = cvData.skills as any[];
+    const hasValues = skills.some(s => typeof s === 'string' ? s.trim() : s?.value?.trim());
+    if (!hasValues) return null;
     if (template === 'creative' || template === 'executive') return null;
+    const hp = highlightedPath;
+    
+    // Custom joiner to allow per-item highlighting
+    const renderSkills = (joinStr: string) => skills.map((s, i) => {
+        const val = typeof s === 'string' ? s : s.value;
+        if (!val || !val.trim()) return null;
+        return <React.Fragment key={i}><span className={getHL(`skills[${i}].value`, hp)}>{val}</span>{i < skills.length - 1 && joinStr}</React.Fragment>;
+    });
+
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Skills</h2>
-            <p className="text-gray-900 text-xs">{skills.join(' • ')}</p>
+            <div className="text-gray-900 text-xs">{renderSkills(' • ')}</div>
         </div>
     );
     if (template === 'corporate') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold text-gray-900 mb-2 uppercase bg-gray-200 px-2 py-1">Skills</h2>
-            <p className="text-gray-800 px-2 text-xs">{skills.join(', ')}</p>
+            <div className="text-gray-800 px-2 text-xs">{renderSkills(', ')}</div>
         </div>
     );
     return (
         <div className="mb-5">
             <h2 className="text-sm font-bold text-blue-600 mb-2 pb-1 border-b-2 border-blue-200">Skills</h2>
             <div className="flex flex-wrap gap-1">
-                {skills.map((s, i) => <span key={i} className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">{s}</span>)}
+                {skills.map((s, i) => {
+                    const val = typeof s === 'string' ? s : s.value;
+                    if (!val || !val.trim()) return null;
+                    return <span key={i} className={`px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium ${getHL(`skills[${i}].value`, hp)}`}>{val}</span>;
+                })}
             </div>
         </div>
     );
 }
 
-function SectionProjects({ cvData, template }: { cvData: CVData; template: TemplateName }) {
+function SectionProjects({ cvData, template, highlightedPath }: { cvData: CVData; template: TemplateName; highlightedPath?: string | null }) {
     const projects = cvData.projects ?? [];
+    const hp = highlightedPath;
     if (!projects.length) return null;
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Projects</h2>
             {projects.map((p, i) => (
                 <div key={i} className="mb-3">
-                    {p.title && <h3 className="font-bold text-gray-900 text-xs">{p.title}</h3>}
-                    {p.technologies && <p className="text-gray-700 text-xs italic">{p.technologies}</p>}
-                    {p.description && <p className="text-gray-900 mt-1 text-xs">{p.description}</p>}
-                    {p.link && <p className="text-gray-600 text-xs mt-1">Link: {p.link}</p>}
+                    {p.title && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`projects[${i}].title`, hp)}`}>{p.title}</h3>}
+                    {p.technologies && <p className={`text-gray-700 text-xs italic ${getHL(`projects[${i}].technologies`, hp)}`}>{p.technologies}</p>}
+                    {p.description && <p className={`text-gray-900 mt-1 text-xs ${getHL(`projects[${i}].description`, hp)}`}>{p.description}</p>}
+                    {p.link && <p className={`text-gray-600 text-xs mt-1 ${getHL(`projects[${i}].link`, hp)}`}>Link: {p.link}</p>}
                 </div>
             ))}
         </div>
@@ -328,10 +350,10 @@ function SectionProjects({ cvData, template }: { cvData: CVData; template: Templ
             <div className="px-2 space-y-2">
                 {projects.map((p, i) => (
                     <div key={i}>
-                        {p.title && <h3 className="font-bold text-gray-900 text-xs">{p.title}</h3>}
-                        {p.technologies && <p className="text-gray-700 italic text-xs">{p.technologies}</p>}
-                        {p.description && <p className="text-gray-800 mt-1 text-xs">{p.description}</p>}
-                        {p.link && <p className="text-gray-600 text-xs mt-1">Link: {p.link}</p>}
+                        {p.title && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`projects[${i}].title`, hp)}`}>{p.title}</h3>}
+                        {p.technologies && <p className={`text-gray-700 italic text-xs ${getHL(`projects[${i}].technologies`, hp)}`}>{p.technologies}</p>}
+                        {p.description && <p className={`text-gray-800 mt-1 text-xs ${getHL(`projects[${i}].description`, hp)}`}>{p.description}</p>}
+                        {p.link && <p className={`text-gray-600 text-xs mt-1 ${getHL(`projects[${i}].link`, hp)}`}>Link: {p.link}</p>}
                     </div>
                 ))}
             </div>
@@ -342,10 +364,10 @@ function SectionProjects({ cvData, template }: { cvData: CVData; template: Templ
             <h2 className="text-sm font-bold text-purple-700 mb-3">Projects</h2>
             {projects.map((p, i) => (
                 <div key={i} className="mb-3">
-                    {p.title && <h3 className="font-bold text-gray-900 text-xs">{p.title}</h3>}
-                    {p.technologies && <p className="text-purple-600 font-medium text-xs">{p.technologies}</p>}
-                    {p.description && <p className="text-gray-700 mt-1 text-xs">{p.description}</p>}
-                    {p.link && <p className="text-purple-500 text-xs mt-1">Link: {p.link}</p>}
+                     {p.title && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`projects[${i}].title`, hp)}`}>{p.title}</h3>}
+                     {p.technologies && <p className={`text-purple-600 font-medium text-xs ${getHL(`projects[${i}].technologies`, hp)}`}>{p.technologies}</p>}
+                     {p.description && <p className={`text-gray-700 mt-1 text-xs ${getHL(`projects[${i}].description`, hp)}`}>{p.description}</p>}
+                     {p.link && <p className={`text-purple-500 text-xs mt-1 ${getHL(`projects[${i}].link`, hp)}`}>Link: {p.link}</p>}
                 </div>
             ))}
         </div>
@@ -358,10 +380,10 @@ function SectionProjects({ cvData, template }: { cvData: CVData; template: Templ
             <div className="space-y-3">
                 {projects.map((p, i) => (
                     <div key={i} className="bg-white p-3 shadow-sm border-l-4 border-yellow-500">
-                        {p.title && <h3 className="font-bold text-gray-900 text-xs">{p.title}</h3>}
-                        {p.technologies && <p className="text-gray-600 text-xs italic">{p.technologies}</p>}
-                        {p.description && <p className="text-gray-700 text-xs mt-1">{p.description}</p>}
-                        {p.link && <p className="text-gray-500 text-xs mt-1">Link: {p.link}</p>}
+                        {p.title && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`projects[${i}].title`, hp)}`}>{p.title}</h3>}
+                        {p.technologies && <p className={`text-gray-600 text-xs italic ${getHL(`projects[${i}].technologies`, hp)}`}>{p.technologies}</p>}
+                        {p.description && <p className={`text-gray-700 text-xs mt-1 ${getHL(`projects[${i}].description`, hp)}`}>{p.description}</p>}
+                        {p.link && <p className={`text-gray-500 text-xs mt-1 ${getHL(`projects[${i}].link`, hp)}`}>Link: {p.link}</p>}
                     </div>
                 ))}
             </div>
@@ -372,30 +394,45 @@ function SectionProjects({ cvData, template }: { cvData: CVData; template: Templ
             <h2 className="text-sm font-bold text-blue-600 mb-2 pb-1 border-b-2 border-blue-200">Projects</h2>
             {projects.map((p, i) => (
                 <div key={i} className="mb-3 pl-3 border-l-2 border-blue-300">
-                    {p.title && <h3 className="font-bold text-gray-900 text-xs">{p.title}</h3>}
-                    {p.technologies && <p className="text-blue-600 font-medium text-xs">{p.technologies}</p>}
-                    {p.description && <p className="text-gray-700 mt-1 text-xs">{p.description}</p>}
-                    {p.link && <p className="text-blue-500 text-xs mt-1">Link: {p.link}</p>}
+                     {p.title && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`projects[${i}].title`, hp)}`}>{p.title}</h3>}
+                     {p.technologies && <p className={`text-blue-600 font-medium text-xs ${getHL(`projects[${i}].technologies`, hp)}`}>{p.technologies}</p>}
+                     {p.description && <p className={`text-gray-700 mt-1 text-xs ${getHL(`projects[${i}].description`, hp)}`}>{p.description}</p>}
+                     {p.link && <p className={`text-blue-500 text-xs mt-1 ${getHL(`projects[${i}].link`, hp)}`}>Link: {p.link}</p>}
                 </div>
             ))}
         </div>
     );
 }
 
-function SectionCertification({ cvData, template }: { cvData: CVData; template: TemplateName }) {
-    const certs = cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim());
-    if (!certs.length) return null;
+function SectionCertification({ cvData, template, highlightedPath }: { cvData: CVData; template: TemplateName; highlightedPath?: string | null }) {
+    const certs = cvData.certification as any[];
+    const hasValues = certs.some(c => typeof c === 'string' ? c.trim() : c?.value?.trim());
+    if (!hasValues) return null;
     if (template === 'creative') return null;
+    const hp = highlightedPath;
+
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Certifications</h2>
-            <ul className="list-disc list-inside space-y-1">{certs.map((c, i) => <li key={i} className="text-gray-900 text-xs">{c}</li>)}</ul>
+            <ul className="list-disc list-inside space-y-1">
+                {certs.map((c, i) => {
+                    const val = typeof c === 'string' ? c : c.value;
+                    if (!val || !val.trim()) return null;
+                    return <li key={i} className="text-gray-900 text-xs"><span className={getHL(`certification[${i}].value`, hp)}>{val}</span></li>;
+                })}
+            </ul>
         </div>
     );
     if (template === 'corporate') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold text-gray-900 mb-2 uppercase bg-gray-200 px-2 py-1">Certifications</h2>
-            <ul className="list-disc list-inside px-2 space-y-1">{certs.map((c, i) => <li key={i} className="text-gray-800 text-xs">{c}</li>)}</ul>
+            <ul className="list-disc list-inside px-2 space-y-1">
+                {certs.map((c, i) => {
+                    const val = typeof c === 'string' ? c : c.value;
+                    if (!val || !val.trim()) return null;
+                    return <li key={i} className="text-gray-800 text-xs"><span className={getHL(`certification[${i}].value`, hp)}>{val}</span></li>;
+                })}
+            </ul>
         </div>
     );
     if (template === 'executive') return (
@@ -404,56 +441,83 @@ function SectionCertification({ cvData, template }: { cvData: CVData; template: 
                 <span className="w-6 h-0.5 bg-gray-900 inline-block" /> Certifications
             </h2>
             <div className="grid grid-cols-2 gap-2">
-                {certs.map((c, i) => <div key={i} className="text-gray-700 text-xs bg-white p-2 border-l-2 border-gray-900">{c}</div>)}
+                {certs.map((c, i) => {
+                    const val = typeof c === 'string' ? c : c.value;
+                    if (!val || !val.trim()) return null;
+                    return <div key={i} className={`text-gray-700 text-xs bg-white p-2 border-l-2 border-gray-900 ${getHL(`certification[${i}].value`, hp)}`}>{val}</div>;
+                })}
             </div>
         </div>
     );
     return (
         <div className="mb-5">
             <h2 className="text-sm font-bold text-blue-600 mb-2 pb-1 border-b-2 border-blue-200">Certifications</h2>
-            <ul className="space-y-1">{certs.map((c, i) => <li key={i} className="text-gray-700 flex items-start gap-1 text-xs"><span className="text-blue-600 mt-0.5">✓</span><span>{c}</span></li>)}</ul>
+            <ul className="space-y-1">
+                {certs.map((c, i) => {
+                    const val = typeof c === 'string' ? c : c.value;
+                    if (!val || !val.trim()) return null;
+                    return <li key={i} className="text-gray-700 flex items-start gap-1 text-xs"><span className="text-blue-600 mt-0.5">✓</span><span className={getHL(`certification[${i}].value`, hp)}>{val}</span></li>
+                })}
+            </ul>
         </div>
     );
 }
 
-function SectionLanguage({ cvData, template }: { cvData: CVData; template: TemplateName }) {
-    const langs = cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim());
-    if (!langs.length) return null;
+function SectionLanguage({ cvData, template, highlightedPath }: { cvData: CVData; template: TemplateName; highlightedPath?: string | null }) {
+    const langs = cvData.language as any[];
+    const hasValues = langs.some(l => typeof l === 'string' ? l.trim() : l?.value?.trim());
+    if (!hasValues) return null;
     if (template === 'creative' || template === 'executive') return null;
+    const hp = highlightedPath;
+    
+    const renderLangs = (joinStr: string) => langs.map((l, i) => {
+         const val = typeof l === 'string' ? l : l.value;
+         if (!val || !val.trim()) return null;
+         return <React.Fragment key={i}><span className={getHL(`language[${i}].value`, hp)}>{val}</span>{i < langs.length - 1 && joinStr}</React.Fragment>;
+    });
+
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Languages</h2>
-            <p className="text-gray-900 text-xs">{langs.join(' • ')}</p>
+            <div className="text-gray-900 text-xs">{renderLangs(' • ')}</div>
         </div>
     );
     if (template === 'corporate') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold text-gray-900 mb-2 uppercase bg-gray-200 px-2 py-1">Languages</h2>
-            <p className="text-gray-800 px-2 text-xs">{langs.join(', ')}</p>
+            <div className="text-gray-800 px-2 text-xs">{renderLangs(', ')}</div>
         </div>
     );
     return (
         <div className="mb-5">
             <h2 className="text-sm font-bold text-blue-600 mb-2 pb-1 border-b-2 border-blue-200">Languages</h2>
-            <div className="flex flex-wrap gap-1">{langs.map((l, i) => <span key={i} className="px-2 py-0.5 bg-blue-50 text-gray-700 rounded text-xs">{l}</span>)}</div>
+            <div className="flex flex-wrap gap-1">
+                {langs.map((l, i) => {
+                     const val = typeof l === 'string' ? l : l.value;
+                     if (!val || !val.trim()) return null;
+                     return <span key={i} className={`px-2 py-0.5 bg-blue-50 text-gray-700 rounded text-xs ${getHL(`language[${i}].value`, hp)}`}>{val}</span>;
+                })}
+            </div>
         </div>
     );
 }
 
-type SectionRenderer = (cvData: CVData, template: TemplateName) => React.ReactNode;
+
+type SectionRenderer = (cvData: CVData, template: TemplateName, highlightedPath?: string | null) => React.ReactNode;
 const SECTION_RENDERERS: Record<string, SectionRenderer> = {
-    summary: (d, t) => <SectionSummary cvData={d} template={t} />,
-    experience: (d, t) => <SectionExperience cvData={d} template={t} />,
-    education: (d, t) => <SectionEducation cvData={d} template={t} />,
-    skills: (d, t) => <SectionSkills cvData={d} template={t} />,
-    projects: (d, t) => <SectionProjects cvData={d} template={t} />,
-    certification: (d, t) => <SectionCertification cvData={d} template={t} />,
-    language: (d, t) => <SectionLanguage cvData={d} template={t} />,
+    summary: (d, t, hp) => <SectionSummary cvData={d} template={t} highlightedPath={hp} />,
+    experience: (d, t, hp) => <SectionExperience cvData={d} template={t} highlightedPath={hp} />,
+    education: (d, t, hp) => <SectionEducation cvData={d} template={t} highlightedPath={hp} />,
+    skills: (d, t, hp) => <SectionSkills cvData={d} template={t} highlightedPath={hp} />,
+    projects: (d, t, hp) => <SectionProjects cvData={d} template={t} highlightedPath={hp} />,
+    certification: (d, t, hp) => <SectionCertification cvData={d} template={t} highlightedPath={hp} />,
+    language: (d, t, hp) => <SectionLanguage cvData={d} template={t} highlightedPath={hp} />,
 };
 
 // ─── Sidebar ───────────────────────────────────────────────────────────────
 
-function Sidebar({ cvData, template }: { cvData: CVData; template: 'creative' | 'executive' }) {
+function Sidebar({ cvData, template, highlightedPath }: { cvData: CVData; template: 'creative' | 'executive'; highlightedPath?: string | null }) {
+    const hp = highlightedPath;
     if (template === 'executive') return (
         <div className="w-64 flex-shrink-0 bg-gray-900 text-white p-6 border-r-4 border-yellow-500 self-stretch">
             {cvData.personal.name && (
@@ -535,8 +599,9 @@ function Sidebar({ cvData, template }: { cvData: CVData; template: 'creative' | 
 
 // ─── Personal header ───────────────────────────────────────────────────────
 
-function PersonalHeader({ cvData, template }: { cvData: CVData; template: TemplateName }) {
+function PersonalHeader({ cvData, template, highlightedPath }: { cvData: CVData; template: TemplateName; highlightedPath?: string | null }) {
     const p = cvData.personal;
+    const hp = highlightedPath;
     if (!p.name) return null;
     if (template === 'minimal') return (
         <div className="text-center mb-5 border-b-2 border-black pb-3">
@@ -576,14 +641,14 @@ function PersonalHeader({ cvData, template }: { cvData: CVData; template: Templa
 
 // ─── Page container layout ─────────────────────────────────────────────────
 
-function PageLayout({ template, children, isFirstPage, cvData }: {
-    template: TemplateName; children: React.ReactNode; isFirstPage: boolean; cvData: CVData;
+function PageLayout({ template, children, isFirstPage, cvData, highlightedPath }: {
+    template: TemplateName; children: React.ReactNode; isFirstPage: boolean; cvData: CVData; highlightedPath?: string | null;
 }) {
     const isSidebar = template === 'creative' || template === 'executive';
     if (isSidebar) return (
         <div className="flex h-full">
             {isFirstPage
-                ? <Sidebar cvData={cvData} template={template as 'creative' | 'executive'} />
+                ? <Sidebar cvData={cvData} template={template as 'creative' | 'executive'} highlightedPath={highlightedPath} />
                 : <div className={`flex-shrink-0 ${template === 'executive' ? 'w-64 bg-gray-900 border-r-4 border-yellow-500' : 'w-56 bg-gradient-to-b from-purple-600 to-purple-800'}`} />
             }
             <div className={`flex-1 p-8 overflow-hidden ${template === 'executive' ? 'bg-gray-50' : 'bg-white'}`}>
@@ -601,7 +666,7 @@ function PageLayout({ template, children, isFirstPage, cvData }: {
 // ─── Main component ────────────────────────────────────────────────────────
 
 export default function CVPagedContent({
-    cvData, sections, selectedTemplate, tier = 'free', pageIdPrefix = 'pdf-page',
+    cvData, sections, selectedTemplate, tier = 'free', pageIdPrefix = 'pdf-page', highlightedPath,
 }: CVPagedContentProps) {
     const template: TemplateName = (selectedTemplate as TemplateName) || 'minimal';
     const isSidebar = template === 'creative' || template === 'executive';
@@ -674,11 +739,11 @@ export default function CVPagedContent({
                 }}
             >
                 <div data-measure-id="personal">
-                    <PersonalHeader cvData={cvData} template={template} />
+                    <PersonalHeader cvData={cvData} template={template} highlightedPath={highlightedPath} />
                 </div>
                 {enabledSections.map(section => (
                     <div key={section.id} data-measure-id={section.id}>
-                        {SECTION_RENDERERS[section.id]?.(cvData, template)}
+                        {SECTION_RENDERERS[section.id]?.(cvData, template, highlightedPath)}
                     </div>
                 ))}
             </div>
@@ -691,11 +756,11 @@ export default function CVPagedContent({
                     data-pdf-page={pageIdPrefix}
                     style={{ width: `${A4_WIDTH_PX}px`, height: `${A4_HEIGHT_PX}px`, position: 'relative', overflow: 'hidden', flexShrink: 0 }}
                 >
-                    <PageLayout template={template} isFirstPage={pageIndex === 0} cvData={cvData}>
-                        {pageIndex === 0 && !isSidebar && <PersonalHeader cvData={cvData} template={template} />}
+                    <PageLayout template={template} isFirstPage={pageIndex === 0} cvData={cvData} highlightedPath={highlightedPath}>
+                        {pageIndex === 0 && !isSidebar && <PersonalHeader cvData={cvData} template={template} highlightedPath={highlightedPath} />}
                         {pageSectionIds.map(sectionId => (
                             <div key={sectionId}>
-                                {SECTION_RENDERERS[sectionId]?.(cvData, template)}
+                                {SECTION_RENDERERS[sectionId]?.(cvData, template, highlightedPath)}
                             </div>
                         ))}
                     </PageLayout>

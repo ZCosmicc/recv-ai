@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Loader2, AlertCircle, CheckCircle, ChevronRight, Wand2, Star, TrendingUp, Sparkles, Download, XCircle, Trash2 } from 'lucide-react';
 import { CVData, Section } from '../types';
 import CVPagedContent from './CVPagedContent';
+import CVPreviewPane from './CVPreviewPane';
 import { downloadPDF } from '../utils/pdf';
 import Toast, { ToastType } from './Toast';
 import LimitModal from './LimitModal';
@@ -39,6 +40,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
     const [error, setError] = useState<string | null>(null);
     const [appliedFixes, setAppliedFixes] = useState<Set<number>>(new Set());
     const [ignoredItems, setIgnoredItems] = useState<Set<number>>(new Set());
+    const [hoveredPath, setHoveredPath] = useState<string | null>(null);
     const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
     const [showLimitModal, setShowLimitModal] = useState(false);
 
@@ -251,9 +253,12 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
     }
 
     return (
-        <div className="py-8 px-4 sm:px-0 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-            {/* Header / Score */}
-            <div className="bg-white border-4 border-black shadow-neo mb-6 md:mb-8 p-4 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center">
+        <div className="py-8 px-4 sm:px-0 max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex flex-col lg:flex-row gap-8">
+                {/* Left Panel - Analysis */}
+                <div className="flex-1 space-y-6 lg:max-w-[800px]">
+                    {/* Header / Score */}
+                    <div className="bg-white border-4 border-black shadow-neo p-4 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center">
                 <div className="relative w-40 h-40 flex-shrink-0">
                     <svg className="w-full h-full transform -rotate-90">
                         <circle
@@ -289,11 +294,11 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                     <h2 className="text-3xl font-bold mb-2">Review Summary</h2>
                     <p className="text-gray-600 text-lg leading-relaxed">{result.summary}</p>
                 </div>
-            </div>
+                    </div>
 
-            <div className="grid md:grid-cols-2 gap-8">
-                {/* Improvements */}
-                <div className="space-y-4">
+                    <div className="grid lg:grid-cols-2 gap-8">
+                        {/* Improvements */}
+                        <div className="space-y-4 lg:col-span-1">
                     <h3 className="text-xl font-bold flex items-center gap-2">
                         <div className="bg-red-100 p-2 border-2 border-black rounded-lg">
                             <TrendingUp className="w-5 h-5 text-red-600" />
@@ -304,7 +309,11 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                         if (ignoredItems.has(idx)) return null;
 
                         return (
-                            <div key={idx} className="bg-white border-2 border-black p-4 shadow-neo-sm relative group">
+                            <div key={idx} 
+                                 className="bg-white border-2 border-black p-4 shadow-neo-sm relative group transition-transform duration-200 hover:-translate-y-1 hover:shadow-neo"
+                                 onMouseEnter={() => setHoveredPath(item.target_path || null)}
+                                 onMouseLeave={() => setHoveredPath(null)}
+                            >
                                 <button
                                     onClick={() => {
                                         const newIgnored = new Set(ignoredItems);
@@ -426,6 +435,40 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                             ))}
                         </ul>
                     </div>
+                </div>
+                </div>
+            </div>
+
+            {/* Right Panel - Sticky Preview (Desktop) */}
+            <div className="hidden lg:block lg:w-[450px] xl:w-[500px] sticky top-8 self-start border-4 border-black shadow-neo bg-white p-4">
+                    <h3 className="font-bold text-xl mb-4 flex items-center gap-2 border-b-4 border-black pb-2 text-primary">
+                        <Wand2 className="w-5 h-5 text-purple-600" /> Live Preview
+                    </h3>
+                    <div className="bg-gray-100 p-2 rounded-lg -mx-2 -mb-2 overflow-hidden">
+                        <CVPreviewPane
+                            cvData={cvData}
+                            sections={sections}
+                            selectedTemplate={selectedTemplate}
+                            tier={tier}
+                            highlightedPath={hoveredPath}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile Preview Panel (Bottom Stack) */}
+            <div className="lg:hidden mt-8 border-4 border-black shadow-neo bg-white p-4">
+                <h3 className="font-bold text-xl mb-4 flex items-center gap-2 border-b-4 border-black pb-2 text-primary">
+                    <Wand2 className="w-5 h-5 text-purple-600" /> Live Preview
+                </h3>
+                <div className="bg-gray-100 p-2 rounded-lg -mx-2 -mb-2 overflow-hidden">
+                    <CVPreviewPane
+                        cvData={cvData}
+                        sections={sections}
+                        selectedTemplate={selectedTemplate}
+                        tier={tier}
+                        highlightedPath={hoveredPath}
+                    />
                 </div>
             </div>
 

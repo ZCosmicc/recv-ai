@@ -2,6 +2,11 @@
 
 All user-facing updates and improvements to Recv. AI.
 
+## [1.4.0] - 2026-04-13
+### ✨ New Features
+- **Review Page CV Live Preview**: We completely redesigned the AI Analysis page! It now features a split-pane layout with a sticky Live View of your CV right next to the AI Feedback. You no longer have to blindly guess what the AI is talking about or bounce back to the editor—you see everything exactly as it'll look on your actual CV, instantly.
+- **Interactive AI Highlighting**: When you hover your mouse over an AI suggestion card on the Review page, you'll see a bright yellow highlight lock onto the exact field it's referencing in your Live Preview CV. It feels *magical*.
+
 ## [1.3.5] - 2026-04-13
 ### 🐛 Bug Fixes & Polish
 - **Mobile Drag Fixed — Scroll Without Accidentally Reordering:** On phones and tablets, swiping up or down on a CV card in the builder was sometimes triggering the reorder drag instead of scrolling the page. This has been fixed — dragging to reorder now only activates when you grab the **grip handle** (⠿) on the left side of each card. Scrolling the rest of the card works naturally again.
