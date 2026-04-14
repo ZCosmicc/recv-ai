@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.1] - 2026-04-14
+
+### ✨ SEO & Branding
+
+- **Custom Favicon**: Swapped out the default Vercel logo for the official `Logo.png` by replacing `app/favicon.ico` with `app/icon.png`.
+- **Social Media Previews (Open Graph)**: Configured `metadataBase`, `openGraph.images`, and `twitter.images` in the root layout so that sharing the site URL (e.g. on WhatsApp, Twitter) generates proper preview cards.
+
+### 🐛 Bug Fixes & Polish
+
+- **Review Page Ghost Page Bug**: Fixed an issue where the Review mode pagination preview showed an extra blank page. The root cause involved two `<CVPreviewPane>` instances (Desktop and Mobile) sharing the same `data-pdf-page` tracking prefix. Assigned unique `pageIdPrefix`es (`desktop-preview`, `mobile-preview`) to isolate their DOM measurements.
+- **Overlapping Notifications**: Fixed a UI bug where "Fix Applied" toast alerts in the Review page overlapped with global toasts (like "Saving changes..."). Removed the isolated toast state in `Review.tsx` and routed all notifications securely into the centralized queue in `app/page.tsx`.
+
 ## [1.4.0] - 2026-04-13
 
 ### ✨ Features (UI/UX)

@@ -2,6 +2,15 @@
 
 All user-facing updates and improvements to Recv. AI.
 
+## [1.4.1] - 2026-04-14
+### ✨ SEO & Branding
+- **Better Link Sharing**: Sharing Recv. AI with your friends or colleagues on WhatsApp, Twitter, or Discord will now display a beautiful preview card of the application instead of an empty box.
+- **Official Favicon**: We've updated our browser tab icon to the official Recv. AI logo, replacing the default placeholder.
+
+### 🐛 Bug Fixes & Polish
+- **Preview Page Precision**: Fixed a phantom bug where the live CV preview in the Review page would sometimes mistakenly display an extra blank page at the very end of the document.
+- **Notification Fixes**: Solved an issue where multiple popup notifications (like applying an AI fix and auto-saving simultaneously) would directly overlap and hide each other. They now sort themselves out smoothly.
+
 ## [1.4.0] - 2026-04-13
 ### ✨ New Features
 - **Review Page CV Live Preview**: We completely redesigned the AI Analysis page! It now features a split-pane layout with a sticky Live View of your CV right next to the AI Feedback. You no longer have to blindly guess what the AI is talking about or bounce back to the editor—you see everything exactly as it'll look on your actual CV, instantly.

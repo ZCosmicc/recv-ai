@@ -17,6 +17,7 @@ interface ReviewProps {
     aiCredits: number;
     setAiCredits: (credits: number) => void;
     tier: 'guest' | 'free' | 'pro';
+    addToast?: (message: string, type: ToastType) => void;
 }
 
 // Mock Data Types
@@ -34,15 +35,20 @@ interface ReviewResult {
     }[];
 }
 
-export default function Review({ cvData, setCvData, onNavigate, sections, selectedTemplate, aiCredits, setAiCredits, tier }: ReviewProps) {
+export default function Review({ cvData, setCvData, onNavigate, sections, selectedTemplate, aiCredits, setAiCredits, tier, addToast }: ReviewProps) {
     const [analyzing, setAnalyzing] = useState(false);
     const [result, setResult] = useState<ReviewResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [appliedFixes, setAppliedFixes] = useState<Set<number>>(new Set());
     const [ignoredItems, setIgnoredItems] = useState<Set<number>>(new Set());
     const [hoveredPath, setHoveredPath] = useState<string | null>(null);
-    const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
     const [showLimitModal, setShowLimitModal] = useState(false);
+
+    const setToast = (toastObj: { message: string; type: ToastType } | null) => {
+        if (toastObj && addToast) {
+            addToast(toastObj.message, toastObj.type);
+        }
+    };
 
     // Refinement State
     const [refiningIdx, setRefiningIdx] = useState<number | null>(null);
@@ -495,6 +501,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                             tier={tier}
                             highlightedPath={hoveredPath}
                             suggestedPaths={result.improvements.filter((_, idx) => !ignoredItems.has(idx) && _.target_path).map(i => i.target_path as string)}
+                            pageIdPrefix="desktop-preview"
                         />
                     </div>
                 </div>
@@ -513,6 +520,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                         tier={tier}
                         highlightedPath={hoveredPath}
                         suggestedPaths={result.improvements.filter((_, idx) => !ignoredItems.has(idx) && _.target_path).map(i => i.target_path as string)}
+                        pageIdPrefix="mobile-preview"
                     />
                 </div>
             </div>
@@ -560,21 +568,6 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                     tier={tier}
                     pageIdPrefix="pdf-page"
                 />
-            </div>
-
-            {/* Toast Feedback — fixed top-right, matching app-wide pattern */}
-            <div
-                className="fixed top-20 right-3 md:right-6 z-[100] flex flex-col gap-2 md:gap-3 items-end"
-                aria-live="polite"
-            >
-                {toast && (
-                    <Toast
-                        key={toast.message}
-                        message={toast.message}
-                        type={toast.type}
-                        onClose={() => setToast(null)}
-                    />
-                )}
             </div>
         </div>
     );

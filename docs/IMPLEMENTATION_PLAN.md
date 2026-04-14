@@ -298,3 +298,35 @@ Keep Framer Motion but remove `initial`/`animate`/`exit` from `Reorder.Item` and
 | 4 | Undo delete toast | ✅ Done (3rd attempt) | 🟡 Medium |
 | 4.5 | Mobile drag scroll conflict | ✅ Done (Fill + Sections) | 🟡 Medium |
 | 5 | Review page live preview | ✅ Done | 🔴 Complex |
+
+---
+
+## Outstanding Polish & SEO Fixes (v1.4.x)
+
+### 1. Fix Persistent Ghost Page in Review Preview
+- **Problem**: The pagination preview in Review mode occasionally shows an extra blank page at the end of the document, showing "Page 1 of 3" when there are only 2 pages of content.
+- **Root Cause Hypothesis**: The previous fix stripped out tracking arrays (`[[]]`) but the issue is likely rooted in the DOM queries inside `CVPreviewPane.tsx` capturing elements they shouldn't, or `CVPagedContent.tsx` generating a trailing `<div data-pdf-page>` even if an array was popped, perhaps due to React state staleness between the `pages` array and the `countPages` timeout.
+- **Implementation Strategy**:
+  - Review `countPages` timing vs `pages` state update timing.
+  - Check if the hidden `-9999px` measurer is interfering with document queries or creating artificial heights that force the array into a ghost block.
+
+### 2. Custom Favicon (Replace Vercel Logo)
+- **Problem**: The website currently displays the Vercel default logo in browser tabs and Google Search results.
+- **Solution**: 
+  - Overwrite or rename `app/favicon.ico` using `public/Logo.png` (or generate an `.ico` version).
+  - Add Apple Touch icon configurations if missing.
+
+### 3. Open Graph & Twitter Social Previews
+- **Problem**: Sharing the URL (`recv-ai.me`) on WhatsApp, Discord, or Instagram does not generate an image preview.
+- **Solution**:
+  - Update `app/layout.tsx` metadata to explicitly include `openGraph.images` and `twitter.images`.
+  - Add `metadataBase: new URL('https://recv-ai.me')` within `layout.tsx` to resolve absolute paths for OG images.
+  - Instruct the user to take a clean screenshot of the application, name it `og-image.png`, and place it in the `/public` folder.
+
+### 4. Overlapping Toasts (Review Page vs Global)
+- **Problem**: The "Fix Applied Successfully" AI toast overlaps directly with the "Changes Saved!" global toast.
+- **Root Cause**: `Review.tsx` implements its own local `toasts` tracking array and renders its own `<div className="fixed top-20 right-3">` container. `app/page.tsx` simultaneously renders a global toast container in the exact same coordinates.
+- **Solution**:
+  - Update the `ReviewProps` interface to accept `addToast` and `removeToast` from the parent `BuilderContent`.
+  - Delete the local toast tracking and fixed container in `Review.tsx`.
+  - Update the "Fix Applied" logic to simply call the global `addToast` so they naturally flow together in the queue.

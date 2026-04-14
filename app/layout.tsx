@@ -23,17 +23,20 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
+  metadataBase: new URL('https://recv-ai.me'),
   openGraph: {
     title: "Recv. AI - Free ATS-Friendly CV Builder",
     description: "Build your professional CV and generate tailored cover letters with AI. Free, fast, and ATS-optimized.",
     type: "website",
     locale: "en_US",
     siteName: "Recv. AI",
+    images: ['/og-image.png'],
   },
   twitter: {
     card: "summary_large_image",
     title: "Recv. AI - Free ATS-Friendly CV Builder",
     description: "Build your professional CV and generate tailored cover letters with AI.",
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,

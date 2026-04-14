@@ -549,6 +549,7 @@ function BuilderContent() {
         aiCredits={aiCredits}
         setAiCredits={setAiCredits}
         tier={tier}
+        addToast={addToast}
       />
     );
   } else {
