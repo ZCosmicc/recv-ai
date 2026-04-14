@@ -8,6 +8,7 @@ All user-facing updates and improvements to Recv. AI.
 - **Official Favicon**: We've updated our browser tab icon to the official Recv. AI logo, replacing the default placeholder.
 
 ### 🐛 Bug Fixes & Polish
+- **Mobile Suggestion Controls**: The 'Ignore' button for dismissing AI suggestions is now always visible on phones and tablets. Previously, it only appeared when hovering with a mouse, which made it tricky to use on touch screens.
 - **Preview Page Precision**: Fixed a phantom bug where the live CV preview in the Review page would sometimes mistakenly display an extra blank page at the very end of the document.
 - **Notification Fixes**: Solved an issue where multiple popup notifications (like applying an AI fix and auto-saving simultaneously) would directly overlap and hide each other. They now sort themselves out smoothly.
 

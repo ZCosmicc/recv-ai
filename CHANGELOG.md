@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes & Polish
 
+- **Mobile Suggestion Ignore UX**: The 'Ignore' (X) button on AI suggestion cards was only visible on hover, making it inaccessible to mobile users. Updated styling (`opacity-100 lg:opacity-0 lg:group-hover:opacity-100`) to guarantee visibility by default on touch devices.
 - **Review Page Ghost Page Bug**: Fixed an issue where the Review mode pagination preview showed an extra blank page. The root cause involved two `<CVPreviewPane>` instances (Desktop and Mobile) sharing the same `data-pdf-page` tracking prefix. Assigned unique `pageIdPrefix`es (`desktop-preview`, `mobile-preview`) to isolate their DOM measurements.
 - **Overlapping Notifications**: Fixed a UI bug where "Fix Applied" toast alerts in the Review page overlapped with global toasts (like "Saving changes..."). Removed the isolated toast state in `Review.tsx` and routed all notifications securely into the centralized queue in `app/page.tsx`.
 

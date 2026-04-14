@@ -369,7 +369,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                                         newIgnored.add(idx);
                                         setIgnoredItems(newIgnored);
                                     }}
-                                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity"
+                                    className="absolute top-2 right-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity"
                                     title="Ignore this suggestion"
                                 >
                                     <XCircle className="w-5 h-5" />
