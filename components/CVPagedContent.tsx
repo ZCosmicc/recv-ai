@@ -530,79 +530,108 @@ const SECTION_RENDERERS: Record<string, SectionRenderer> = {
 function Sidebar({ cvData, template, highlightedPath, suggestedPaths }: { cvData: CVData; template: 'creative' | 'executive'; highlightedPath?: string | null; suggestedPaths?: string[] }) {
     const hp = highlightedPath;
     const sp = suggestedPaths;
+    const skillVals = cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim());
+    const langVals = cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim());
+    const certVals = cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim());
+
     if (template === 'executive') return (
         <div className="w-64 flex-shrink-0 bg-gray-900 text-white p-6 border-r-4 border-yellow-500 self-stretch">
             {cvData.personal.name && (
                 <div className="mb-8 text-center">
                     <div className="w-full h-0.5 bg-yellow-500 mb-3" />
-                    <h1 className="text-xl font-bold uppercase tracking-widest mb-3 font-serif text-yellow-500">{cvData.personal.name}</h1>
+                    <h1 className={`text-xl font-bold uppercase tracking-widest mb-3 font-serif text-yellow-500${getHL('personal.name', hp, sp)}`}>{cvData.personal.name}</h1>
                     <div className="text-gray-300 text-xs space-y-1 font-medium">
-                        {cvData.personal.email && <div className="border-b border-gray-700 pb-1">{cvData.personal.email}</div>}
-                        {cvData.personal.phone && <div className="border-b border-gray-700 pb-1">{cvData.personal.phone}</div>}
-                        {cvData.personal.location && <div className="border-b border-gray-700 pb-1">{cvData.personal.location}</div>}
+                        {cvData.personal.email && <div className={`border-b border-gray-700 pb-1${getHL('personal.email', hp, sp)}`}>{cvData.personal.email}</div>}
+                        {cvData.personal.phone && <div className={`border-b border-gray-700 pb-1${getHL('personal.phone', hp, sp)}`}>{cvData.personal.phone}</div>}
+                        {cvData.personal.location && <div className={`border-b border-gray-700 pb-1${getHL('personal.location', hp, sp)}`}>{cvData.personal.location}</div>}
                     </div>
                     {cvData.personal.customFields.map((f, i) => f.label && f.value && (
                         <div key={i} className="text-gray-400 text-xs mt-1">
-                            <span className="text-yellow-600 font-bold uppercase">{f.label}:</span> {f.value}
+                            <span className="text-yellow-600 font-bold uppercase">{f.label}:</span>{' '}
+                            <span className={getHL(`personal.customFields[${i}].value`, hp, sp)}>{f.value}</span>
                         </div>
                     ))}
                 </div>
             )}
-            {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).length > 0 && (
+            {skillVals.length > 0 && (
                 <div className="mb-6">
                     <h2 className="text-xs font-bold uppercase tracking-widest text-yellow-500 mb-3 border-b border-gray-700 pb-1">Expertise</h2>
                     <ul className="space-y-1">
-                        {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((s, i) => (
+                        {skillVals.map((s, i) => (
                             <li key={i} className="text-gray-300 text-xs flex items-center">
-                                <span className="w-1.5 h-1.5 bg-yellow-600 mr-2 rotate-45 inline-block flex-shrink-0" />{s}
+                                <span className="w-1.5 h-1.5 bg-yellow-600 mr-2 rotate-45 inline-block flex-shrink-0" />
+                                <span className={getHL(`skills[${i}].value`, hp, sp)}>{s}</span>
                             </li>
                         ))}
                     </ul>
                 </div>
             )}
-            {cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).length > 0 && (
+            {langVals.length > 0 && (
                 <div className="mb-6">
                     <h2 className="text-xs font-bold uppercase tracking-widest text-yellow-500 mb-3 border-b border-gray-700 pb-1">Languages</h2>
-                    <ul className="space-y-1">{cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).map((l, i) => <li key={i} className="text-gray-300 text-xs">{l}</li>)}</ul>
+                    <ul className="space-y-1">
+                        {langVals.map((l, i) => (
+                            <li key={i} className={`text-gray-300 text-xs${getHL(`language[${i}].value`, hp, sp)}`}>{l}</li>
+                        ))}
+                    </ul>
                 </div>
             )}
-            {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).length > 0 && (
+            {certVals.length > 0 && (
                 <div>
                     <h2 className="text-xs font-bold uppercase tracking-widest text-yellow-500 mb-3 border-b border-gray-700 pb-1">Certifications</h2>
-                    <ul className="space-y-1">{cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((c, i) => <li key={i} className="text-gray-300 text-xs">✓ {c}</li>)}</ul>
+                    <ul className="space-y-1">
+                        {certVals.map((c, i) => (
+                            <li key={i} className={`text-gray-300 text-xs${getHL(`certification[${i}].value`, hp, sp)}`}>✓ {c}</li>
+                        ))}
+                    </ul>
                 </div>
             )}
         </div>
     );
+    // creative template
     return (
         <div className="w-56 flex-shrink-0 bg-gradient-to-b from-purple-600 to-purple-800 text-white p-5 self-stretch">
             {cvData.personal.name && (
                 <div className="mb-5">
-                    <h1 className="text-lg font-bold mb-2">{cvData.personal.name}</h1>
+                    <h1 className={`text-lg font-bold mb-2${getHL('personal.name', hp, sp)}`}>{cvData.personal.name}</h1>
                     <div className="space-y-1 text-xs">
-                        {cvData.personal.email && <p className="break-all">📧 {cvData.personal.email}</p>}
-                        {cvData.personal.phone && <p>📞 {cvData.personal.phone}</p>}
-                        {cvData.personal.location && <p>📍 {cvData.personal.location}</p>}
-                        {cvData.personal.customFields.map((f, i) => f.label && f.value && <p key={i} className="break-all">🔗 {f.value}</p>)}
+                        {cvData.personal.email && <p className={`break-all${getHL('personal.email', hp, sp)}`}>📧 {cvData.personal.email}</p>}
+                        {cvData.personal.phone && <p className={getHL('personal.phone', hp, sp)}>📞 {cvData.personal.phone}</p>}
+                        {cvData.personal.location && <p className={getHL('personal.location', hp, sp)}>📍 {cvData.personal.location}</p>}
+                        {cvData.personal.customFields.map((f, i) => f.label && f.value && (
+                            <p key={i} className={`break-all${getHL(`personal.customFields[${i}].value`, hp, sp)}`}>🔗 {f.value}</p>
+                        ))}
                     </div>
                 </div>
             )}
-            {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).length > 0 && (
+            {skillVals.length > 0 && (
                 <div className="mb-5">
                     <h2 className="text-sm font-bold mb-2 pb-1 border-b border-purple-400">Skills</h2>
-                    <div className="space-y-1">{cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((s, i) => <div key={i} className="bg-purple-700 px-2 py-0.5 rounded text-xs">{s}</div>)}</div>
+                    <div className="space-y-1">
+                        {skillVals.map((s, i) => (
+                            <div key={i} className={`bg-purple-700 px-2 py-0.5 rounded text-xs${getHL(`skills[${i}].value`, hp, sp)}`}>{s}</div>
+                        ))}
+                    </div>
                 </div>
             )}
-            {cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).length > 0 && (
+            {langVals.length > 0 && (
                 <div className="mb-5">
                     <h2 className="text-sm font-bold mb-2 pb-1 border-b border-purple-400">Languages</h2>
-                    <div className="space-y-1 text-xs">{cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).map((l, i) => <p key={i}>• {l}</p>)}</div>
+                    <div className="space-y-1 text-xs">
+                        {langVals.map((l, i) => (
+                            <p key={i} className={getHL(`language[${i}].value`, hp, sp)}>• {l}</p>
+                        ))}
+                    </div>
                 </div>
             )}
-            {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).length > 0 && (
+            {certVals.length > 0 && (
                 <div>
                     <h2 className="text-sm font-bold mb-2 pb-1 border-b border-purple-400">Certifications</h2>
-                    <div className="space-y-1 text-xs">{cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((c, i) => <p key={i}>✓ {c}</p>)}</div>
+                    <div className="space-y-1 text-xs">
+                        {certVals.map((c, i) => (
+                            <p key={i} className={getHL(`certification[${i}].value`, hp, sp)}>✓ {c}</p>
+                        ))}
+                    </div>
                 </div>
             )}
         </div>
@@ -654,15 +683,15 @@ function PersonalHeader({ cvData, template, highlightedPath, suggestedPaths }: {
 
 // ─── Page container layout ─────────────────────────────────────────────────
 
-function PageLayout({ template, children, isFirstPage, cvData, highlightedPath }: {
-    template: TemplateName; children: React.ReactNode; isFirstPage: boolean; cvData: CVData; highlightedPath?: string | null;
-    suggestedPaths?: string[];
+function PageLayout({ template, children, isFirstPage, cvData, highlightedPath, suggestedPaths }: {
+    template: TemplateName; children: React.ReactNode; isFirstPage: boolean; cvData: CVData;
+    highlightedPath?: string | null; suggestedPaths?: string[];
 }) {
     const isSidebar = template === 'creative' || template === 'executive';
     if (isSidebar) return (
         <div className="flex h-full">
             {isFirstPage
-                ? <Sidebar cvData={cvData} template={template as 'creative' | 'executive'} highlightedPath={highlightedPath} />
+                ? <Sidebar cvData={cvData} template={template as 'creative' | 'executive'} highlightedPath={highlightedPath} suggestedPaths={suggestedPaths} />
                 : <div className={`flex-shrink-0 ${template === 'executive' ? 'w-64 bg-gray-900 border-r-4 border-yellow-500' : 'w-56 bg-gradient-to-b from-purple-600 to-purple-800'}`} />
             }
             <div className={`flex-1 p-8 overflow-hidden ${template === 'executive' ? 'bg-gray-50' : 'bg-white'}`}>
@@ -723,6 +752,11 @@ export default function CVPagedContent({
             }
         });
 
+        // Remove any trailing empty pages (could happen if last section renders null)
+        while (newPages.length > 1 && newPages[newPages.length - 1].length === 0) {
+            newPages.pop();
+        }
+
         // Only update if pages actually changed (avoid infinite loop)
         setPages(prev => {
             const prevStr = JSON.stringify(prev);
@@ -771,7 +805,7 @@ export default function CVPagedContent({
                     data-pdf-page={pageIdPrefix}
                     style={{ width: `${A4_WIDTH_PX}px`, height: `${A4_HEIGHT_PX}px`, position: 'relative', overflow: 'hidden', flexShrink: 0 }}
                 >
-                    <PageLayout template={template} isFirstPage={pageIndex === 0} cvData={cvData} highlightedPath={highlightedPath}>
+                    <PageLayout template={template} isFirstPage={pageIndex === 0} cvData={cvData} highlightedPath={highlightedPath} suggestedPaths={suggestedPaths}>
                         {pageIndex === 0 && !isSidebar && <PersonalHeader cvData={cvData} template={template} highlightedPath={highlightedPath} />}
                         {pageSectionIds.map(sectionId => (
                             <div key={sectionId}>
