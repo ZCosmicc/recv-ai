@@ -87,37 +87,80 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
         }
     };
 
-    const handleApplyFix = (idx: number, path: string | undefined, suggestion: string) => {
+    const handleApplyFix = (idx: number, path: string | undefined, suggestion: string, improvement_type: string) => {
         if (!path) return;
 
-        console.log("Applying fix:", { idx, path, suggestion });
+        console.log("Applying fix:", { idx, path, suggestion, improvement_type });
 
         try {
             const newData = JSON.parse(JSON.stringify(cvData)); // Deep clone
-            let current: any = newData;
-            const parts = path.replace(/\]/g, '').split(/[.\[]/); // "experience[0].description" -> ["experience", "0", "description"]
+            const parts = path.replace(/\]/g, '').split(/[.[]/); // "experience[0].description" -> ["experience", "0", "description"]
 
             let applied = false;
 
-            for (let i = 0; i < parts.length - 1; i++) {
-                const part = parts[i];
-                if (current[part] === undefined) {
-                    console.warn(`Path segment '${part}' not found in`, current);
-                    setToast({ message: `Could not find field: ${part}`, type: 'error' });
-                    return;
-                }
-                current = current[part];
-            }
+            if (improvement_type === 'remove') {
+                // For remove: navigate to the parent array and splice out the element
+                // e.g. path = "language[2].value" -> navigate to cvData.language, splice index 2
+                // e.g. path = "skills[0].value" -> navigate to cvData.skills, splice index 0
+                let arrayRef: any = newData;
+                let arrayIndex = -1;
 
-            const lastPart = parts[parts.length - 1];
-            if (lastPart && current) {
-                // FALLBACK: If the AI path targets the object itself (e.g. skills[0]) instead of .value
-                if (typeof current[lastPart] === 'object' && current[lastPart] !== null && 'value' in current[lastPart]) {
-                    current[lastPart].value = suggestion;
-                } else {
-                    current[lastPart] = suggestion;
+                for (let i = 0; i < parts.length; i++) {
+                    const part = parts[i];
+                    const nextIsIndex = i + 1 < parts.length && /^\d+$/.test(parts[i + 1]);
+                    if (nextIsIndex) {
+                        // part is the array name, parts[i+1] is the numeric index
+                        arrayRef = arrayRef[part];
+                        arrayIndex = parseInt(parts[i + 1], 10);
+                        // We found the array and index, stop here
+                        break;
+                    }
+                    if (/^\d+$/.test(part)) {
+                        // This is the index itself, the parent was already navigated
+                        arrayIndex = parseInt(part, 10);
+                        break;
+                    }
+                    if (arrayRef[part] === undefined) break;
+                    arrayRef = arrayRef[part];
                 }
-                applied = true;
+
+                if (Array.isArray(arrayRef) && arrayIndex >= 0 && arrayIndex < arrayRef.length) {
+                    arrayRef.splice(arrayIndex, 1);
+                    applied = true;
+                } else {
+                    // Fallback: if path doesn't have array, try setting to empty string
+                    console.warn('Remove: could not locate array element, falling back to empty string', path);
+                    let current: any = newData;
+                    for (let i = 0; i < parts.length - 1; i++) {
+                        if (current[parts[i]] === undefined) { break; }
+                        current = current[parts[i]];
+                    }
+                    const lastPart = parts[parts.length - 1];
+                    if (lastPart && current) { current[lastPart] = ''; applied = true; }
+                }
+            } else {
+                // For fix: navigate to the target and set the suggestion value
+                let current: any = newData;
+
+                for (let i = 0; i < parts.length - 1; i++) {
+                    const part = parts[i];
+                    if (current[part] === undefined) {
+                        console.warn(`Path segment '${part}' not found in`, current);
+                        setToast({ message: `Could not find field: ${part}`, type: 'error' });
+                        return;
+                    }
+                    current = current[part];
+                }
+
+                const lastPart = parts[parts.length - 1];
+                if (lastPart && current) {
+                    if (typeof current[lastPart] === 'object' && current[lastPart] !== null && 'value' in current[lastPart]) {
+                        current[lastPart].value = suggestion;
+                    } else {
+                        current[lastPart] = suggestion;
+                    }
+                    applied = true;
+                }
             }
 
             if (applied) {
@@ -127,9 +170,9 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                 const newApplied = new Set(appliedFixes);
                 newApplied.add(idx);
                 setAppliedFixes(newApplied);
-                setToast({ message: 'Fix applied successfully!', type: 'success' });
+                setToast({ message: improvement_type === 'remove' ? 'Item removed successfully!' : 'Fix applied successfully!', type: 'success' });
             } else {
-                console.warn("Failed to apply fix. Target reached but invalid:", current, lastPart);
+                console.warn("Failed to apply fix. Target reached but invalid.");
                 setToast({ message: 'Failed to apply fix', type: 'error' });
             }
 
@@ -390,7 +433,7 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
 
                                 {(item.improvement_type === 'fix' || item.improvement_type === 'remove') && item.target_path && !refiningIdx && (
                                     <button
-                                        onClick={() => handleApplyFix(idx, item.target_path, item.suggestion)}
+                                        onClick={() => handleApplyFix(idx, item.target_path, item.suggestion, item.improvement_type)}
                                         disabled={appliedFixes.has(idx)}
                                         className={`mt-4 w-full py-2 font-bold text-sm transition-colors flex items-center justify-center gap-2 ${appliedFixes.has(idx)
                                             ? 'bg-green-600 text-white cursor-default'
@@ -519,14 +562,20 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                 />
             </div>
 
-            {/* Toast Feedback */}
-            {toast && (
-                <Toast
-                    message={toast.message}
-                    type={toast.type}
-                    onClose={() => setToast(null)}
-                />
-            )}
+            {/* Toast Feedback — fixed top-right, matching app-wide pattern */}
+            <div
+                className="fixed top-20 right-3 md:right-6 z-[100] flex flex-col gap-2 md:gap-3 items-end"
+                aria-live="polite"
+            >
+                {toast && (
+                    <Toast
+                        key={toast.message}
+                        message={toast.message}
+                        type={toast.type}
+                        onClose={() => setToast(null)}
+                    />
+                )}
+            </div>
         </div>
     );
 }

@@ -14,6 +14,9 @@ All notable changes to this project will be documented in this file.
 ### 🐛 Bug Fixes
 
 - **Ghost Page Pagination Removal**: Fixed an edge-case logic bug in the custom A4 CV paginator engine (`CVPagedContent.tsx`) where trailing invisible/empty elements (e.g. an active Certifications section with 0 entries) would erroneously contribute padding values (`offsetHeight + 12`) to the boundary calculator. This previously forced the engine to spontaneously spool up an entirely blank final page if the margin exceeded the bounding limit.
+- **Sidebar Highlight Support (Creative & Executive)**: The `Sidebar` and `PageLayout` components were rendering items with no `getHL()` wiring — `hp` and `sp` variables were declared but never applied. Rewrote all sidebar item renders to wrap text nodes with `getHL()`. Also fixed `PageLayout` to properly include `suggestedPaths` in its prop signature destructuring and forward it to `<Sidebar />`.
+- **Remove with AI Now Actually Removes Items**: `handleApplyFix` was using the same write-to-field logic for `remove` type improvements as for `fix` — so "Remove with AI" was writing the `suggestion` text (e.g. `"This item identifies as invalid or irrelevant."`) into the CV field instead of deleting it. Refactored the remove path to navigate to the parent array using the `target_path` and `splice()` out the element by index.
+- **'Fix Applied' Toast Position**: The `<Toast>` in Review.tsx was rendered inline in the page flow, causing it to appear at the bottom of the document. Fixed by wrapping it in a `position: fixed top-20 right-6` container matching the app-wide toast pattern.
 
 ## [1.3.5] - 2026-04-12
 

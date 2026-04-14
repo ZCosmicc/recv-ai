@@ -10,6 +10,9 @@ All user-facing updates and improvements to Recv. AI.
 
 ### 🐛 Bug Fixes & Polish
 - **Removed Ghost Pages**: We eradicated a visual bug where the CV preview would occasionally tack on an entirely blank A4 page at the very end of your document due to empty underlying sections triggering the engine. Your pagination previews should now be precise.
+- **Sidebar Highlights Now Work for Creative & Executive Templates**: The left-side panel for both the Creative and Executive templates now correctly lights up with AI suggestion highlights alongside the main content area.
+- **'Remove with AI' Now Actually Removes**: Clicking "Remove with AI" on a suggestion was incorrectly writing a message into your CV field instead of deleting the item. It now correctly removes the flagged entry from your CV.
+- **'Fix Applied' Toast Now Appears at the Top**: The success notification after applying an AI fix was incorrectly appearing at the bottom of the page. It now shows up in the top-right corner where all other app notifications appear.
 
 ## [1.3.5] - 2026-04-12
 ### 🐛 Bug Fixes & Polish
