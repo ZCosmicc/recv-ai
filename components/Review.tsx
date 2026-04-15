@@ -351,15 +351,15 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                     {result.score_breakdown && (
                         <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-4">
                             <div className="bg-gray-50 border-2 border-black rounded p-2 text-center shadow-neo-sm">
-                                <span className="block text-lg font-black text-black">{result.score_breakdown.completeness}<span className="text-sm font-bold text-gray-400">/30</span></span>
+                                <span className="block text-lg font-black text-black">{result.score_breakdown.completeness}<span className="text-sm font-bold text-gray-400">/100</span></span>
                                 <span className="text-[10px] sm:text-xs font-bold uppercase text-gray-600">Completeness</span>
                             </div>
                             <div className="bg-gray-50 border-2 border-black rounded p-2 text-center shadow-neo-sm">
-                                <span className="block text-lg font-black text-black">{result.score_breakdown.impact}<span className="text-sm font-bold text-gray-400">/40</span></span>
+                                <span className="block text-lg font-black text-black">{result.score_breakdown.impact}<span className="text-sm font-bold text-gray-400">/100</span></span>
                                 <span className="text-[10px] sm:text-xs font-bold uppercase text-gray-600">Impact</span>
                             </div>
                             <div className="bg-gray-50 border-2 border-black rounded p-2 text-center shadow-neo-sm">
-                                <span className="block text-lg font-black text-black">{result.score_breakdown.clarity}<span className="text-sm font-bold text-gray-400">/30</span></span>
+                                <span className="block text-lg font-black text-black">{result.score_breakdown.clarity}<span className="text-sm font-bold text-gray-400">/100</span></span>
                                 <span className="text-[10px] sm:text-xs font-bold uppercase text-gray-600">Clarity</span>
                             </div>
                         </div>
