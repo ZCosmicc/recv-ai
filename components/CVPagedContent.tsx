@@ -843,7 +843,7 @@ function PersonalHeader({ cvData, template, highlightedPath, suggestedPaths }: {
     const sp = suggestedPaths;
     if (!p.name) return null;
     if (template === 'syntax') return (
-        <div className="grid grid-cols-[1fr_2fr] gap-4 mb-6 border-b-2 border-dashed border-gray-300 pb-4 font-geist">
+        <div className="grid grid-cols-[1fr_2fr] gap-4 mb-2 border-b-2 border-dashed border-gray-300 pb-4 font-geist">
             <div>
                 <h1 className={`text-2xl font-bold uppercase tracking-tight ${getHL('personal.name', hp, sp)}`}>{p.name}</h1>
                 <p className="text-gray-500 mt-1 uppercase tracking-widest text-[10px]">Professional Profile</p>
