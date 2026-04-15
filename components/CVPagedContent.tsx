@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { CVData, Section } from '../types';
+import { Mail, Phone, MapPin, Link as LinkIcon, Check } from 'lucide-react';
 
 // A4 at 96dpi
 export const A4_WIDTH_PX = 794;
@@ -17,6 +18,8 @@ const CONTENT_WIDTHS: Record<string, number> = {
     corporate: 714,
     creative: 506,
     executive: 474,
+    syntax: 714,
+    'syntax-nano': 714,
 };
 
 // Max usable height per page (A4 height minus vertical padding)
@@ -28,9 +31,11 @@ const MAX_HEIGHTS: Record<string, number> = {
     corporate: 1043,
     creative: 1059,
     executive: 1059,
+    syntax: 1043,
+    'syntax-nano': 1043,
 };
 
-export type TemplateName = 'minimal' | 'modern' | 'creative' | 'corporate' | 'executive';
+export type TemplateName = 'minimal' | 'modern' | 'creative' | 'corporate' | 'executive' | 'syntax' | 'syntax-nano';
 
 interface CVPagedContentProps {
     cvData: CVData;
@@ -89,6 +94,18 @@ function SectionSummary({ cvData, template, highlightedPath, suggestedPaths }: {
     if (!cvData.summary) return null;
     const hp = highlightedPath;
     const sp = suggestedPaths;
+    if (template === 'syntax') return (
+        <div className="grid grid-cols-[1fr_3fr] gap-4 mb-4 font-geist">
+            <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Summary</h2>
+            <p className={`text-xs leading-relaxed text-gray-800 ${getHL('summary', hp, sp)}`}>{cvData.summary}</p>
+        </div>
+    );
+    if (template === 'syntax-nano') return (
+        <div className="mb-4 font-jetbrains">
+            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Summary</h2>
+            <p className={`text-xs leading-relaxed text-gray-800 ${getHL('summary', hp, sp)}`}>{cvData.summary}</p>
+        </div>
+    );
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Summary</h2>
@@ -127,6 +144,51 @@ function SectionExperience({ cvData, template, highlightedPath, suggestedPaths }
     if (!cvData.experience.length) return null;
     const hp = highlightedPath;
     const sp = suggestedPaths;
+    if (template === 'syntax') return (
+        <div className="grid grid-cols-[1fr_3fr] gap-4 mb-4 font-geist">
+            <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Experience</h2>
+            <div className="space-y-4">
+                {cvData.experience.map((exp, i) => (
+                    <div key={i}>
+                        <div className="flex justify-between items-baseline mb-1">
+                            {exp.title && <h3 className={`font-bold text-xs ${getHL(`experience[${i}].title`, hp, sp)}`}>{exp.title}</h3>}
+                            {(exp.startDate || exp.endDate || exp.current) && (
+                                <p className="text-gray-500 text-[10px]">
+                                    <span className={getHL(`experience[${i}].startDate`, hp, sp)}>{exp.startDate ? fmt(exp.startDate) : ''}</span>
+                                    {' - '}
+                                    <span className={getHL(`experience[${i}].endDate`, hp, sp)}>{exp.current ? 'Present' : (exp.endDate ? fmt(exp.endDate) : '')}</span>
+                                </p>
+                            )}
+                        </div>
+                        {exp.company && <p className={`text-gray-600 text-xs mb-1 ${getHL(`experience[${i}].company`, hp, sp)}`}>{exp.company}</p>}
+                        {exp.description && <DescriptionText text={exp.description} className={`text-gray-700 ${getHL(`experience[${i}].description`, hp, sp)}`} />}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+    if (template === 'syntax-nano') return (
+        <div className="mb-4 font-jetbrains">
+            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Experience</h2>
+            <div className="space-y-3">
+                {cvData.experience.map((exp, i) => (
+                    <div key={i}>
+                        <div className="flex justify-between items-baseline mb-0.5">
+                            {exp.title && <h3 className={`font-bold text-xs ${getHL(`experience[${i}].title`, hp, sp)}`}>{exp.title} <span className="font-normal text-gray-600">@ {exp.company}</span></h3>}
+                            {(exp.startDate || exp.endDate || exp.current) && (
+                                <p className="text-gray-500 text-[10px]">
+                                    <span className={getHL(`experience[${i}].startDate`, hp, sp)}>{exp.startDate ? fmt(exp.startDate) : ''}</span>
+                                    {' - '}
+                                    <span className={getHL(`experience[${i}].endDate`, hp, sp)}>{exp.current ? 'Present' : (exp.endDate ? fmt(exp.endDate) : '')}</span>
+                                </p>
+                            )}
+                        </div>
+                        {exp.description && <DescriptionText text={exp.description} className={`pl-3 border-l text-gray-700 ${getHL(`experience[${i}].description`, hp, sp)}`} />}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Experience</h2>
@@ -221,6 +283,38 @@ function SectionEducation({ cvData, template, highlightedPath, suggestedPaths }:
     if (!cvData.education.length) return null;
     const hp = highlightedPath;
     const sp = suggestedPaths;
+    if (template === 'syntax') return (
+        <div className="grid grid-cols-[1fr_3fr] gap-4 mb-4 font-geist">
+            <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Education</h2>
+            <div className="space-y-3">
+                {cvData.education.map((edu, i) => (
+                    <div key={i} className="flex justify-between items-baseline">
+                        <div>
+                            {edu.degree && <h3 className={`font-bold text-xs ${getHL(`education[${i}].degree`, hp, sp)}`}>{edu.degree}{edu.major && <span className={getHL(`education[${i}].major`, hp, sp)}>{` in ${edu.major}`}</span>}</h3>}
+                            {edu.institution && <p className={`text-gray-600 text-[10px] ${getHL(`education[${i}].institution`, hp, sp)}`}>{edu.institution}</p>}
+                        </div>
+                        {edu.year && <p className={`text-gray-500 text-[10px] ${getHL(`education[${i}].year`, hp, sp)}`}>{fmt(edu.year)}</p>}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+    if (template === 'syntax-nano') return (
+        <div className="mb-4 font-jetbrains">
+            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Education</h2>
+            <div className="space-y-2">
+                {cvData.education.map((edu, i) => (
+                    <div key={i} className="flex justify-between items-baseline">
+                        <div>
+                            {edu.degree && <h3 className={`font-bold text-xs ${getHL(`education[${i}].degree`, hp, sp)}`}>{edu.degree}{edu.major && <span className={getHL(`education[${i}].major`, hp, sp)}>{` - ${edu.major}`}</span>}</h3>}
+                            {edu.institution && <p className={`text-gray-600 text-[10px] ${getHL(`education[${i}].institution`, hp, sp)}`}>{edu.institution}</p>}
+                        </div>
+                        {edu.year && <p className={`text-gray-500 text-[10px] ${getHL(`education[${i}].year`, hp, sp)}`}>{fmt(edu.year)}</p>}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Education</h2>
@@ -309,6 +403,26 @@ function SectionSkills({ cvData, template, highlightedPath, suggestedPaths }: { 
         return <React.Fragment key={i}><span className={getHL(`skills[${i}].value`, hp, sp)}>{val}</span>{i < skills.length - 1 && joinStr}</React.Fragment>;
     });
 
+    if (template === 'syntax') return (
+        <div className="grid grid-cols-[1fr_3fr] gap-4 mb-4 font-geist">
+            <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Skills</h2>
+            <div className="flex flex-wrap gap-1 text-xs text-gray-800">
+                {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((skill, i) => (
+                    <span key={i} className={`px-1.5 py-0.5 bg-gray-100 rounded-sm leading-none border border-gray-200 ${getHL(`skills[${i}].value`, hp, sp)}`}>{skill}</span>
+                ))}
+            </div>
+        </div>
+    );
+    if (template === 'syntax-nano') return (
+        <div className="mb-4 font-jetbrains">
+            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Skills</h2>
+            <p className="text-xs text-gray-800 leading-relaxed">
+                {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((skill, i, arr) => (
+                    <span key={i} className={getHL(`skills[${i}].value`, hp, sp)}>{skill}{i < arr.length - 1 ? ' • ' : ''}</span>
+                ))}
+            </p>
+        </div>
+    );
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Skills</h2>
@@ -340,6 +454,40 @@ function SectionProjects({ cvData, template, highlightedPath, suggestedPaths }: 
     const hp = highlightedPath;
     const sp = suggestedPaths;
     if (!projects.length) return null;
+    if (template === 'syntax') return (
+        <div className="grid grid-cols-[1fr_3fr] gap-4 mb-4 font-geist">
+            <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Projects</h2>
+            <div className="space-y-4">
+                {projects.map((p, i) => (
+                    <div key={i}>
+                        <div className="flex justify-between items-baseline mb-0.5">
+                            {p.title && <h3 className={`font-bold text-xs ${getHL(`projects[${i}].title`, hp, sp)}`}>{p.title}</h3>}
+                            {p.technologies && <span className={`text-[10px] bg-gray-100 px-1.5 py-0.5 rounded-sm border border-gray-200 ${getHL(`projects[${i}].technologies`, hp, sp)}`}>{p.technologies}</span>}
+                        </div>
+                        {p.description && <p className={`text-xs leading-relaxed text-gray-700 ${getHL(`projects[${i}].description`, hp, sp)}`}>{p.description}</p>}
+                        {p.link && <p className={`flex items-center gap-1 text-gray-500 text-[10px] mt-1 ${getHL(`projects[${i}].link`, hp, sp)}`}><LinkIcon className="w-2.5 h-2.5 flex-shrink-0" /> {p.link}</p>}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+    if (template === 'syntax-nano') return (
+        <div className="mb-4 font-jetbrains">
+            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Projects</h2>
+            <div className="space-y-3">
+                {projects.map((p, i) => (
+                    <div key={i}>
+                        <div className="flex justify-between items-baseline mb-0.5">
+                            {p.title && <h3 className={`font-bold text-xs ${getHL(`projects[${i}].title`, hp, sp)}`}>{p.title}</h3>}
+                        </div>
+                        {p.technologies && <p className={`text-[10px] text-gray-500 mb-0.5 ${getHL(`projects[${i}].technologies`, hp, sp)}`}>Built with: {p.technologies}</p>}
+                        {p.description && <p className={`text-xs leading-relaxed text-gray-700 mb-0.5 ${getHL(`projects[${i}].description`, hp, sp)}`}>{p.description}</p>}
+                        {p.link && <p className={`flex items-center gap-1 text-gray-500 text-[10px] ${getHL(`projects[${i}].link`, hp, sp)}`}><LinkIcon className="w-2.5 h-2.5 flex-shrink-0" /> {p.link}</p>}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Projects</h2>
@@ -421,6 +569,30 @@ function SectionCertification({ cvData, template, highlightedPath, suggestedPath
     const hp = highlightedPath;
     const sp = suggestedPaths;
 
+    if (template === 'syntax') return (
+        <div className="grid grid-cols-[1fr_3fr] gap-4 mb-4 font-geist">
+            <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Certs</h2>
+            <div className="flex flex-col gap-0.5 text-xs text-gray-800">
+                {certs.map((c, i) => {
+                    const val = typeof c === 'string' ? c : c.value;
+                    if (!val || !val.trim()) return null;
+                    return <div key={i} className={`flex items-start gap-1.5 ${getHL(`certification[${i}].value`, hp, sp)}`}><Check className="w-3 h-3 text-gray-400 flex-shrink-0" /> {val}</div>
+                })}
+            </div>
+        </div>
+    );
+    if (template === 'syntax-nano') return (
+        <div className="mb-4 font-jetbrains">
+            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Certifications</h2>
+            <div className="grid grid-cols-2 gap-1 text-xs text-gray-800">
+                {certs.map((c, i) => {
+                    const val = typeof c === 'string' ? c : c.value;
+                    if (!val || !val.trim()) return null;
+                    return <div key={i} className={`flex items-center gap-1 ${getHL(`certification[${i}].value`, hp, sp)}`}><span className="text-gray-400">›</span> {val}</div>
+                })}
+            </div>
+        </div>
+    );
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Certifications</h2>
@@ -428,7 +600,7 @@ function SectionCertification({ cvData, template, highlightedPath, suggestedPath
                 {certs.map((c, i) => {
                     const val = typeof c === 'string' ? c : c.value;
                     if (!val || !val.trim()) return null;
-                    return <li key={i} className="text-gray-900 text-xs"><span className={getHL(`certification[${i}].value`, hp, sp)}>{val}</span></li>;
+                    return <li key={i} className={`text-gray-900 text-xs ${getHL(`certification[${i}].value`, hp, sp)}`}>{val}</li>;
                 })}
             </ul>
         </div>
@@ -440,7 +612,7 @@ function SectionCertification({ cvData, template, highlightedPath, suggestedPath
                 {certs.map((c, i) => {
                     const val = typeof c === 'string' ? c : c.value;
                     if (!val || !val.trim()) return null;
-                    return <li key={i} className="text-gray-800 text-xs"><span className={getHL(`certification[${i}].value`, hp, sp)}>{val}</span></li>;
+                    return <li key={i} className={`text-gray-800 text-xs ${getHL(`certification[${i}].value`, hp, sp)}`}>{val}</li>;
                 })}
             </ul>
         </div>
@@ -466,7 +638,7 @@ function SectionCertification({ cvData, template, highlightedPath, suggestedPath
                 {certs.map((c, i) => {
                     const val = typeof c === 'string' ? c : c.value;
                     if (!val || !val.trim()) return null;
-                    return <li key={i} className="text-gray-700 flex items-start gap-1 text-xs"><span className="text-blue-600 mt-0.5">✓</span><span className={getHL(`certification[${i}].value`, hp, sp)}>{val}</span></li>
+                    return <li key={i} className={`text-gray-700 flex items-start gap-1 text-xs ${getHL(`certification[${i}].value`, hp, sp)}`}><Check className="w-3 h-3 text-blue-600 mt-0.5 flex-shrink-0" /> {val}</li>
                 })}
             </ul>
         </div>
@@ -487,6 +659,30 @@ function SectionLanguage({ cvData, template, highlightedPath, suggestedPaths }: 
          return <React.Fragment key={i}><span className={getHL(`language[${i}].value`, hp, sp)}>{val}</span>{i < langs.length - 1 && joinStr}</React.Fragment>;
     });
 
+    if (template === 'syntax') return (
+        <div className="grid grid-cols-[1fr_3fr] gap-4 mb-4 font-geist">
+            <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Languages</h2>
+            <div className="flex flex-wrap gap-1 text-xs text-gray-800">
+                {langs.map((l, i) => {
+                    const val = typeof l === 'string' ? l : l.value;
+                    if (!val || !val.trim()) return null;
+                    return <span key={i} className={`px-1.5 py-0.5 bg-gray-100 rounded-sm leading-none border border-gray-200 ${getHL(`language[${i}].value`, hp, sp)}`}>{val}</span>
+                })}
+            </div>
+        </div>
+    );
+    if (template === 'syntax-nano') return (
+        <div className="mb-4 font-jetbrains">
+            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Languages</h2>
+            <p className="text-xs text-gray-800 leading-relaxed">
+                {langs.map((l, i, arr) => {
+                    const val = typeof l === 'string' ? l : l.value;
+                    if (!val || !val.trim()) return null;
+                    return <span key={i} className={getHL(`language[${i}].value`, hp, sp)}>{val}{i < arr.length - 1 ? ' • ' : ''}</span>
+                })}
+            </p>
+        </div>
+    );
     if (template === 'minimal') return (
         <div className="mb-5">
             <h2 className="text-xs font-bold uppercase tracking-wider border-b border-black pb-1 mb-2 text-gray-900">Languages</h2>
@@ -541,12 +737,13 @@ function Sidebar({ cvData, template, highlightedPath, suggestedPaths }: { cvData
                     <div className="w-full h-0.5 bg-yellow-500 mb-3" />
                     <h1 className={`text-xl font-bold uppercase tracking-widest mb-3 font-serif text-yellow-500${getHL('personal.name', hp, sp)}`}>{cvData.personal.name}</h1>
                     <div className="text-gray-300 text-xs space-y-1 font-medium">
-                        {cvData.personal.email && <div className={`border-b border-gray-700 pb-1${getHL('personal.email', hp, sp)}`}>{cvData.personal.email}</div>}
-                        {cvData.personal.phone && <div className={`border-b border-gray-700 pb-1${getHL('personal.phone', hp, sp)}`}>{cvData.personal.phone}</div>}
-                        {cvData.personal.location && <div className={`border-b border-gray-700 pb-1${getHL('personal.location', hp, sp)}`}>{cvData.personal.location}</div>}
+                        {cvData.personal.email && <div className={`flex items-center gap-1 border-b border-gray-700 pb-1${getHL('personal.email', hp, sp)}`}><Mail className="w-3 h-3 flex-shrink-0" /> {cvData.personal.email}</div>}
+                        {cvData.personal.phone && <div className={`flex items-center gap-1 border-b border-gray-700 pb-1${getHL('personal.phone', hp, sp)}`}><Phone className="w-3 h-3 flex-shrink-0" /> {cvData.personal.phone}</div>}
+                        {cvData.personal.location && <div className={`flex items-center gap-1 border-b border-gray-700 pb-1${getHL('personal.location', hp, sp)}`}><MapPin className="w-3 h-3 flex-shrink-0" /> {cvData.personal.location}</div>}
                     </div>
                     {cvData.personal.customFields.map((f, i) => f.label && f.value && (
-                        <div key={i} className="text-gray-400 text-xs mt-1">
+                        <div key={i} className="text-gray-400 text-xs mt-1 flex items-center gap-1">
+                            <LinkIcon className="w-3 h-3 text-yellow-600 flex-shrink-0" />
                             <span className="text-yellow-600 font-bold uppercase">{f.label}:</span>{' '}
                             <span className={getHL(`personal.customFields[${i}].value`, hp, sp)}>{f.value}</span>
                         </div>
@@ -581,7 +778,7 @@ function Sidebar({ cvData, template, highlightedPath, suggestedPaths }: { cvData
                     <h2 className="text-xs font-bold uppercase tracking-widest text-yellow-500 mb-3 border-b border-gray-700 pb-1">Certifications</h2>
                     <ul className="space-y-1">
                         {certVals.map((c, i) => (
-                            <li key={i} className={`text-gray-300 text-xs${getHL(`certification[${i}].value`, hp, sp)}`}>✓ {c}</li>
+                            <li key={i} className={`text-gray-300 text-xs flex items-center gap-1 ${getHL(`certification[${i}].value`, hp, sp)}`}><Check className="w-3 h-3 text-current flex-shrink-0" /> {c}</li>
                         ))}
                     </ul>
                 </div>
@@ -595,11 +792,11 @@ function Sidebar({ cvData, template, highlightedPath, suggestedPaths }: { cvData
                 <div className="mb-5">
                     <h1 className={`text-lg font-bold mb-2${getHL('personal.name', hp, sp)}`}>{cvData.personal.name}</h1>
                     <div className="space-y-1 text-xs">
-                        {cvData.personal.email && <p className={`break-all${getHL('personal.email', hp, sp)}`}>📧 {cvData.personal.email}</p>}
-                        {cvData.personal.phone && <p className={getHL('personal.phone', hp, sp)}>📞 {cvData.personal.phone}</p>}
-                        {cvData.personal.location && <p className={getHL('personal.location', hp, sp)}>📍 {cvData.personal.location}</p>}
+                        {cvData.personal.email && <p className={`break-all flex items-center gap-1${getHL('personal.email', hp, sp)}`}><Mail className="w-3 h-3 flex-shrink-0" /> {cvData.personal.email}</p>}
+                        {cvData.personal.phone && <p className={`flex items-center gap-1${getHL('personal.phone', hp, sp)}`}><Phone className="w-3 h-3 flex-shrink-0" /> {cvData.personal.phone}</p>}
+                        {cvData.personal.location && <p className={`flex items-center gap-1${getHL('personal.location', hp, sp)}`}><MapPin className="w-3 h-3 flex-shrink-0" /> {cvData.personal.location}</p>}
                         {cvData.personal.customFields.map((f, i) => f.label && f.value && (
-                            <p key={i} className={`break-all${getHL(`personal.customFields[${i}].value`, hp, sp)}`}>🔗 {f.value}</p>
+                            <p key={i} className={`break-all flex items-center gap-1${getHL(`personal.customFields[${i}].value`, hp, sp)}`}><LinkIcon className="w-3 h-3 flex-shrink-0" /> {f.value}</p>
                         ))}
                     </div>
                 </div>
@@ -629,7 +826,7 @@ function Sidebar({ cvData, template, highlightedPath, suggestedPaths }: { cvData
                     <h2 className="text-sm font-bold mb-2 pb-1 border-b border-purple-400">Certifications</h2>
                     <div className="space-y-1 text-xs">
                         {certVals.map((c, i) => (
-                            <p key={i} className={getHL(`certification[${i}].value`, hp, sp)}>✓ {c}</p>
+                            <p key={i} className={`flex items-start gap-1 ${getHL(`certification[${i}].value`, hp, sp)}`}><Check className="w-3 h-3 text-current flex-shrink-0 mt-0.5" /> {c}</p>
                         ))}
                     </div>
                 </div>
@@ -645,6 +842,35 @@ function PersonalHeader({ cvData, template, highlightedPath, suggestedPaths }: {
     const hp = highlightedPath;
     const sp = suggestedPaths;
     if (!p.name) return null;
+    if (template === 'syntax') return (
+        <div className="grid grid-cols-[1fr_2fr] gap-4 mb-6 border-b-2 border-dashed border-gray-300 pb-4 font-geist">
+            <div>
+                <h1 className={`text-2xl font-bold uppercase tracking-tight ${getHL('personal.name', hp, sp)}`}>{p.name}</h1>
+                <p className="text-gray-500 mt-1 uppercase tracking-widest text-[10px]">Professional Profile</p>
+            </div>
+            <div className="flex flex-col flex-wrap gap-1.5 text-[10px] self-end content-end">
+                {p.email && <div className={`flex items-center gap-1.5 ${getHL('personal.email', hp, sp)}`}><Mail className="w-3 h-3 flex-shrink-0" /> {p.email}</div>}
+                {p.phone && <div className={`flex items-center gap-1.5 ${getHL('personal.phone', hp, sp)}`}><Phone className="w-3 h-3 flex-shrink-0" /> {p.phone}</div>}
+                {p.location && <div className={`flex items-center gap-1.5 ${getHL('personal.location', hp, sp)}`}><MapPin className="w-3 h-3 flex-shrink-0" /> {p.location}</div>}
+                {p.customFields.map((f, i) => f.label && f.value && (
+                    <div key={i} className={`flex items-center gap-1.5 ${getHL(`personal.customFields[${i}].value`, hp, sp)}`}><LinkIcon className="w-3 h-3 flex-shrink-0" /> {f.value}</div>
+                ))}
+            </div>
+        </div>
+    );
+    if (template === 'syntax-nano') return (
+        <div className="mb-4 font-jetbrains">
+            <h1 className={`text-xl font-bold uppercase mb-1.5 ${getHL('personal.name', hp, sp)}`}>{p.name}</h1>
+            <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-gray-600 mb-2">
+                {p.email && <span className={`flex items-center gap-1 ${getHL('personal.email', hp, sp)}`}><Mail className="w-2.5 h-2.5 flex-shrink-0" /> {p.email}</span>}
+                {p.phone && <span className={`flex items-center gap-1 ${getHL('personal.phone', hp, sp)}`}><Phone className="w-2.5 h-2.5 flex-shrink-0" /> {p.phone}</span>}
+                {p.location && <span className={`flex items-center gap-1 ${getHL('personal.location', hp, sp)}`}><MapPin className="w-2.5 h-2.5 flex-shrink-0" /> {p.location}</span>}
+                {p.customFields.map((f, i) => f.label && f.value && (
+                    <span key={i} className={`flex items-center gap-1 ${getHL(`personal.customFields[${i}].value`, hp, sp)}`}><LinkIcon className="w-2.5 h-2.5 flex-shrink-0" /> {f.value}</span>
+                ))}
+            </div>
+        </div>
+    );
     if (template === 'minimal') return (
         <div className="text-center mb-5 border-b-2 border-black pb-3">
             <h1 className="text-2xl font-bold uppercase tracking-wide text-gray-900">{p.name}</h1>
@@ -660,11 +886,15 @@ function PersonalHeader({ cvData, template, highlightedPath, suggestedPaths }: {
         <div className="mb-5">
             <h1 className="text-3xl font-bold text-blue-600 mb-1">{p.name}</h1>
             <div className="flex flex-wrap gap-2 text-gray-600 text-xs">
-                {p.email && <span>📧 {p.email}</span>}
-                {p.phone && <span>📞 {p.phone}</span>}
-                {p.location && <span>📍 {p.location}</span>}
+                {cvData.personal.email && <span className={`flex items-center gap-1 ${getHL('personal.email', hp, sp)}`}><Mail className="w-3 h-3 text-current flex-shrink-0" /> {cvData.personal.email}</span>}
+                {cvData.personal.phone && <span className={`flex items-center gap-1 ${getHL('personal.phone', hp, sp)}`}><Phone className="w-3 h-3 text-current flex-shrink-0" /> {cvData.personal.phone}</span>}
+                {cvData.personal.location && <span className={`flex items-center gap-1 ${getHL('personal.location', hp, sp)}`}><MapPin className="w-3 h-3 text-current flex-shrink-0" /> {cvData.personal.location}</span>}
             </div>
-            {p.customFields.map((f, i) => f.label && f.value && <div key={i} className="text-gray-600 text-xs mt-0.5">🔗 {f.label}: {f.value}</div>)}
+            {p.customFields.map((f, i) => f.label && f.value && (
+                <div key={i} className={`text-gray-600 text-xs mt-0.5 flex items-center gap-1 ${getHL(`personal.customFields[${i}].value`, hp, sp)}`}>
+                    <LinkIcon className="w-3 h-3 text-current flex-shrink-0" /> {f.label}: {f.value}
+                </div>
+            ))}
         </div>
     );
     if (template === 'corporate') return (

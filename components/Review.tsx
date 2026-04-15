@@ -33,6 +33,11 @@ interface ReviewResult {
         original?: string;
         suggestion: string;
     }[];
+    score_breakdown?: {
+        completeness: number;
+        impact: number;
+        clarity: number;
+    };
 }
 
 export default function Review({ cvData, setCvData, onNavigate, sections, selectedTemplate, aiCredits, setAiCredits, tier, addToast }: ReviewProps) {
@@ -342,6 +347,23 @@ export default function Review({ cvData, setCvData, onNavigate, sections, select
                 <div className="flex-1 text-left">
                     <h2 className="text-3xl font-bold mb-2">Review Summary</h2>
                     <p className="text-gray-600 text-lg leading-relaxed">{result.summary}</p>
+                    
+                    {result.score_breakdown && (
+                        <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-4">
+                            <div className="bg-gray-50 border-2 border-black rounded p-2 text-center shadow-neo-sm">
+                                <span className="block text-lg font-black text-black">{result.score_breakdown.completeness}<span className="text-sm font-bold text-gray-400">/30</span></span>
+                                <span className="text-[10px] sm:text-xs font-bold uppercase text-gray-600">Completeness</span>
+                            </div>
+                            <div className="bg-gray-50 border-2 border-black rounded p-2 text-center shadow-neo-sm">
+                                <span className="block text-lg font-black text-black">{result.score_breakdown.impact}<span className="text-sm font-bold text-gray-400">/40</span></span>
+                                <span className="text-[10px] sm:text-xs font-bold uppercase text-gray-600">Impact</span>
+                            </div>
+                            <div className="bg-gray-50 border-2 border-black rounded p-2 text-center shadow-neo-sm">
+                                <span className="block text-lg font-black text-black">{result.score_breakdown.clarity}<span className="text-sm font-bold text-gray-400">/30</span></span>
+                                <span className="text-[10px] sm:text-xs font-bold uppercase text-gray-600">Clarity</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
                     </div>
 

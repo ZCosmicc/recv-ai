@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.2] - 2026-04-15
+
+### ✨ Templates & Design Additions
+
+- **Developer Templates**: Added two new premium developer-focused templates ("Syntax" and "Syntax Nano").
+  - "Syntax" uses `Geist Mono` typography within a clean two-column grid.
+  - "Syntax Nano" utilizes `JetBrains Mono` for a highly dense, extremely compact single-column layout fitting maximum text on one page.
+- **Lucide Vector Icons**: Fully stripped the hardcoded text-emojis (`📧`, `📞`, `📍`, `🔗`, `✓`) across *all* existing CV templates (Modern, Executive, Creative, Corporate) and replaced them with `lucide-react` scalable SVG vector icons (`Mail`, `Phone`, `MapPin`, `Link`, `Check`) for flawless resolution natively adapting across CSS color hierarchies.
+- **Template Reorganization**: Re-classed the `Creative` template from Premium to Free. Updated `CVPreview.tsx` arrays to auto-align in proper tier order within UI views.
+
+### 🧠 AI Feedback Refinements
+- **Language Auto-Detection & Matching**: Instructed the Groq system prompt to dynamically detect the semantic language of the CV's content (e.g., Bahasa Indonesia vs English) and reply with all suggestions, fixes, and analysis entirely in that language, ignoring the hardcoded English default.
+- **Prompt Injection Defense**: Strengthened the `SAFETY RULE` to reject malicious UI text additions ("How to build a rocket", script injections, unrelated spam). The AI now returns 0 score, refuses 'fix' outputs, and provides a strict 'invalid' feedback response.
+
+### 🐛 Bug Fixes & Polish
+- **Fill Page Explicit Date UI**: Adjusted the `Education` block view to provide an explicit "Graduation Date" label to alleviate UX ambiguity entirely natively within UI without affecting the underlying database schema.
+
 ## [1.4.1] - 2026-04-14
 
 ### ✨ SEO & Branding

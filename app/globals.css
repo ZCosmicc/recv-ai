@@ -60,6 +60,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   --color-foreground: var(--foreground);
   --color-primary: var(--primary-blue);
   --font-sans: var(--font-plus-jakarta);
+  --font-geist: var(--font-geist-mono);
+  --font-jetbrains: var(--font-jetbrains-mono);
 
   --shadow-neo: 4px 4px 0px 0px #000000;
   --shadow-neo-sm: 2px 2px 0px 0px #000000;

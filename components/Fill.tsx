@@ -667,16 +667,19 @@ export default function Fill({
                                                             }}
                                                             className="w-full px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
                                                         />
-                                                        <input
-                                                            type="month"
-                                                            value={edu.year}
-                                                            onChange={(e) => {
-                                                                const newEdu = [...cvData.education];
-                                                                newEdu[idx].year = e.target.value;
-                                                                setCvData({ ...cvData, education: newEdu });
-                                                            }}
-                                                            className="w-full px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
-                                                        />
+                                                        <div className="flex flex-col mb-1 w-full">
+                                                            <label className="text-xs font-bold text-gray-700 mb-1">Graduation Date</label>
+                                                            <input
+                                                                type="month"
+                                                                value={edu.year}
+                                                                onChange={(e) => {
+                                                                    const newEdu = [...cvData.education];
+                                                                    newEdu[idx].year = e.target.value;
+                                                                    setCvData({ ...cvData, education: newEdu });
+                                                                }}
+                                                                className="w-full px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
+                                                            />
+                                                        </div>
                                                     </div>
                                                     <button
                                                     onClick={() => handleSoftDelete('education', edu, idx, 'Education')}

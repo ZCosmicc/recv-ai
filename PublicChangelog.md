@@ -2,6 +2,19 @@
 
 All user-facing updates and improvements to Recv. AI.
 
+## [1.4.2] - 2026-04-15
+### ✨ New Templates
+- **Developer Templates:** Meet **Syntax** and **Syntax Nano** — two sleek, terminal-inspired templates crafted specifically for software engineers. Complete with beautiful monospaced typefaces, these new premium additions perfectly merge structure with readability to help your professional background pop.
+- **More Free Options:** We've shifted our robust **Creative** template from Premium down to the Free tier. Enjoy building beautiful layouts! 
+
+### 🧠 Smarter AI Feedback
+- **Native Language Detection:** You no longer need to translate your English recommendations! The AI Review system will natively detect if your CV is written in Bahasa Indonesia or any other language, and it will respond with analysis, strengths, and fix suggestions entirely in your native language.
+- **Spam Rejection Guardrails:** We've upgraded the AI model's engine protections to actively reject attempts to insert irrelevant copy-paste material into the CV structure. Your CV builder will strictly maintain its professional environment.
+
+### 🎨 Design Polish
+- **Crisp Vector Icons:** Look closely and you'll notice our templates just got much sharper! We've systematically replaced all older text-message emojis (like 📧 and 📞) across our templates with razor-sharp vector SVG icons. No more blurry phone markers when scaling your CVs to massive PDFs!
+- **Clarity in Editing:** Added a straightforward "Graduation Date" placeholder tag within the Education block of the Fill editor to clear any formatting ambiguity when adding dates to schools!
+
 ## [1.4.1] - 2026-04-14
 ### ✨ SEO & Branding
 - **Better Link Sharing**: Sharing Recv. AI with your friends or colleagues on WhatsApp, Twitter, or Discord will now display a beautiful preview card of the application instead of an empty box.

@@ -3,6 +3,8 @@
 import React from 'react';
 import { CVData, Section } from '../types';
 
+import { Mail, Phone, MapPin, Link as LinkIcon, Check } from 'lucide-react';
+
 interface CVPreviewProps {
     cvData: CVData;
     sections: Section[];
@@ -12,9 +14,11 @@ interface CVPreviewProps {
 export const templates = [
     { id: 'minimal', name: 'Minimal', description: 'Clean black & white design', isPremium: false },
     { id: 'corporate', name: 'Corporate', description: 'Traditional professional layout', isPremium: false },
+    { id: 'creative', name: 'Creative', description: 'Colored sidebar, modern fonts', isPremium: false },
     { id: 'modern', name: 'Modern', description: 'Subtle blue accents, professional', isPremium: true },
-    { id: 'creative', name: 'Creative', description: 'Colored sidebar, modern fonts', isPremium: true },
-    { id: 'executive', name: 'Executive', description: 'Premium dark sidebar with gold accents', isPremium: true }
+    { id: 'executive', name: 'Executive', description: 'Premium dark sidebar with gold accents', isPremium: true },
+    { id: 'syntax', name: 'Syntax', description: 'Two-column minimal layout', isPremium: true },
+    { id: 'syntax-nano', name: 'Syntax Nano', description: 'Compact single-column layout', isPremium: true },
 ];
 
 export default function CVPreview({ cvData, sections, selectedTemplate }: CVPreviewProps) {
@@ -145,14 +149,14 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                 <div className="mb-6">
                     <h1 className="text-3xl sm:text-4xl font-bold text-blue-600 mb-2">{cvData.personal.name}</h1>
                     <div className="flex flex-wrap gap-3 text-gray-600 text-xs">
-                        {cvData.personal.email && <span className="flex items-center gap-1">📧 {cvData.personal.email}</span>}
-                        {cvData.personal.phone && <span className="flex items-center gap-1">📞 {cvData.personal.phone}</span>}
-                        {cvData.personal.location && <span className="flex items-center gap-1">📍 {cvData.personal.location}</span>}
+                        {cvData.personal.email && <span className="flex items-center gap-1"><Mail className="w-3 h-3 text-current" /> {cvData.personal.email}</span>}
+                        {cvData.personal.phone && <span className="flex items-center gap-1"><Phone className="w-3 h-3 text-current" /> {cvData.personal.phone}</span>}
+                        {cvData.personal.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3 text-current" /> {cvData.personal.location}</span>}
                     </div>
                     {cvData.personal.customFields.map((field, idx) => (
                         field.label && field.value && (
-                            <div key={idx} className="text-gray-600 text-xs mt-1">
-                                🔗 {field.label}: {field.value}
+                            <div key={idx} className="flex items-center gap-1 text-gray-600 text-xs mt-1">
+                                <LinkIcon className="w-3 h-3 text-current flex-shrink-0" /> {field.label}: {field.value}
                             </div>
                         )
                     ))}
@@ -217,7 +221,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                     {project.title && <h3 className="font-bold text-gray-900">{project.title}</h3>}
                                     {project.technologies && <p className="text-blue-600 font-medium text-xs">{project.technologies}</p>}
                                     {project.description && <p className="text-gray-700 mt-1">{project.description}</p>}
-                                    {project.link && <p className="text-gray-500 text-xs mt-1">🔗 {project.link}</p>}
+                                    {project.link && <p className="flex items-center gap-1 text-gray-500 text-xs mt-1"><LinkIcon className="w-3 h-3 text-current flex-shrink-0" /> {project.link}</p>}
                                 </div>
                             ))}
                         </div>
@@ -246,7 +250,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                             <ul className="space-y-1">
                                 {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((cert, idx) => (
                                     <li key={idx} className="text-gray-700 flex items-start gap-2">
-                                        <span className="text-blue-600 mt-1">✓</span>
+                                        <Check className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
                                         <span>{cert}</span>
                                     </li>
                                 ))}
@@ -282,12 +286,12 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     <div className="mb-6">
                         <h1 className="text-2xl font-bold mb-3">{cvData.personal.name}</h1>
                         <div className="space-y-2 text-xs">
-                            {cvData.personal.email && <p className="break-all">📧 {cvData.personal.email}</p>}
-                            {cvData.personal.phone && <p>📞 {cvData.personal.phone}</p>}
-                            {cvData.personal.location && <p>📍 {cvData.personal.location}</p>}
+                            {cvData.personal.email && <p className="break-all flex items-center gap-1"><Mail className="w-3 h-3 text-current flex-shrink-0" /> {cvData.personal.email}</p>}
+                            {cvData.personal.phone && <p className="flex items-center gap-1"><Phone className="w-3 h-3 text-current flex-shrink-0" /> {cvData.personal.phone}</p>}
+                            {cvData.personal.location && <p className="flex items-center gap-1"><MapPin className="w-3 h-3 text-current flex-shrink-0" /> {cvData.personal.location}</p>}
                             {cvData.personal.customFields.map((field, idx) => (
                                 field.label && field.value && (
-                                    <p key={idx} className="break-all">🔗 {field.value}</p>
+                                    <p key={idx} className="break-all flex items-center gap-1"><LinkIcon className="w-3 h-3 text-current flex-shrink-0" /> {field.value}</p>
                                 )
                             ))}
                         </div>
@@ -321,9 +325,9 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                 {cvData.certification.length > 0 && (
                     <div>
                         <h2 className="text-lg font-bold mb-3 pb-2 border-b border-purple-400">Certifications</h2>
-                        <div className="space-y-1 text-xs">
+                        <div className="space-y-1 text-xs mt-2">
                             {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((cert, idx) => (
-                                <p key={idx}>✓ {cert}</p>
+                                <p key={idx} className="flex items-start gap-1"><Check className="w-3 h-3 text-current flex-shrink-0 mt-0.5" /> {cert}</p>
                             ))}
                         </div>
                     </div>
@@ -389,7 +393,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                         {project.title && <h3 className="font-bold text-gray-900">{project.title}</h3>}
                                         {project.technologies && <p className="text-purple-600 font-medium text-sm">{project.technologies}</p>}
                                         {project.description && <p className="text-gray-700 mt-1">{project.description}</p>}
-                                        {project.link && <p className="text-gray-500 text-xs mt-1">🔗 {project.link}</p>}
+                                        {project.link && <p className="flex items-center gap-1 text-gray-500 text-xs mt-1"><LinkIcon className="w-3 h-3 text-current flex-shrink-0" /> {project.link}</p>}
                                     </div>
                                 ))}
                             </div>
@@ -665,7 +669,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                             {project.title && <h3 className="font-bold text-gray-900 text-lg">{project.title}</h3>}
                                             {project.technologies && <p className="text-gray-600 text-sm italic">{project.technologies}</p>}
                                             {project.description && <p className="text-gray-700 text-sm mt-2">{project.description}</p>}
-                                            {project.link && <p className="text-gray-500 text-xs mt-2">🔗 {project.link}</p>}
+                                            {project.link && <p className="flex items-center gap-1 text-gray-500 text-xs mt-2"><LinkIcon className="w-3 h-3 text-current flex-shrink-0" /> {project.link}</p>}
                                         </div>
                                     ))}
                                 </div>
@@ -696,7 +700,296 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
         </div>
     );
 
+    const renderSyntax = () => (
+        <div className="p-5 sm:p-8 bg-white text-sm font-geist text-gray-900 border-8 border-gray-100">
+            {cvData.personal.name && (
+                <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-6 mb-8 border-b-2 border-dashed border-gray-300 pb-6">
+                    <div>
+                        <h1 className="text-3xl font-bold uppercase tracking-tight">{cvData.personal.name}</h1>
+                        <p className="text-gray-500 mt-1 uppercase tracking-widest text-xs">Professional Profile</p>
+                    </div>
+                    <div className="flex flex-col flex-wrap gap-2 text-xs self-center sm:min-h-[4rem] content-start sm:content-end">
+                        {cvData.personal.email && <div className="flex items-center gap-2"><Mail className="w-3 h-3 flex-shrink-0" /> {cvData.personal.email}</div>}
+                        {cvData.personal.phone && <div className="flex items-center gap-2"><Phone className="w-3 h-3 flex-shrink-0" /> {cvData.personal.phone}</div>}
+                        {cvData.personal.location && <div className="flex items-center gap-2"><MapPin className="w-3 h-3 flex-shrink-0" /> {cvData.personal.location}</div>}
+                        {cvData.personal.customFields.map((field, idx) => (
+                            field.label && field.value && (
+                                <div key={idx} className="flex items-center gap-2"><LinkIcon className="w-3 h-3 flex-shrink-0" /> {field.value}</div>
+                            )
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            <div className="space-y-8">
+                {sections.filter(s => s.enabled).map(section => {
+                    if (section.id === 'personal') return null;
+
+                    if (section.id === 'summary' && cvData.summary) {
+                        return (
+                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4">
+                                <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Summary</h2>
+                                <p className="text-sm leading-relaxed text-gray-800">{cvData.summary}</p>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'experience' && cvData.experience.length > 0) {
+                        return (
+                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4">
+                                <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Experience</h2>
+                                <div className="space-y-6">
+                                    {cvData.experience.map((exp, idx) => (
+                                        <div key={idx}>
+                                            <div className="flex justify-between items-baseline mb-1">
+                                                {exp.title && <h3 className="font-bold text-base">{exp.title}</h3>}
+                                                {(exp.startDate || exp.endDate || exp.current) && (
+                                                    <p className="text-gray-500 text-xs">
+                                                        {exp.startDate && new Date(exp.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                                                        {' - '}
+                                                        {exp.current ? 'Present' : exp.endDate && new Date(exp.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {exp.company && <p className="text-gray-600 mb-2">{exp.company}</p>}
+                                            {exp.description && <p className="text-sm leading-relaxed text-gray-700 whitespace-pre-line">{exp.description}</p>}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'education' && cvData.education.length > 0) {
+                        return (
+                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4">
+                                <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Education</h2>
+                                <div className="space-y-4">
+                                    {cvData.education.map((edu, idx) => (
+                                        <div key={idx} className="flex justify-between items-baseline">
+                                            <div>
+                                                {edu.degree && <h3 className="font-bold">{edu.degree}{edu.major && ` in ${edu.major}`}</h3>}
+                                                {edu.institution && <p className="text-gray-600">{edu.institution}</p>}
+                                            </div>
+                                            {edu.year && <p className="text-gray-500 text-xs">{new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'skills' && cvData.skills.length > 0) {
+                        return (
+                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4">
+                                <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Skills</h2>
+                                <div className="flex flex-wrap gap-2 text-sm text-gray-800">
+                                    {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((skill, idx) => (
+                                        <span key={idx} className="px-2 py-1 bg-gray-100 rounded-sm leading-none border border-gray-200">{skill}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'projects' && cvData.projects?.length > 0) {
+                        return (
+                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4">
+                                <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Projects</h2>
+                                <div className="space-y-4">
+                                    {cvData.projects.map((project, idx) => (
+                                        <div key={idx}>
+                                            <div className="flex justify-between items-baseline mb-1">
+                                                {project.title && <h3 className="font-bold">{project.title}</h3>}
+                                                {project.technologies && <span className="text-xs bg-gray-100 px-2 py-1 rounded-sm border border-gray-200">{project.technologies}</span>}
+                                            </div>
+                                            {project.description && <p className="text-sm leading-relaxed text-gray-700">{project.description}</p>}
+                                            {project.link && <p className="flex items-center gap-1 text-gray-500 text-xs mt-1"><LinkIcon className="w-3 h-3 flex-shrink-0" /> {project.link}</p>}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'certification' && cvData.certification.length > 0) {
+                        return (
+                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4">
+                                <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Certs</h2>
+                                <div className="flex flex-col gap-1 text-sm text-gray-800">
+                                    {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((cert, idx) => (
+                                        <div key={idx} className="flex items-start gap-2"><Check className="w-4 h-4 text-gray-400 flex-shrink-0" /> {cert}</div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+                    
+                    if (section.id === 'language' && cvData.language.length > 0) {
+                        return (
+                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4">
+                                <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Languages</h2>
+                                <div className="flex flex-wrap gap-2 text-sm text-gray-800">
+                                    {cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).map((lang, idx) => (
+                                        <span key={idx} className="px-2 py-1 bg-gray-100 rounded-sm leading-none border border-gray-200">{lang}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    return null;
+                })}
+            </div>
+        </div>
+    );
+
+    const renderSyntaxNano = () => (
+        <div className="p-4 sm:p-6 bg-white text-sm font-jetbrains text-gray-900 mx-auto max-w-3xl">
+            {cvData.personal.name && (
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold uppercase mb-2">{cvData.personal.name}</h1>
+                    <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-600 mb-4">
+                        {cvData.personal.email && <span className="flex items-center gap-1"><Mail className="w-3 h-3 flex-shrink-0" /> {cvData.personal.email}</span>}
+                        {cvData.personal.phone && <span className="flex items-center gap-1"><Phone className="w-3 h-3 flex-shrink-0" /> {cvData.personal.phone}</span>}
+                        {cvData.personal.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3 flex-shrink-0" /> {cvData.personal.location}</span>}
+                        {cvData.personal.customFields.map((field, idx) => (
+                            field.label && field.value && (
+                                <span key={idx} className="flex items-center gap-1"><LinkIcon className="w-3 h-3 flex-shrink-0" /> {field.value}</span>
+                            )
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            <div className="space-y-6">
+                {sections.filter(s => s.enabled).map(section => {
+                    if (section.id === 'personal') return null;
+
+                    if (section.id === 'summary' && cvData.summary) {
+                        return (
+                            <div key={section.id}>
+                                <h2 className="text-sm font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Summary</h2>
+                                <p className="text-sm leading-relaxed text-gray-800">{cvData.summary}</p>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'experience' && cvData.experience.length > 0) {
+                        return (
+                            <div key={section.id}>
+                                <h2 className="text-sm font-bold uppercase mb-3 border-b-2 border-gray-900 pb-1">Experience</h2>
+                                <div className="space-y-4">
+                                    {cvData.experience.map((exp, idx) => (
+                                        <div key={idx}>
+                                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-1">
+                                                {exp.title && <h3 className="font-bold text-base">{exp.title} <span className="font-normal text-gray-600">@ {exp.company}</span></h3>}
+                                                {(exp.startDate || exp.endDate || exp.current) && (
+                                                    <p className="text-gray-500 text-xs">
+                                                        {exp.startDate && new Date(exp.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                                                        {' - '}
+                                                        {exp.current ? 'Present' : exp.endDate && new Date(exp.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {exp.description && <p className="text-sm leading-relaxed text-gray-700 whitespace-pre-line pl-4 border-l-2 border-gray-200">{exp.description}</p>}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'education' && cvData.education.length > 0) {
+                        return (
+                            <div key={section.id}>
+                                <h2 className="text-sm font-bold uppercase mb-3 border-b-2 border-gray-900 pb-1">Education</h2>
+                                <div className="space-y-3">
+                                    {cvData.education.map((edu, idx) => (
+                                        <div key={idx} className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline">
+                                            <div>
+                                                {edu.degree && <h3 className="font-bold">{edu.degree}{edu.major && ` - ${edu.major}`}</h3>}
+                                                {edu.institution && <p className="text-gray-600">{edu.institution}</p>}
+                                            </div>
+                                            {edu.year && <p className="text-gray-500 text-xs">{new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'skills' && cvData.skills.length > 0) {
+                        return (
+                            <div key={section.id}>
+                                <h2 className="text-sm font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Skills</h2>
+                                <p className="text-sm text-gray-800 leading-relaxed">
+                                    {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((skill, idx, arr) => (
+                                        <span key={idx}>{skill}{idx < arr.length - 1 ? ' • ' : ''}</span>
+                                    ))}
+                                </p>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'projects' && cvData.projects?.length > 0) {
+                        return (
+                            <div key={section.id}>
+                                <h2 className="text-sm font-bold uppercase mb-3 border-b-2 border-gray-900 pb-1">Projects</h2>
+                                <div className="space-y-4">
+                                    {cvData.projects.map((project, idx) => (
+                                        <div key={idx}>
+                                            <div className="flex justify-between items-baseline mb-1">
+                                                {project.title && <h3 className="font-bold">{project.title}</h3>}
+                                            </div>
+                                            {project.technologies && <p className="text-xs text-gray-500 mb-1">Built with: {project.technologies}</p>}
+                                            {project.description && <p className="text-sm leading-relaxed text-gray-700 mb-1">{project.description}</p>}
+                                            {project.link && <p className="flex items-center gap-1 text-gray-500 text-xs"><LinkIcon className="w-3 h-3 flex-shrink-0" /> {project.link}</p>}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'certification' && cvData.certification.length > 0) {
+                        return (
+                            <div key={section.id}>
+                                <h2 className="text-sm font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Certifications</h2>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-800">
+                                    {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((cert, idx) => (
+                                        <div key={idx} className="flex items-center gap-2">
+                                            <span className="text-gray-400">›</span> {cert}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    if (section.id === 'language' && cvData.language.length > 0) {
+                        return (
+                            <div key={section.id}>
+                                <h2 className="text-sm font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Languages</h2>
+                                <p className="text-sm text-gray-800 leading-relaxed">
+                                    {cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).map((lang, idx, arr) => (
+                                        <span key={idx}>{lang}{idx < arr.length - 1 ? ' • ' : ''}</span>
+                                    ))}
+                                </p>
+                            </div>
+                        );
+                    }
+
+                    return null;
+                })}
+            </div>
+        </div>
+    );
+
+
     switch (selectedTemplate) {
+        case 'syntax': return renderSyntax();
+        case 'syntax-nano': return renderSyntaxNano();
         case 'minimal': return renderMinimal();
         case 'modern': return renderModern();
         case 'creative': return renderCreative();
