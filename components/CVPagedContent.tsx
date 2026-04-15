@@ -95,14 +95,14 @@ function SectionSummary({ cvData, template, highlightedPath, suggestedPaths }: {
     const hp = highlightedPath;
     const sp = suggestedPaths;
     if (template === 'syntax') return (
-        <div className="grid grid-cols-[1fr_3fr] gap-4 mb-4 font-geist">
+        <div className="grid grid-cols-[1fr_3fr] gap-4 border-t border-gray-200 py-4 font-geist">
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Summary</h2>
             <p className={`text-xs leading-relaxed text-gray-800 ${getHL('summary', hp, sp)}`}>{cvData.summary}</p>
         </div>
     );
     if (template === 'syntax-nano') return (
         <div className="mb-4 font-jetbrains">
-            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Summary</h2>
+            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-300 pb-1">Summary</h2>
             <p className={`text-xs leading-relaxed text-gray-800 ${getHL('summary', hp, sp)}`}>{cvData.summary}</p>
         </div>
     );
@@ -145,7 +145,7 @@ function SectionExperience({ cvData, template, highlightedPath, suggestedPaths }
     const hp = highlightedPath;
     const sp = suggestedPaths;
     if (template === 'syntax') return (
-        <div className="grid grid-cols-[1fr_3fr] gap-4 mb-4 font-geist">
+        <div className="grid grid-cols-[1fr_3fr] gap-4 border-t border-gray-200 py-4 font-geist">
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Experience</h2>
             <div className="space-y-4">
                 {cvData.experience.map((exp, i) => (
@@ -169,7 +169,7 @@ function SectionExperience({ cvData, template, highlightedPath, suggestedPaths }
     );
     if (template === 'syntax-nano') return (
         <div className="mb-4 font-jetbrains">
-            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Experience</h2>
+            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-300 pb-1">Experience</h2>
             <div className="space-y-3">
                 {cvData.experience.map((exp, i) => (
                     <div key={i}>
@@ -284,7 +284,7 @@ function SectionEducation({ cvData, template, highlightedPath, suggestedPaths }:
     const hp = highlightedPath;
     const sp = suggestedPaths;
     if (template === 'syntax') return (
-        <div className="grid grid-cols-[1fr_3fr] gap-4 mb-4 font-geist">
+        <div className="grid grid-cols-[1fr_3fr] gap-4 border-t border-gray-200 py-4 font-geist">
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Education</h2>
             <div className="space-y-3">
                 {cvData.education.map((edu, i) => (
@@ -301,7 +301,7 @@ function SectionEducation({ cvData, template, highlightedPath, suggestedPaths }:
     );
     if (template === 'syntax-nano') return (
         <div className="mb-4 font-jetbrains">
-            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Education</h2>
+            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-300 pb-1">Education</h2>
             <div className="space-y-2">
                 {cvData.education.map((edu, i) => (
                     <div key={i} className="flex justify-between items-baseline">
@@ -404,7 +404,7 @@ function SectionSkills({ cvData, template, highlightedPath, suggestedPaths }: { 
     });
 
     if (template === 'syntax') return (
-        <div className="grid grid-cols-[1fr_3fr] gap-4 mb-4 font-geist">
+        <div className="grid grid-cols-[1fr_3fr] gap-4 border-t border-gray-200 py-4 font-geist">
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Skills</h2>
             <div className="flex flex-wrap gap-1 text-xs text-gray-800">
                 {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((skill, i) => (
@@ -415,7 +415,7 @@ function SectionSkills({ cvData, template, highlightedPath, suggestedPaths }: { 
     );
     if (template === 'syntax-nano') return (
         <div className="mb-4 font-jetbrains">
-            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Skills</h2>
+            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-300 pb-1">Skills</h2>
             <p className="text-xs text-gray-800 leading-relaxed">
                 {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((skill, i, arr) => (
                     <span key={i} className={getHL(`skills[${i}].value`, hp, sp)}>{skill}{i < arr.length - 1 ? ' • ' : ''}</span>
@@ -455,7 +455,7 @@ function SectionProjects({ cvData, template, highlightedPath, suggestedPaths }: 
     const sp = suggestedPaths;
     if (!projects.length) return null;
     if (template === 'syntax') return (
-        <div className="grid grid-cols-[1fr_3fr] gap-4 mb-4 font-geist">
+        <div className="grid grid-cols-[1fr_3fr] gap-4 border-t border-gray-200 py-4 font-geist">
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Projects</h2>
             <div className="space-y-4">
                 {projects.map((p, i) => (
@@ -473,7 +473,7 @@ function SectionProjects({ cvData, template, highlightedPath, suggestedPaths }: 
     );
     if (template === 'syntax-nano') return (
         <div className="mb-4 font-jetbrains">
-            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Projects</h2>
+            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-300 pb-1">Projects</h2>
             <div className="space-y-3">
                 {projects.map((p, i) => (
                     <div key={i}>
@@ -570,7 +570,7 @@ function SectionCertification({ cvData, template, highlightedPath, suggestedPath
     const sp = suggestedPaths;
 
     if (template === 'syntax') return (
-        <div className="grid grid-cols-[1fr_3fr] gap-4 mb-4 font-geist">
+        <div className="grid grid-cols-[1fr_3fr] gap-4 border-t border-gray-200 py-4 font-geist">
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Certs</h2>
             <div className="flex flex-col gap-0.5 text-xs text-gray-800">
                 {certs.map((c, i) => {
@@ -583,7 +583,7 @@ function SectionCertification({ cvData, template, highlightedPath, suggestedPath
     );
     if (template === 'syntax-nano') return (
         <div className="mb-4 font-jetbrains">
-            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Certifications</h2>
+            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-300 pb-1">Certifications</h2>
             <div className="grid grid-cols-2 gap-1 text-xs text-gray-800">
                 {certs.map((c, i) => {
                     const val = typeof c === 'string' ? c : c.value;
@@ -660,7 +660,7 @@ function SectionLanguage({ cvData, template, highlightedPath, suggestedPaths }: 
     });
 
     if (template === 'syntax') return (
-        <div className="grid grid-cols-[1fr_3fr] gap-4 mb-4 font-geist">
+        <div className="grid grid-cols-[1fr_3fr] gap-4 border-t border-gray-200 py-4 font-geist">
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Languages</h2>
             <div className="flex flex-wrap gap-1 text-xs text-gray-800">
                 {langs.map((l, i) => {
@@ -673,7 +673,7 @@ function SectionLanguage({ cvData, template, highlightedPath, suggestedPaths }: 
     );
     if (template === 'syntax-nano') return (
         <div className="mb-4 font-jetbrains">
-            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Languages</h2>
+            <h2 className="text-xs font-bold uppercase mb-2 border-b-2 border-gray-300 pb-1">Languages</h2>
             <p className="text-xs text-gray-800 leading-relaxed">
                 {langs.map((l, i, arr) => {
                     const val = typeof l === 'string' ? l : l.value;
