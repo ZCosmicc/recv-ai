@@ -33,6 +33,9 @@ export const downloadPDF = (
 <head>
   <meta charset="utf-8">
   <title>${cvData.personal.name || 'My CV'}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     * {
@@ -45,6 +48,12 @@ export const downloadPDF = (
       margin: 0;
       padding: 0;
       background: #fff;
+    }
+    .font-geist, .font-geist * {
+      font-family: 'Geist Mono', 'Courier New', monospace !important;
+    }
+    .font-jetbrains, .font-jetbrains * {
+      font-family: 'JetBrains Mono', 'Courier New', monospace !important;
     }
     @page {
       size: A4;

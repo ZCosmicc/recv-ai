@@ -721,13 +721,13 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                 </div>
             )}
 
-            <div className="space-y-8">
+            <div className="space-y-0 divide-y divide-gray-200">
                 {sections.filter(s => s.enabled).map(section => {
                     if (section.id === 'personal') return null;
 
                     if (section.id === 'summary' && cvData.summary) {
                         return (
-                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4">
+                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4 py-8">
                                 <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Summary</h2>
                                 <p className="text-sm leading-relaxed text-gray-800">{cvData.summary}</p>
                             </div>
@@ -736,7 +736,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
 
                     if (section.id === 'experience' && cvData.experience.length > 0) {
                         return (
-                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4">
+                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4 py-8">
                                 <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Experience</h2>
                                 <div className="space-y-6">
                                     {cvData.experience.map((exp, idx) => (
@@ -762,7 +762,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
 
                     if (section.id === 'education' && cvData.education.length > 0) {
                         return (
-                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4">
+                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4 py-8">
                                 <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Education</h2>
                                 <div className="space-y-4">
                                     {cvData.education.map((edu, idx) => (
@@ -781,7 +781,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
 
                     if (section.id === 'skills' && cvData.skills.length > 0) {
                         return (
-                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4">
+                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4 py-8">
                                 <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Skills</h2>
                                 <div className="flex flex-wrap gap-2 text-sm text-gray-800">
                                     {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((skill, idx) => (
@@ -794,7 +794,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
 
                     if (section.id === 'projects' && cvData.projects?.length > 0) {
                         return (
-                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4">
+                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4 py-8">
                                 <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Projects</h2>
                                 <div className="space-y-4">
                                     {cvData.projects.map((project, idx) => (
@@ -814,7 +814,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
 
                     if (section.id === 'certification' && cvData.certification.length > 0) {
                         return (
-                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4">
+                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4 py-8">
                                 <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Certs</h2>
                                 <div className="flex flex-col gap-1 text-sm text-gray-800">
                                     {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((cert, idx) => (
@@ -827,7 +827,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     
                     if (section.id === 'language' && cvData.language.length > 0) {
                         return (
-                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4">
+                            <div key={section.id} className="grid grid-cols-1 sm:grid-cols-[1fr_3fr] gap-4 py-8">
                                 <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400">Languages</h2>
                                 <div className="flex flex-wrap gap-2 text-sm text-gray-800">
                                     {cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).map((lang, idx) => (
@@ -869,7 +869,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     if (section.id === 'summary' && cvData.summary) {
                         return (
                             <div key={section.id}>
-                                <h2 className="text-sm font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Summary</h2>
+                                <h2 className="text-sm font-bold uppercase mb-2 border-b-2 border-gray-300 pb-1">Summary</h2>
                                 <p className="text-sm leading-relaxed text-gray-800">{cvData.summary}</p>
                             </div>
                         );
@@ -878,7 +878,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     if (section.id === 'experience' && cvData.experience.length > 0) {
                         return (
                             <div key={section.id}>
-                                <h2 className="text-sm font-bold uppercase mb-3 border-b-2 border-gray-900 pb-1">Experience</h2>
+                                <h2 className="text-sm font-bold uppercase mb-3 border-b-2 border-gray-300 pb-1">Experience</h2>
                                 <div className="space-y-4">
                                     {cvData.experience.map((exp, idx) => (
                                         <div key={idx}>
@@ -903,7 +903,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     if (section.id === 'education' && cvData.education.length > 0) {
                         return (
                             <div key={section.id}>
-                                <h2 className="text-sm font-bold uppercase mb-3 border-b-2 border-gray-900 pb-1">Education</h2>
+                                <h2 className="text-sm font-bold uppercase mb-3 border-b-2 border-gray-300 pb-1">Education</h2>
                                 <div className="space-y-3">
                                     {cvData.education.map((edu, idx) => (
                                         <div key={idx} className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline">
@@ -922,7 +922,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     if (section.id === 'skills' && cvData.skills.length > 0) {
                         return (
                             <div key={section.id}>
-                                <h2 className="text-sm font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Skills</h2>
+                                <h2 className="text-sm font-bold uppercase mb-2 border-b-2 border-gray-300 pb-1">Skills</h2>
                                 <p className="text-sm text-gray-800 leading-relaxed">
                                     {cvData.skills.map(s => typeof s === 'string' ? s : s.value).filter(v => v && v.trim()).map((skill, idx, arr) => (
                                         <span key={idx}>{skill}{idx < arr.length - 1 ? ' • ' : ''}</span>
@@ -935,7 +935,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     if (section.id === 'projects' && cvData.projects?.length > 0) {
                         return (
                             <div key={section.id}>
-                                <h2 className="text-sm font-bold uppercase mb-3 border-b-2 border-gray-900 pb-1">Projects</h2>
+                                <h2 className="text-sm font-bold uppercase mb-3 border-b-2 border-gray-300 pb-1">Projects</h2>
                                 <div className="space-y-4">
                                     {cvData.projects.map((project, idx) => (
                                         <div key={idx}>
@@ -955,7 +955,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     if (section.id === 'certification' && cvData.certification.length > 0) {
                         return (
                             <div key={section.id}>
-                                <h2 className="text-sm font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Certifications</h2>
+                                <h2 className="text-sm font-bold uppercase mb-2 border-b-2 border-gray-300 pb-1">Certifications</h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-800">
                                     {cvData.certification.map(c => typeof c === 'string' ? c : c.value).filter(v => v && v.trim()).map((cert, idx) => (
                                         <div key={idx} className="flex items-center gap-2">
@@ -970,7 +970,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                     if (section.id === 'language' && cvData.language.length > 0) {
                         return (
                             <div key={section.id}>
-                                <h2 className="text-sm font-bold uppercase mb-2 border-b-2 border-gray-900 pb-1">Languages</h2>
+                                <h2 className="text-sm font-bold uppercase mb-2 border-b-2 border-gray-300 pb-1">Languages</h2>
                                 <p className="text-sm text-gray-800 leading-relaxed">
                                     {cvData.language.map(l => typeof l === 'string' ? l : l.value).filter(v => v && v.trim()).map((lang, idx, arr) => (
                                         <span key={idx}>{lang}{idx < arr.length - 1 ? ' • ' : ''}</span>
