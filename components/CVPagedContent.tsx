@@ -95,7 +95,7 @@ function SectionSummary({ cvData, template, highlightedPath, suggestedPaths }: {
     const hp = highlightedPath;
     const sp = suggestedPaths;
     if (template === 'syntax') return (
-        <div className="grid grid-cols-[1fr_3fr] gap-4 border-t border-gray-200 py-4 font-geist">
+        <div className="grid grid-cols-[1fr_3fr] gap-4 py-4 font-geist">
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Summary</h2>
             <p className={`text-xs leading-relaxed text-gray-800 ${getHL('summary', hp, sp)}`}>{cvData.summary}</p>
         </div>
