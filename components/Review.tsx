@@ -16,7 +16,7 @@ interface ReviewProps {
     selectedTemplate: string | null;
     aiCredits: number;
     setAiCredits: (credits: number) => void;
-    tier: 'guest' | 'free' | 'pro';
+    tier: 'guest' | 'free' | 'starter' | 'pro';
     addToast?: (message: string, type: ToastType) => void;
 }
 

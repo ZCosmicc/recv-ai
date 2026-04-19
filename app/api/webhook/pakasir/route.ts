@@ -46,14 +46,23 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Payment verification failed' }, { status: 400 });
         }
 
-        // 5. Extract user ID from order_id (format: ReCV-PRO-{userId}-{timestamp})
+        // 5. Extract plan and user ID from order_id (format: ReCV-{PLAN}-{userId8}-{timestamp})
         const orderParts = order_id.split('-');
 
-        // Should be: ['ReCV', 'PRO', '{userId}', '{timestamp}']
-        if (orderParts.length < 4 || orderParts[0] !== 'ReCV' || orderParts[1] !== 'PRO') {
-            console.error('❌ Invalid order ID format');
+        // Should be: ['ReCV', 'PRO'|'STARTER', '{userId8}', '{timestamp}']
+        const planFromOrder = orderParts[1]; // 'PRO' or 'STARTER'
+        if (orderParts.length < 4 || orderParts[0] !== 'ReCV' || !['PRO', 'STARTER'].includes(planFromOrder)) {
+            console.error('❌ Invalid order ID format:', order_id);
             return NextResponse.json({ error: 'Invalid order ID format' }, { status: 400 });
         }
+
+        // Verify the amount matches what we expect for this plan
+        const expectedAmount = planFromOrder === 'STARTER' ? 5000 : 15000;
+        if (amount !== expectedAmount) {
+            console.error(`❌ Amount mismatch: expected ${expectedAmount} for ${planFromOrder}, got ${amount}`);
+            return NextResponse.json({ error: 'Amount mismatch for plan' }, { status: 400 });
+        }
+
         const userIdPrefix = orderParts[2];
 
         // 6. Use service role to update user (bypass RLS)
@@ -89,19 +98,20 @@ export async function POST(req: Request) {
         }
 
         const profile = matchingProfiles[0];
-
         const userId = profile.id;
-        console.log('✅ Payment verified, upgrading user to Pro');
+
+        const newTier = planFromOrder === 'STARTER' ? 'starter' : 'pro';
+        console.log(`✅ Payment verified, upgrading user to ${newTier}`);
 
         // 8. Calculate expiry date (30 days from now)
         const expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + 30);
 
-        // 9. Update user to Pro tier
+        // 9. Update user tier
         const { error: updateError } = await supabase
             .from('profiles')
             .update({
-                tier: 'pro',
+                tier: newTier,
                 pro_expires_at: expiryDate.toISOString()
             })
             .eq('id', userId);
@@ -111,7 +121,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
         }
 
-        console.log('✅ User upgraded to Pro successfully');
+        console.log(`✅ User upgraded to ${newTier} successfully`);
 
         return NextResponse.json({
             success: true,

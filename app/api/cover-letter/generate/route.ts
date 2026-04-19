@@ -99,8 +99,8 @@ export async function POST(req: Request) {
 
         const now = new Date();
 
-        // Check if Pro subscription expired - auto-downgrade
-        if (profile.tier === 'pro' && profile.pro_expires_at) {
+        // Check if Pro/Starter subscription expired - auto-downgrade
+        if ((profile.tier === 'pro' || profile.tier === 'starter') && profile.pro_expires_at) {
             const expiryDate = new Date(profile.pro_expires_at);
             if (expiryDate < now) {
                 await supabase.from('profiles').update({ tier: 'free', pro_expires_at: null }).eq('id', user.id);
@@ -109,7 +109,8 @@ export async function POST(req: Request) {
         }
 
         const lastReset = new Date(profile.last_credit_reset || 0);
-        const limit = profile.tier === 'pro' ? 50 : 1;
+        const CREDIT_LIMITS: Record<string, number> = { pro: 30, starter: 10, free: 1 };
+        const limit = CREDIT_LIMITS[profile.tier] ?? 1;
 
         // Reset if 24h passed
         const hoursSuccess = Math.abs(now.getTime() - lastReset.getTime()) / 36e5;
@@ -132,7 +133,8 @@ export async function POST(req: Request) {
                 .eq('user_id', user.id);
 
             if (!countError && count !== null) {
-                const storageLimit = profile.tier === 'pro' ? 4 : 1;
+                const STORAGE_LIMITS: Record<string, number> = { pro: 4, starter: 2, free: 1 };
+                const storageLimit = STORAGE_LIMITS[profile.tier] ?? 1;
                 if (count >= storageLimit) {
                     return NextResponse.json({
                         error: `Storage limit reached (${storageLimit} max). Delete existing letters to create new ones.`,

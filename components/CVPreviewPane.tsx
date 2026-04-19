@@ -9,7 +9,7 @@ interface CVPreviewPaneProps {
     cvData: CVData;
     sections: Section[];
     selectedTemplate: string | null;
-    tier?: 'guest' | 'free' | 'pro';
+    tier?: 'guest' | 'free' | 'starter' | 'pro';
     className?: string;
     /** unique prefix so multiple panes on the same page don't conflict */
     pageIdPrefix?: string;

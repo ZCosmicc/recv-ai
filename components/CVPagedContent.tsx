@@ -41,7 +41,7 @@ interface CVPagedContentProps {
     cvData: CVData;
     sections: Section[];
     selectedTemplate: string | null;
-    tier?: 'guest' | 'free' | 'pro';
+    tier?: 'guest' | 'free' | 'starter' | 'pro';
     pageIdPrefix?: string;
     highlightedPath?: string | null;
     suggestedPaths?: string[];
@@ -248,7 +248,7 @@ function SectionExperience({ cvData, template, highlightedPath, suggestedPaths }
             <div className="space-y-4 relative border-l-2 border-gray-200 ml-2 pl-4">
                 {cvData.experience.map((exp, i) => (
                     <div key={i} className="relative">
-                        <div className="absolute -left-[25px] top-1 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full" />
+                        <div className="absolute -left-[23px] top-1 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full" />
                         <div className="flex justify-between items-baseline mb-1">
                             {exp.title && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`experience[${i}].title`, hp, sp)}`}>{exp.title}</h3>}
                             {(exp.startDate || exp.endDate || exp.current) && (
@@ -733,17 +733,17 @@ function Sidebar({ cvData, template, highlightedPath, suggestedPaths }: { cvData
     if (template === 'executive') return (
         <div className="w-64 flex-shrink-0 bg-gray-900 text-white p-6 border-r-4 border-yellow-500 self-stretch">
             {cvData.personal.name && (
-                <div className="mb-8 text-center">
+                <div className="mb-8">
                     <div className="w-full h-0.5 bg-yellow-500 mb-3" />
-                    <h1 className={`text-xl font-bold uppercase tracking-widest mb-3 font-serif text-yellow-500${getHL('personal.name', hp, sp)}`}>{cvData.personal.name}</h1>
+                    <h1 className={`text-xl font-bold uppercase tracking-widest mb-3 font-serif text-yellow-500 text-center${getHL('personal.name', hp, sp)}`}>{cvData.personal.name}</h1>
                     <div className="text-gray-300 text-xs space-y-1 font-medium">
-                        {cvData.personal.email && <div className={`flex items-center gap-1 border-b border-gray-700 pb-1${getHL('personal.email', hp, sp)}`}><Mail className="w-3 h-3 flex-shrink-0" /> {cvData.personal.email}</div>}
-                        {cvData.personal.phone && <div className={`flex items-center gap-1 border-b border-gray-700 pb-1${getHL('personal.phone', hp, sp)}`}><Phone className="w-3 h-3 flex-shrink-0" /> {cvData.personal.phone}</div>}
-                        {cvData.personal.location && <div className={`flex items-center gap-1 border-b border-gray-700 pb-1${getHL('personal.location', hp, sp)}`}><MapPin className="w-3 h-3 flex-shrink-0" /> {cvData.personal.location}</div>}
+                        {cvData.personal.email && <div className={`flex items-start gap-1 border-b border-gray-700 pb-1${getHL('personal.email', hp, sp)}`}><Mail className="w-3 h-3 flex-shrink-0 mt-px" /> {cvData.personal.email}</div>}
+                        {cvData.personal.phone && <div className={`flex items-start gap-1 border-b border-gray-700 pb-1${getHL('personal.phone', hp, sp)}`}><Phone className="w-3 h-3 flex-shrink-0 mt-px" /> {cvData.personal.phone}</div>}
+                        {cvData.personal.location && <div className={`flex items-start gap-1 border-b border-gray-700 pb-1${getHL('personal.location', hp, sp)}`}><MapPin className="w-3 h-3 flex-shrink-0 mt-px" /> {cvData.personal.location}</div>}
                     </div>
                     {cvData.personal.customFields.map((f, i) => f.label && f.value && (
-                        <div key={i} className="text-gray-400 text-xs mt-1 flex items-center gap-1">
-                            <LinkIcon className="w-3 h-3 text-yellow-600 flex-shrink-0" />
+                        <div key={i} className="text-gray-400 text-xs mt-1 flex items-start gap-1">
+                            <LinkIcon className="w-3 h-3 text-yellow-600 flex-shrink-0 mt-px" />
                             <span className="text-yellow-600 font-bold uppercase">{f.label}:</span>{' '}
                             <span className={getHL(`personal.customFields[${i}].value`, hp, sp)}>{f.value}</span>
                         </div>
@@ -1044,7 +1044,7 @@ export default function CVPagedContent({
                         ))}
                     </PageLayout>
 
-                    {tier !== 'pro' && (
+                    {(tier !== 'pro' && tier !== 'starter') && (
                         <div style={{ position: 'absolute', bottom: '10mm', right: '10mm', textAlign: 'center', opacity: 0.6, zIndex: 10 }}>
                             <div style={{ fontSize: '10px', color: '#666', marginBottom: '4px', fontWeight: 500 }}>Created by</div>
                             {/* eslint-disable-next-line @next/next/no-img-element */}

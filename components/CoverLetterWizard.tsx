@@ -58,7 +58,7 @@ export default function CoverLetterWizard() {
     const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
     // New state for PlanCard
-    const [tier, setTier] = useState<'guest' | 'free' | 'pro'>('guest');
+    const [tier, setTier] = useState<'guest' | 'free' | 'starter' | 'pro'>('guest');
     const [aiCredits, setAiCredits] = useState<number>(0);
 
     // Fetch user's CVs and Profile on mount

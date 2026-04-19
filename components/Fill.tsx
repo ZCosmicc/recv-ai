@@ -29,7 +29,7 @@ interface FillProps {
     isCloud?: boolean;
     onSave?: () => void;
     isSaving?: boolean;
-    tier?: 'guest' | 'free' | 'pro';
+    tier?: 'guest' | 'free' | 'starter' | 'pro';
     addToast: (message: string, type: import('./Toast').ToastType, duration?: number, action?: { label: string; onClick: () => void }) => string;
     removeToast: (id: string) => void;
 }

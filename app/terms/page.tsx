@@ -30,7 +30,7 @@ export default function TermsOfService() {
             {/* Content */}
             <SlideIn delay={0.1} className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-4xl min-h-[calc(100vh-80px)]">
                 <h1 className="text-3xl sm:text-5xl font-extrabold text-black mb-4 sm:mb-6">{t.terms.title}</h1>
-                <p className="text-gray-600 mb-8">{t.terms.lastUpdated}: January 29, 2026</p>
+                <p className="text-gray-600 mb-8">{t.terms.lastUpdated}: April 20, 2026</p>
 
                 <div className="space-y-8 text-gray-800">
                     <section>
@@ -58,12 +58,23 @@ export default function TermsOfService() {
                                 </ul>
                             </div>
                             <div>
+                                <h3 className="text-lg sm:text-xl font-semibold mb-2">Starter Tier (Rp.5,000/month)</h3>
+                                <ul className="list-disc list-inside space-y-2 ml-4">
+                                    <li>Up to 2 saved CVs</li>
+                                    <li>All premium templates</li>
+                                    <li>Unlimited PDF exports without watermark</li>
+                                    <li>10 AI analyses per day</li>
+                                    <li>2 AI cover letters</li>
+                                </ul>
+                            </div>
+                            <div>
                                 <h3 className="text-lg sm:text-xl font-semibold mb-2">Pro Tier (Rp.15,000/month)</h3>
                                 <ul className="list-disc list-inside space-y-2 ml-4">
                                     <li>Up to 4 saved CVs</li>
                                     <li>All premium templates</li>
                                     <li>Unlimited PDF exports without watermark</li>
-                                    <li>50 AI analyses per day</li>
+                                    <li>30 AI analyses per day</li>
+                                    <li>4 AI cover letters</li>
                                     <li>Priority support</li>
                                 </ul>
                             </div>
@@ -89,7 +100,7 @@ export default function TermsOfService() {
                             <li>Attempt to hack, breach, or compromise the security of our systems</li>
                             <li>Upload malicious code or viruses</li>
                             <li>Create false or misleading CVs (we recommend honesty in your CV content)</li>
-                            <li>Share your Pro account with others</li>
+                            <li>Share your Starter or Pro account with others</li>
                             <li>Use automated tools to scrape or abuse the service</li>
                         </ul>
                     </section>
@@ -97,12 +108,12 @@ export default function TermsOfService() {
                     <section>
                         <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Payment and Billing</h2>
                         <div className="space-y-4">
-                            <p className="leading-relaxed">
-                                Pro subscriptions are billed monthly at Rp.15,000 per month through our payment processor, Pakasir.
-                            </p>
+                        <p className="leading-relaxed">
+                            Subscriptions are billed monthly at Rp.5,000 (Starter) or Rp.15,000 (Pro) through our payment processor, Pakasir.
+                        </p>
                             <ul className="list-disc list-inside space-y-2 ml-4">
                                 <li>Payments are non-refundable except as required by law</li>
-                                <li>Pro access is valid for 30 days from purchase</li>
+                                <li>Starter and Pro access is valid for 30 days from purchase</li>
                                 <li>We reserve the right to change pricing with 30 days notice</li>
                             </ul>
                         </div>

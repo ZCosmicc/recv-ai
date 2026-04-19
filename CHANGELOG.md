@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.3] - 2026-04-20
+
+### ✨ Subscription Tiers (Starter & Pro)
+
+- **New "Starter" Tier**: Introduced a budget-friendly subscription tier (Rp 5.000) with optimized limits:
+  - Up to 2 saved CVs (vs 1 for Free and 4 for Pro).
+  - 10 AI Credits/day (vs 1 for Free and 30 for Pro).
+  - 2 AI Cover Letters (vs 1 for Free and 4 for Pro).
+  - Full access to all Premium Templates (Syntax, Executive, etc.).
+  - Unlimited PDF exports with no watermark.
+- **Unified AI Credit Limits**: Standardized Pro plan AI credits at 30/day across the entire platform (Marketing, Limits, and API).
+
+### 🎨 UI/UX Refinements
+
+- **Tiered Pricing Display**:
+  - Redesigned the "Popular" badge on the Starter plan as a sleek, black corner-pinned element.
+  - Positioned the Pro plan as "Best Value" with a hero gold-badge design.
+  - Swapped feature order (AI Credits above CV Limit) for better Starter tier hierarchy.
+  - Renamed all primary subscription CTAs to "Try Starter" / "Go Pro" for clearer user intent.
+- **Smart Upselling (LimitModal)**: 
+  - Updated the paywall logic to offer dual upgrade paths (Starter and Pro) to Guest and Free users.
+  - Added tier-awareness: Starter users are only shown Pro upgrade options.
+- **Localized Success Workflows**: Replaced hardcoded Pro-only success messages with dynamic, localized notifications. The system now confirms the specific plan purchased (Starter or Pro) and summarizes the associated benefits in the user's selected language.
+
+### ⚖️ Legal & Documentation
+
+- **Terms of Service Integration**: Fully updated the Terms page to include the Starter tier in acceptable use, billing, and subscription duration policies.
+- **Full i18n Expansion**: Conducted a platform-wide audit and cleanup of hardcoded limit strings, moving all subscription-related copy into the centralized `translations.ts` engine.
+
 ## [1.4.2] - 2026-04-15
 
 ### ✨ Templates & Design Additions

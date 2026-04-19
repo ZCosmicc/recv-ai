@@ -1,8 +1,8 @@
 import React from 'react';
-import { Crown, User, Users } from 'lucide-react';
+import { Crown, User, Users, Zap } from 'lucide-react';
 
 interface PlanCardProps {
-    tier: 'guest' | 'free' | 'pro';
+    tier: 'guest' | 'free' | 'starter' | 'pro';
 }
 
 export default function PlanCard({ tier }: PlanCardProps) {
@@ -18,6 +18,12 @@ export default function PlanCard({ tier }: PlanCardProps) {
             bgColor: 'bg-blue-400',
             textColor: 'text-white',
             icon: <User className="w-3 h-3 sm:w-4 sm:h-4" />
+        },
+        starter: {
+            label: 'STARTER',
+            bgColor: 'bg-white',
+            textColor: 'text-blue-600',
+            icon: <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
         },
         pro: {
             label: 'PRO',

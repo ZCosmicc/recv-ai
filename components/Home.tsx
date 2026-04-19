@@ -46,6 +46,41 @@ export default function Home({ onStart }: HomeProps) {
         return () => clearTimeout(timer);
     }, [text, isDeleting, loopNum, typingSpeed]);
 
+    const handlePayment = async (plan: 'starter' | 'pro') => {
+        try {
+            const res = await fetch('/api/payment/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plan })
+            });
+            const data = await res.json();
+
+            if (res.status === 401) {
+                setAlertMessage('Please log in first to upgrade.');
+                setShowAlert(true);
+                return;
+            }
+
+            if (res.status === 400 && (data.error === 'ALREADY_PRO' || data.error === 'ALREADY_STARTER')) {
+                setAlertMessage(data.message || `You're already a member!`);
+                setShowAlert(true);
+                return;
+            }
+
+            if (data.paymentUrl) {
+                window.location.href = data.paymentUrl;
+            } else {
+                const errorMsg = data.message || data.error || 'Failed to create payment. Please try again.';
+                setAlertMessage(errorMsg);
+                setShowAlert(true);
+            }
+        } catch (error) {
+            console.error('Payment error:', error);
+            setAlertMessage('Payment error. Please try again.');
+            setShowAlert(true);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-white font-sans text-black">
             {/* Navigation */}
@@ -121,13 +156,12 @@ export default function Home({ onStart }: HomeProps) {
             {/* Pricing Section */}
             <SlideIn delay={0.3} id="pricing" className="mt-20 sm:mt-32 md:mt-40 text-center scroll-mt-24">
                     <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-black mb-12 sm:mb-16 md:mb-20 uppercase tracking-tight px-2">{t.pricing.title}</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12 max-w-5xl mx-auto px-4 sm:px-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-6 md:gap-8 max-w-6xl mx-auto px-4 sm:px-6">
                         {/* Free Plan */}
-                        <div className="bg-white border-4 border-black shadow-neo p-6 sm:p-8 text-left relative">
-                            <div className="absolute top-0 right-0 bg-black text-white px-3 sm:px-4 py-1 font-bold text-xs sm:text-sm border-l-4 border-b-4 border-white">{t.pricing.popular}</div>
+                        <div className="bg-white border-4 border-black shadow-neo p-6 sm:p-8 text-left h-full flex flex-col">
                             <h3 className="text-2xl sm:text-3xl font-bold mb-2">{t.pricing.free.title}</h3>
                             <div className="text-4xl sm:text-5xl font-extrabold mb-6">{t.pricing.free.price}<span className="text-lg sm:text-xl font-medium text-gray-500">{t.pricing.perMonth}</span></div>
-                            <ul className="space-y-4 mb-8">
+                            <ul className="space-y-4 mb-8 flex-grow">
                                 <li className="flex items-center gap-3 font-bold">
                                     <Check className="w-6 h-6 text-green-600 border-2 border-black p-0.5" />
                                     {t.pricing.free.features.basic}
@@ -150,18 +184,56 @@ export default function Home({ onStart }: HomeProps) {
                                 whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
                                 whileTap={{ scale: 0.98 }}
                                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                                className="w-full py-4 border-4 border-black bg-white hover:bg-gray-50 font-extrabold text-xl shadow-neo-sm"
+                                className="w-full py-4 border-4 border-black bg-white hover:bg-gray-50 font-extrabold text-xl shadow-neo-sm mt-auto"
                             >
                                 {t.pricing.free.button}
                             </motion.button>
                         </div>
 
-                        {/* Pro Plan */}
-                        <div className="bg-primary text-white border-4 border-black shadow-neo p-6 sm:p-8 text-left relative transform md:-translate-y-4">
+                        {/* Starter Plan */}
+                        <div className="bg-white text-blue-500 border-4 border-black shadow-neo p-6 sm:p-8 text-left relative h-full flex flex-col">
+                            <div className="absolute top-0 right-0 bg-black text-white px-3 py-1 font-extrabold text-[10px] tracking-widest uppercase border-l-4 border-b-4 border-black z-20">{t.pricing.popular}</div>
+                            <h3 className="text-2xl sm:text-3xl font-bold mb-2 mt-4 sm:mt-0">{t.pricing.starter ? t.pricing.starter.title : 'Starter'}</h3>
+                            <div className="text-4xl sm:text-5xl font-extrabold mb-6 text-black">{t.pricing.starter ? t.pricing.starter.price : 'Rp.5k'}<span className="text-lg sm:text-xl font-medium text-gray-500">{t.pricing.perMonth}</span></div>
+                            <ul className="space-y-4 mb-8 flex-grow">
+                                <li className="flex items-center gap-3 font-bold">
+                                    <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-green-600" /></div>
+                                    {t.pricing.starter ? t.pricing.starter.features.premium : 'All Premium Templates'}
+                                </li>
+                                <li className="flex items-center gap-3 font-bold">
+                                    <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-green-600" /></div>
+                                    {t.pricing.starter ? t.pricing.starter.features.noWatermark : 'PDF Export (No Watermark)'}
+                                </li>
+                                <li className="flex items-center gap-3 font-bold">
+                                    <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-green-600" /></div>
+                                    {t.pricing.starter ? t.pricing.starter.features.aiLimit : '10 AI Credits per day'}
+                                </li>
+                                <li className="flex items-center gap-3 font-bold">
+                                    <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-green-600" /></div>
+                                    {t.pricing.starter ? t.pricing.starter.features.cvLimit : 'Up to 2 Saved CVs'}
+                                </li>
+                                <li className="flex items-center gap-3 font-bold">
+                                    <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-green-600" /></div>
+                                    {t.pricing.starter ? t.pricing.starter.features.coverLetter : 'AI Cover Letter Generator (2)'}
+                                </li>
+                            </ul>
+                            <motion.button
+                                onClick={() => handlePayment('starter')}
+                                whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                whileTap={{ scale: 0.98 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                className="w-full py-4 border-4 border-black bg-blue-500 text-white font-extrabold text-xl shadow-neo-sm mt-auto hover:bg-blue-600 transition-colors"
+                            >
+                                {t.pricing.starter ? t.pricing.starter.button : 'Go Starter'}
+                            </motion.button>
+                        </div>
+
+                        {/* Pro Plan (Hero) */}
+                        <div className="bg-primary text-white border-4 border-black shadow-neo p-6 sm:p-8 text-left relative transform md:-translate-y-4 h-full flex flex-col z-10">
                             <div className="absolute -top-5 sm:-top-6 left-1/2 -translate-x-1/2 bg-yellow-400 text-black px-4 sm:px-6 py-2 border-4 border-black font-extrabold text-sm sm:text-base shadow-neo-sm transform rotate-2 whitespace-nowrap">{t.pricing.bestValue}</div>
                             <h3 className="text-2xl sm:text-3xl font-bold mb-2 mt-4 sm:mt-0">{t.pricing.pro.title}</h3>
                             <div className="text-4xl sm:text-5xl font-extrabold mb-6">{t.pricing.pro.price}<span className="text-lg sm:text-xl font-medium text-blue-100">{t.pricing.perMonth}</span></div>
-                            <ul className="space-y-4 mb-8">
+                            <ul className="space-y-4 mb-8 flex-grow">
                                 <li className="flex items-center gap-3 font-bold">
                                     <div className="bg-white border-2 border-black p-0.5"><Check className="w-4 h-4 text-green-600" /></div>
                                     {t.pricing.pro.features.premium}
@@ -184,45 +256,11 @@ export default function Home({ onStart }: HomeProps) {
                                 </li>
                             </ul>
                             <motion.button
-                                onClick={async () => {
-                                    try {
-                                        const res = await fetch('/api/payment/create', {
-                                            method: 'POST',
-                                            headers: { 'Content-Type': 'application/json' }
-                                        });
-                                        const data = await res.json();
-
-                                        if (res.status === 401) {
-                                            // User not logged in
-                                            setAlertMessage('Please log in first to upgrade to Pro.');
-                                            setShowAlert(true);
-                                            return;
-                                        }
-
-                                        if (res.status === 400 && data.error === 'ALREADY_PRO') {
-                                            // User is already Pro
-                                            setAlertMessage(data.message || "You're already a Pro member!");
-                                            setShowAlert(true);
-                                            return;
-                                        }
-
-                                        if (data.paymentUrl) {
-                                            window.location.href = data.paymentUrl;
-                                        } else {
-                                            const errorMsg = data.message || data.error || 'Failed to create payment. Please try again.';
-                                            setAlertMessage(errorMsg);
-                                            setShowAlert(true);
-                                        }
-                                    } catch (error) {
-                                        console.error('Payment error:', error);
-                                        setAlertMessage('Payment error. Please try again.');
-                                        setShowAlert(true);
-                                    }
-                                }}
+                                onClick={() => handlePayment('pro')}
                                 whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
                                 whileTap={{ scale: 0.98 }}
                                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                                className="w-full py-4 border-4 border-black bg-yellow-400 text-black font-extrabold text-xl shadow-neo-sm"
+                                className="w-full py-4 border-4 border-black bg-yellow-400 text-black font-extrabold text-xl shadow-neo-sm mt-auto"
                             >
                                 {t.pricing.pro.button}
                             </motion.button>

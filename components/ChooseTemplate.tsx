@@ -122,7 +122,7 @@ interface ChooseTemplateProps {
     onBack: () => void;
     onClearData: () => void;
     hasSavedData: boolean;
-    tier?: 'guest' | 'free' | 'pro';
+    tier?: 'guest' | 'free' | 'starter' | 'pro';
 }
 
 export default function ChooseTemplate({
@@ -173,7 +173,7 @@ export default function ChooseTemplate({
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
                         {templates.map((template, index) => {
-                            const isLocked = (template.isPremium && tier !== 'pro');
+                            const isLocked = (template.isPremium && tier !== 'pro' && tier !== 'starter');
                             return (
                                 <SlideIn key={template.id} delay={index * 0.1} className="h-full w-full">
                                     <motion.button

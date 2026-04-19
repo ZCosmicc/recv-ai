@@ -9,7 +9,7 @@ import { CVData } from '../types';
 export const downloadPDF = (
     cvData: CVData,
     _elementId?: string, // kept for backwards compat, ignored
-    tier?: 'guest' | 'free' | 'pro',
+    tier?: 'guest' | 'free' | 'starter' | 'pro',
 ) => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) {

@@ -20,6 +20,8 @@ export interface Translations {
         redirecting: string;
         successTitle: string;
         successDesc: string;
+        successDescStarter: string;
+        successDescPro: string;
         whatsNext: string;
         step1: string;
         step2: string;
@@ -94,6 +96,18 @@ export interface Translations {
             };
             button: string;
         };
+        starter: {
+            title: string;
+            price: string;
+            features: {
+                premium: string;
+                noWatermark: string;
+                cvLimit: string;
+                aiLimit: string;
+                coverLetter: string;
+            };
+            button: string;
+        };
         pro: {
             title: string;
             price: string;
@@ -134,7 +148,7 @@ export interface Translations {
         limitReached: string;
         usedCredits: string;
         powerUser: string;
-        upgradeFor50: string;
+        upgradeFor30: string;
         exclusiveTemplate: string;
         upgradeUnlock: string;
         used1CV: string;
@@ -145,6 +159,13 @@ export interface Translations {
         gotIt: string;
         upgradeToPro: string;
         goPro: string;
+        goStarter: string;
+        creditsPro: string;
+        creditsStarter: string;
+        cvLimitFreeTitle: string;
+        cvLimitFreeDesc: string;
+        cvLimitStarterTitle: string;
+        cvLimitStarterDesc: string;
     };
 
     // Choose Template
@@ -239,7 +260,9 @@ export const translations: Record<Language, Translations> = {
             processingDesc: 'Thank you! We are verifying your payment.',
             redirecting: 'Redirecting in {seconds} seconds...',
             successTitle: 'Payment Successful!',
-            successDesc: 'Your payment is being processed. Your account will be upgraded to Pro shortly.',
+            successDesc: 'Your payment is being processed. Your account will be upgraded shortly.',
+            successDescStarter: 'Thank you for upgrading! Your account is now Starter. You can create up to 2 CVs and get 10 AI credits per day.',
+            successDescPro: 'Thank you for upgrading! Your account is now Pro. You can create up to 4 CVs and access all features.',
             whatsNext: "What's Next?",
             step1: "✓ We're processing your payment with Pakasir",
             step2: "✓ Your tier will update automatically in a few moments",
@@ -318,14 +341,26 @@ export const translations: Record<Language, Translations> = {
                 },
                 button: 'Start for Free'
             },
+            starter: {
+                title: 'Starter',
+                price: 'Rp.5k',
+                features: {
+                    premium: 'All Premium Templates',
+                    noWatermark: 'Unlimited PDF Export (No Watermark)',
+                    cvLimit: 'Up to 2 Saved CVs',
+                    aiLimit: '10 AI Credits per day',
+                    coverLetter: '2 AI Cover Letters'
+                },
+                button: 'Try Starter'
+            },
             pro: {
                 title: 'Pro',
                 price: 'Rp.15k',
                 features: {
                     premium: 'All Premium Templates',
                     noWatermark: 'Unlimited PDF Exports (No Watermark)',
-                    aiLimit: '50 AI Credits per day',
-                    coverLetter: 'AI Cover Letter Generator',
+                    aiLimit: '30 AI Credits per day',
+                    coverLetter: '4 AI Cover Letters',
                     support: 'Priority Support'
                 },
                 button: 'Go Pro'
@@ -335,7 +370,7 @@ export const translations: Record<Language, Translations> = {
             title: 'FAQ',
             q1: {
                 q: "Is ReCV really free?",
-                a: "Yes! You can build your resume and export it for free. Our Pro plan offers advanced features like AI suggestions and premium templates."
+                a: "Yes! You can build your resume and export it for free with a watermark. Our Starter and Pro plans offer advanced features like AI suggestions, premium templates, and no-watermark exports."
             },
             q2: {
                 q: "Do I need an account?",
@@ -365,7 +400,7 @@ export const translations: Record<Language, Translations> = {
             limitReached: 'Limit Reached',
             usedCredits: "You've used your",
             powerUser: 'You are a power user! Your credits will reset tomorrow.',
-            upgradeFor50: 'Upgrade to Pro for 50 AI analyses per day and more!',
+            upgradeFor30: 'Upgrade to Pro for 30 AI analyses per day and more!',
             exclusiveTemplate: 'This template is exclusive to',
             upgradeUnlock: 'to unlock this premium template, unlimited downloads, and AI features.',
             used1CV: "You've used your",
@@ -376,6 +411,13 @@ export const translations: Record<Language, Translations> = {
             gotIt: 'Got it',
             upgradeToPro: 'Upgrade to Pro',
             goPro: 'Go Pro',
+            goStarter: 'Try Starter',
+            creditsPro: 'Upgrade to Pro for 30 AI credits per day and up to 4 saved CVs!',
+            creditsStarter: 'Upgrade to Starter for 10 AI credits/day, or go Pro for 30 credits/day!',
+            cvLimitFreeTitle: "You've used your 1 free CV.",
+            cvLimitFreeDesc: "Upgrade to Starter for 2 CVs & 10 AI credits, or go Pro for the full experience!",
+            cvLimitStarterTitle: "You've reached your 2 CV limit.",
+            cvLimitStarterDesc: "Upgrade to Pro to create up to 4 CVs and get 30 AI credits per day!",
         },
         chooseTemplate: {
             title: 'Choose Template',
@@ -453,7 +495,9 @@ export const translations: Record<Language, Translations> = {
             processingDesc: 'Terima kasih! Kami sedang memverifikasi pembayaran Anda.',
             redirecting: 'Dialihkan dalam {seconds} detik...',
             successTitle: 'Pembayaran Berhasil!',
-            successDesc: 'Pembayaran Anda sedang diproses. Akun Anda akan segera ditingkatkan ke Pro.',
+            successDesc: 'Pembayaran Anda sedang diproses. Akun Anda akan segera ditingkatkan.',
+            successDescStarter: 'Terima kasih telah melakukan pembaruan! Akun Anda sekarang Starter. Anda dapat membuat hingga 2 CV dan mendapatkan 10 kredit AI per hari.',
+            successDescPro: 'Terima kasih telah melakukan pembaruan! Akun Anda sekarang Pro. Anda dapat membuat hingga 4 CV dan mengakses semua fitur.',
             whatsNext: "Apa Selanjutnya?",
             step1: "✓ Kami sedang memproses pembayaran Anda dengan Pakasir",
             step2: "✓ Tingkat akun Anda akan diperbarui secara otomatis dalam beberapa saat",
@@ -532,14 +576,26 @@ export const translations: Record<Language, Translations> = {
                 },
                 button: 'Mulai Gratis'
             },
+            starter: {
+                title: 'Starter',
+                price: 'Rp.5rb',
+                features: {
+                    premium: 'Semua Template Premium',
+                    noWatermark: 'Ekspor PDF Tanpa Batas (Tanpa Watermark)',
+                    cvLimit: 'Simpan Hingga 2 CV',
+                    aiLimit: '10 Kredit AI per hari',
+                    coverLetter: '2 Surat Lamaran AI'
+                },
+                button: 'Pilih Starter'
+            },
             pro: {
                 title: 'Pro',
                 price: 'Rp.15rb',
                 features: {
                     premium: 'Semua Template Premium',
                     noWatermark: 'Ekspor PDF Tanpa Batas (Tanpa Watermark)',
-                    aiLimit: '50 Kredit AI per hari',
-                    coverLetter: 'Pembuat Surat Lamaran AI',
+                    aiLimit: '30 Kredit AI per hari',
+                    coverLetter: '4 Surat Lamaran AI',
                     support: 'Dukungan Prioritas'
                 },
                 button: 'Jadi Pro'
@@ -549,7 +605,7 @@ export const translations: Record<Language, Translations> = {
             title: 'FAQ',
             q1: {
                 q: "Apakah ReCV benar-benar gratis?",
-                a: "Ya! Anda dapat membuat resume dan mengekspornya secara gratis. Paket Pro kami menawarkan fitur lanjutan seperti saran AI dan template premium."
+                a: "Ya! Anda dapat membuat resume dan mengekspornya secara gratis dengan watermark. Paket Starter dan Pro kami menawarkan fitur lanjutan seperti saran AI, template premium, dan ekspor tanpa watermark."
             },
             q2: {
                 q: "Apakah saya perlu akun?",
@@ -579,7 +635,7 @@ export const translations: Record<Language, Translations> = {
             limitReached: 'Batas Tercapai',
             usedCredits: 'Anda telah menggunakan',
             powerUser: 'Anda pengguna super! Kredit Anda akan direset besok.',
-            upgradeFor50: 'Upgrade ke Pro untuk 50 analisis AI per hari dan lebih banyak lagi!',
+            upgradeFor30: 'Upgrade ke Pro untuk 30 analisis AI per hari dan lebih banyak lagi!',
             exclusiveTemplate: 'Template ini eksklusif untuk',
             upgradeUnlock: 'untuk membuka template premium ini, unduhan tanpa batas, dan fitur AI.',
             used1CV: 'Anda telah menggunakan',
@@ -590,6 +646,13 @@ export const translations: Record<Language, Translations> = {
             gotIt: 'Mengerti',
             upgradeToPro: 'Upgrade ke Pro',
             goPro: 'Jadi Pro',
+            goStarter: 'Coba Starter',
+            creditsPro: 'Upgrade ke Pro untuk 30 kredit AI per hari dan simpan hingga 4 CV!',
+            creditsStarter: 'Upgrade ke Starter untuk 10 kredit AI per hari, atau pilih Pro untuk 30 kredit!',
+            cvLimitFreeTitle: "Anda telah menggunakan 1 CV gratis Anda.",
+            cvLimitFreeDesc: "Upgrade ke Starter untuk 2 CV & 10 kredit AI, atau pilih Pro untuk pengalaman penuh!",
+            cvLimitStarterTitle: "Anda telah mencapai batas 2 CV.",
+            cvLimitStarterDesc: "Upgrade ke Pro untuk membuat hingga 4 CV dan dapatkan 30 kredit AI per hari!",
         },
         chooseTemplate: {
             title: 'Pilih Template',

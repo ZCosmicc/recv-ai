@@ -2,6 +2,18 @@
 
 All user-facing updates and improvements to Recv. AI.
 
+## [1.4.3] - 2026-04-20
+### ✨ Introducing the Starter Plan!
+- **Affordable Premium Access:** We’ve launched the brand new **Starter Plan** for just **Rp 5.000**! It’s the perfect middle ground if you need a professional boost without a full Pro subscription.
+  - **Premium Templates:** Get full access to Syntax, Executive, and all other premium designs.
+  - **No Watermarks:** Export unlimited PDFs with a clean, professional finish.
+  - **Boosted Limits:** Save up to 2 CVs and get 10 AI credits every single day.
+  - **Cover Letters:** You can now create and save 2 AI-generated cover letters to kickstart your applications.
+
+### 🚀 Smoother Success Journey
+- **Personalized Success Messages:** When you upgrade, your success message is now specifically tailored to your new plan, showing you exactly what benefits you've unlocked in your preferred language.
+- **Full Support for Indonesian:** We’ve finished localizing every single limit prompt, button, and description across the app. Whether you speak English or Bahasa Indonesia, the experience is now 100% seamless! Please let us know if we miss something!
+
 ## [1.4.2] - 2026-04-15
 ### ✨ New Templates
 - **Developer Templates:** Meet **Syntax** and **Syntax Nano** — two sleek, terminal-inspired templates crafted specifically for software engineers. Complete with beautiful monospaced typefaces, these new premium additions perfectly merge structure with readability to help your professional background pop.

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Lock, Crown } from 'lucide-react';
+import { X, Lock, Crown, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import AlertModal from './AlertModal';
@@ -8,9 +8,12 @@ import SlideIn from './SlideIn';
 interface LimitModalProps {
     isOpen: boolean;
     onClose: () => void;
-    tier: 'guest' | 'free' | 'pro';
+    tier: 'guest' | 'free' | 'starter' | 'pro';
     mode?: 'cv' | 'ai' | 'premium_template'; // Default to 'cv'
 }
+
+const CREDIT_LIMITS: Record<string, number> = { pro: 30, starter: 10, free: 1 };
+const CV_LIMITS: Record<string, number> = { pro: 4, starter: 2, free: 1 };
 
 export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: LimitModalProps) {
     const { t } = useLanguage();
@@ -21,6 +24,51 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
 
     const isGuest = tier === 'guest';
     const isFree = tier === 'free';
+    const isStarter = tier === 'starter';
+    const isPro = tier === 'pro';
+
+    // Who needs an upgrade CTA?
+    const needsStarterCTA = (isGuest || isFree) && (mode === 'ai' || mode === 'cv' || mode === 'premium_template');
+    const needsProCTA = isStarter && (mode === 'ai' || mode === 'cv');
+    const needsPremiumCTA = mode === 'premium_template' && !isPro;
+
+    const handlePayment = async (plan: 'starter' | 'pro') => {
+        try {
+            const res = await fetch('/api/payment/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plan })
+            });
+            const data = await res.json();
+
+            if (res.status === 401) {
+                setAlertMessage(t.errors.loginRequired);
+                setShowAlert(true);
+                return;
+            }
+
+            if (res.status === 400 && (data.error === 'ALREADY_PRO' || data.error === 'ALREADY_STARTER')) {
+                setAlertMessage(data.message || `You're already on this plan!`);
+                setShowAlert(true);
+                return;
+            }
+
+            if (data.paymentUrl) {
+                window.location.href = data.paymentUrl;
+            } else {
+                const errorMsg = data.message || data.error || t.errors.paymentFailed;
+                setAlertMessage(errorMsg);
+                setShowAlert(true);
+            }
+        } catch (error) {
+            console.error('Payment error:', error);
+            setAlertMessage(t.errors.generic);
+            setShowAlert(true);
+        }
+    };
+
+    const creditLimit = CREDIT_LIMITS[tier] ?? 1;
+    const cvLimit = CV_LIMITS[tier] ?? 1;
 
     return (
         <React.Fragment>
@@ -40,104 +88,107 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                         {mode === 'ai' ? (
                             <>
                                 <p className="font-medium text-lg">
-                                    {t.limitModal.usedCredits} <strong>{tier === 'pro' ? '50' : '1'}</strong>.
+                                    {t.limitModal.usedCredits} <strong>{creditLimit} AI {creditLimit === 1 ? 'credit' : 'credits'}</strong>.
                                 </p>
                                 <p className="text-gray-600">
-                                    {tier === 'pro'
+                                    {isPro
                                         ? t.limitModal.powerUser
-                                        : t.limitModal.upgradeFor50}
+                                        : isStarter
+                                            ? t.limitModal.creditsPro
+                                            : t.limitModal.creditsStarter}
                                 </p>
                             </>
                         ) : mode === 'premium_template' ? (
                             <>
                                 <p className="font-medium text-lg">
-                                    {t.limitModal.exclusiveTemplate} <strong>Pro users</strong>.
+                                    {t.limitModal.exclusiveTemplate} <strong>Starter & Pro users</strong>.
                                 </p>
                                 <p className="text-gray-600">
-                                    <strong>{t.limitModal.upgradeToPro}</strong> {t.limitModal.upgradeUnlock}
+                                    <strong>Upgrade to Starter or Pro</strong> {t.limitModal.upgradeUnlock}
                                 </p>
                             </>
                         ) : (
                             /* CV Limit Logic */
-                            isGuest || isFree ? (
+                            isPro ? (
                                 <>
                                     <p className="font-medium text-lg">
-                                        {t.limitModal.used1CV} <strong>1 free CV</strong>.
+                                        {t.limitModal.reached4CVs} <strong>{cvLimit} CVs</strong>.
+                                    </p>
+                                    <p className="text-gray-600">{t.limitModal.deleteToCreate}</p>
+                                </>
+                            ) : isStarter ? (
+                                <>
+                                    <p className="font-medium text-lg">
+                                        {t.limitModal.cvLimitStarterTitle}
                                     </p>
                                     <p className="text-gray-600">
-                                        <strong>{t.limitModal.upgradeToPro}</strong> {t.limitModal.upgradeTo4CVs}
+                                        {t.limitModal.cvLimitStarterDesc}
                                     </p>
                                 </>
                             ) : (
-                                /* Pro user who reached 4 CV limit */
                                 <>
                                     <p className="font-medium text-lg">
-                                        {t.limitModal.reached4CVs} <strong>4 CVs</strong>.
+                                        {t.limitModal.cvLimitFreeTitle}
                                     </p>
                                     <p className="text-gray-600">
-                                        {t.limitModal.deleteToCreate}
+                                        {t.limitModal.cvLimitFreeDesc}
                                     </p>
                                 </>
                             )
                         )}
 
-                        <div className="flex gap-4 pt-4">
-                            <motion.button
-                                whileHover={{ backgroundColor: '#f3f4f6' }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={onClose}
-                                className="flex-1 px-4 py-3 font-bold border-2 border-black transition-all"
-                            >
-                                {(isGuest || isFree || (mode === 'ai' && tier !== 'pro') || mode === 'premium_template') ? t.limitModal.maybeLater : t.limitModal.gotIt}
-                            </motion.button>
-                            {((isGuest || isFree) && mode === 'cv') || (mode === 'ai' && tier !== 'pro') || mode === 'premium_template' ? (
+                        <div className="flex flex-col gap-2 pt-4">
+                            {/* Maybe Later / Got It */}
+                            <div className="flex gap-3">
                                 <motion.button
-                                    whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                    whileHover={{ backgroundColor: '#f3f4f6' }}
                                     whileTap={{ scale: 0.98 }}
-                                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                                    onClick={async () => {
-                                        try {
-                                            const res = await fetch('/api/payment/create', {
-                                                method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' }
-                                            });
-                                            const data = await res.json();
-
-                                            if (res.status === 401) {
-                                                // User not logged in - show styled alert
-                                                setAlertMessage(t.errors.loginRequired);
-                                                setShowAlert(true);
-                                                return;
-                                            }
-
-                                            if (res.status === 400 && data.error === 'ALREADY_PRO') {
-                                                // User is already Pro
-                                                setAlertMessage(data.message || "You're already a Pro member!");
-                                                setShowAlert(true);
-                                                return;
-                                            }
-
-                                            if (data.paymentUrl) {
-                                                // Redirect to Pakasir payment page
-                                                window.location.href = data.paymentUrl;
-                                            } else {
-                                                // Show specific error from API if available
-                                                const errorMsg = data.message || data.error || t.errors.paymentFailed;
-                                                setAlertMessage(errorMsg);
-                                                setShowAlert(true);
-                                            }
-                                        } catch (error) {
-                                            console.error('Payment error:', error);
-                                            setAlertMessage(t.errors.generic);
-                                            setShowAlert(true);
-                                        }
-                                    }}
-                                    className="flex-1 px-4 py-3 font-bold text-black bg-yellow-400 border-2 border-black shadow-neo-sm flex items-center justify-center gap-2"
+                                    onClick={onClose}
+                                    className="flex-1 px-4 py-3 font-bold border-2 border-black transition-all"
                                 >
-                                    <Crown className="w-4 h-4" />
-                                    {t.limitModal.goPro}
+                                    {(needsStarterCTA || needsProCTA || needsPremiumCTA) ? t.limitModal.maybeLater : t.limitModal.gotIt}
                                 </motion.button>
-                            ) : null}
+
+                                {/* Go Pro button — only if not showing the double button block below */}
+                                {(needsProCTA || needsPremiumCTA) && !needsStarterCTA && (
+                                    <motion.button
+                                        whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                        whileTap={{ scale: 0.98 }}
+                                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                        onClick={() => handlePayment('pro')}
+                                        className="flex-1 px-4 py-3 font-bold text-black bg-yellow-400 border-2 border-black shadow-neo-sm flex items-center justify-center gap-2"
+                                    >
+                                        <Crown className="w-4 h-4" />
+                                        {t.limitModal.goPro}
+                                    </motion.button>
+                                )}
+                            </div>
+
+                            {/* Go Starter button — for Free/Guest users only */}
+                            {needsStarterCTA && (
+                                <div className="flex gap-3">
+                                    <motion.button
+                                        whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                        whileTap={{ scale: 0.98 }}
+                                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                        onClick={() => handlePayment('starter')}
+                                        className="flex-1 px-4 py-3 font-bold text-white bg-blue-500 border-2 border-black shadow-neo-sm flex items-center justify-center gap-2"
+                                    >
+                                        <Zap className="w-4 h-4" />
+                                        {t.limitModal.goStarter}
+                                    </motion.button>
+                                    <motion.button
+                                        whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                                        whileTap={{ scale: 0.98 }}
+                                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                        onClick={() => handlePayment('pro')}
+                                        className="flex-1 px-4 py-3 font-bold text-black bg-yellow-400 border-2 border-black shadow-neo-sm flex items-center justify-center gap-2"
+                                    >
+                                        <Crown className="w-4 h-4" />
+                                        {t.limitModal.goPro}
+                                    </motion.button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </SlideIn>

@@ -546,17 +546,18 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
             {/* Sidebar */}
             <div className="w-full sm:w-1/3 bg-gray-900 text-white p-5 sm:p-8 border-b-4 sm:border-b-0 sm:border-r-4 border-yellow-500">
                 {cvData.personal.name && (
-                    <div className="mb-10 text-center">
+                    <div className="mb-10">
                         <div className="w-16 h-1 w-full bg-yellow-500 mb-4"></div>
-                        <h1 className="text-3xl font-bold uppercase tracking-widest mb-4 font-serif text-yellow-500">{cvData.personal.name}</h1>
+                        <h1 className="text-3xl font-bold uppercase tracking-widest mb-4 font-serif text-yellow-500 text-center">{cvData.personal.name}</h1>
                         <div className="text-gray-300 text-xs space-y-2 font-medium">
-                            {cvData.personal.email && <div className="border-b border-gray-700 pb-1">{cvData.personal.email}</div>}
-                            {cvData.personal.phone && <div className="border-b border-gray-700 pb-1">{cvData.personal.phone}</div>}
-                            {cvData.personal.location && <div className="border-b border-gray-700 pb-1">{cvData.personal.location}</div>}
+                            {cvData.personal.email && <div className="flex items-start gap-1.5 border-b border-gray-700 pb-1"><Mail className="w-3 h-3 flex-shrink-0 mt-px" />{cvData.personal.email}</div>}
+                            {cvData.personal.phone && <div className="flex items-start gap-1.5 border-b border-gray-700 pb-1"><Phone className="w-3 h-3 flex-shrink-0 mt-px" />{cvData.personal.phone}</div>}
+                            {cvData.personal.location && <div className="flex items-start gap-1.5 border-b border-gray-700 pb-1"><MapPin className="w-3 h-3 flex-shrink-0 mt-px" />{cvData.personal.location}</div>}
                         </div>
                         {cvData.personal.customFields.map((field, idx) => (
                             field.label && field.value && (
-                                <div key={idx} className="text-gray-400 text-xs mt-2 text-left">
+                                <div key={idx} className="text-gray-400 text-xs mt-2 flex items-start gap-1.5">
+                                    <LinkIcon className="w-3 h-3 text-yellow-600 flex-shrink-0 mt-px" />
                                     <span className="text-yellow-600 font-bold uppercase">{field.label}:</span> {field.value}
                                 </div>
                             )
@@ -615,7 +616,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                 <div className="space-y-6 relative border-l-2 border-gray-200 ml-2 pl-6">
                                     {cvData.experience.map((exp, idx) => (
                                         <div key={idx} className="relative">
-                                            <div className="absolute -left-[31px] top-1 w-4 h-4 bg-yellow-500 border-4 border-white rounded-full"></div>
+                                            <div className="absolute -left-[33px] top-1 w-4 h-4 bg-yellow-500 border-4 border-white rounded-full"></div>
                                             <div className="flex justify-between items-baseline mb-1">
                                                 {exp.title && <h3 className="font-bold text-gray-900 text-lg">{exp.title}</h3>}
                                                 {(exp.startDate || exp.endDate || exp.current) && (

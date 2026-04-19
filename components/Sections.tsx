@@ -23,7 +23,7 @@ interface SectionsProps {
     isCloud?: boolean;
     onSave?: () => void;
     isSaving?: boolean;
-    tier?: 'guest' | 'free' | 'pro';
+    tier?: 'guest' | 'free' | 'starter' | 'pro';
     aiCredits?: number;
 }
 

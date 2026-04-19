@@ -70,7 +70,8 @@ export async function POST(req: Request) {
                     .eq('user_id', user.id);
 
                 if (!countError && count !== null) {
-                    const storageLimit = profile.tier === 'pro' ? 4 : 1;
+                    const STORAGE_LIMITS: Record<string, number> = { pro: 4, starter: 2, free: 1 };
+                    const storageLimit = STORAGE_LIMITS[profile.tier] ?? 1;
                     if (count >= storageLimit) {
                         return NextResponse.json({
                             error: `Storage limit reached (${storageLimit}). Upgrade to Pro or delete old letters.`,

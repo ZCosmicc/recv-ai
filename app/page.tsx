@@ -11,6 +11,7 @@ import ClearDataModal from '../components/ClearDataModal';
 import AlertModal from '../components/AlertModal';
 import Review from '../components/Review'; // Import Review Component
 import { createClient } from '@/utils/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Loader2 } from 'lucide-react';
 import Toast, { ToastType } from '../components/Toast';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -19,6 +20,7 @@ function BuilderContent() {
   const searchParams = useSearchParams();
   const cvId = searchParams.get('id');
   const supabase = createClient();
+  const { t } = useLanguage();
 
   // State definitions
   const [step, setStep] = useState<string>('home');
@@ -48,7 +50,7 @@ function BuilderContent() {
   });
 
   // Auth & Credit State
-  const [tier, setTier] = useState<'guest' | 'free' | 'pro'>('guest');
+  const [tier, setTier] = useState<'guest' | 'free' | 'starter' | 'pro'>('guest');
   const [dailyUsage, setDailyUsage] = useState<number>(0);
   const [aiCredits, setAiCredits] = useState<number>(0); // Computed remaining credits
   const [isLoaded, setIsLoaded] = useState(false);
@@ -106,11 +108,12 @@ function BuilderContent() {
 
         if (profile) {
           const userTier = profile.tier || 'free'; // Default to free if logged in
-          setTier(userTier);
+          setTier(userTier as 'guest' | 'free' | 'starter' | 'pro');
           setDailyUsage(profile.daily_credits_used || 0);
 
           // Calculate Remaining with client-side reset check
-          const limit = userTier === 'pro' ? 50 : 1;
+          const CREDIT_LIMITS: Record<string, number> = { pro: 30, starter: 10, free: 1 };
+          const limit = CREDIT_LIMITS[userTier] ?? 1;
           let currentUsage = profile.daily_credits_used || 0;
 
           // Check if reset is due (24h)
@@ -286,14 +289,17 @@ function BuilderContent() {
       const newUrl = window.location.pathname;
       window.history.replaceState({}, '', newUrl);
 
+      const plan = searchParams.get('plan');
+      const successMessage = plan === 'starter' ? t.paymentSuccess.successDescStarter : t.paymentSuccess.successDescPro;
+
       setAlertModal({
         isOpen: true,
-        title: 'Payment Successful! 🎉',
+        title: t.paymentSuccess.successTitle,
         message: (
           <div className="space-y-4">
-            <p className="text-gray-800">Thank you for upgrading! Your account is now Pro. You can create up to 4 CVs and access all features.</p>
+            <p className="text-gray-800">{successMessage}</p>
             <p className="text-sm bg-green-50 p-3 rounded-md border border-green-200 text-green-900">
-              <strong>Note:</strong> If your tier still shows 'Free' on the dashboard, please wait a moment and refresh the page. If the issue persists, please contact us.
+              <strong>Note:</strong> {t.paymentSuccess.step2} {t.paymentSuccess.step3}
             </p>
           </div>
         ) as any,
@@ -411,7 +417,8 @@ function BuilderContent() {
           .eq('user_id', user.id);
 
         const cvCount = existingCVs?.length || 0;
-        const limit = tier === 'pro' ? 4 : 1; // Free/Guest: 1 CV, Pro: 4 CVs
+        const CV_LIMITS: Record<string, number> = { pro: 4, starter: 2, free: 1 };
+        const limit = CV_LIMITS[tier] ?? 1;
 
         console.log(`📊 CV Count: ${cvCount}/${limit} (tier: ${tier})`);
 
