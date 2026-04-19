@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LayoutDashboard, Users, Activity, Zap, Search, ChevronRight, Crown, X, Trash2 } from 'lucide-react';
 import ConfirmModal from '@/components/ConfirmModal';
+import TierModal from '@/components/TierModal';
 
 export default function AdminPage() {
     const router = useRouter();
@@ -13,7 +14,12 @@ export default function AdminPage() {
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [userSearch, setUserSearch] = useState('');
     const [updating, setUpdating] = useState<string | null>(null);
-    const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; userId: string; currentTier: string }>({ isOpen: false, userId: '', currentTier: '' });
+    const [tierModal, setTierModal] = useState<{ isOpen: boolean; userId: string; currentTier: string; email: string }>({ 
+        isOpen: false, 
+        userId: '', 
+        currentTier: '', 
+        email: '' 
+    });
     const [tickets, setTickets] = useState<any[]>([]);
     const [ticketFilter, setTicketFilter] = useState<'all' | 'open' | 'in_progress' | 'resolved'>('all');
     const [updatingTicket, setUpdatingTicket] = useState<string | null>(null);
@@ -100,16 +106,20 @@ export default function AdminPage() {
         fetchUsers(userSearch);
     };
 
-    const toggleTier = async (userId: string, currentTier: string) => {
-        setConfirmModal({ isOpen: true, userId, currentTier });
+    const openTierModal = (user: any) => {
+        setTierModal({ 
+            isOpen: true, 
+            userId: user.id, 
+            currentTier: user.tier || 'free', 
+            email: user.email 
+        });
     };
 
-    const handleConfirmTierChange = async () => {
-        const { userId, currentTier } = confirmModal;
-        const newTier = currentTier === 'pro' ? 'free' : 'pro';
-
-        setConfirmModal({ isOpen: false, userId: '', currentTier: '' });
+    const handleTierChange = async (newTier: 'free' | 'starter' | 'pro') => {
+        const { userId } = tierModal;
+        
         setUpdating(userId);
+        setTierModal(prev => ({ ...prev, isOpen: false }));
 
         try {
             const res = await fetch('/api/admin/users', {
@@ -119,8 +129,8 @@ export default function AdminPage() {
             });
 
             if (res.ok) {
-                // Calculate new pro_expires_at to match what the server just set (30 days)
-                const newExpiresAt = newTier === 'pro'
+                // Calculate new pro_expires_at (30 days from now)
+                const newExpiresAt = newTier !== 'free'
                     ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
                     : null;
                 setUsers(users.map(u => u.id === userId
@@ -191,6 +201,12 @@ export default function AdminPage() {
                         icon={<Crown />}
                         meta={`${((stats?.proUsers || 0) / (stats?.totalUsers || 1) * 100).toFixed(1)}% Conversion`}
                     />
+                    <StatCard
+                        title="Starter Users"
+                        value={stats?.starterUsers || 0}
+                        icon={<Zap />}
+                        meta={`${((stats?.starterUsers || 0) / (stats?.totalUsers || 1) * 100).toFixed(1)}% Usage`}
+                    />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
@@ -216,7 +232,7 @@ export default function AdminPage() {
                                     <tr className="border-b-4 border-black">
                                         <th className="p-3 font-extrabold">Email</th>
                                         <th className="p-3 font-extrabold">Tier</th>
-                                        <th className="p-3 font-extrabold">Pro Expires</th>
+                                        <th className="p-3 font-extrabold">Expires Date</th>
                                         <th className="p-3 font-extrabold">Credits Used Today</th>
                                         <th className="p-3 font-extrabold">Joined</th>
                                         <th className="p-3 font-extrabold">Action</th>
@@ -227,22 +243,26 @@ export default function AdminPage() {
                                         <tr key={user.id} className="border-b border-gray-200 hover:bg-gray-50">
                                             <td className="p-3 font-medium">{user.email}</td>
                                             <td className="p-3">
-                                                <span className={`px-2 py-1 text-xs font-bold border-2 border-black ${user.tier === 'pro' ? 'bg-yellow-400 text-black' : 'bg-gray-200'}`}>
+                                                <span className={`px-2 py-1 text-xs font-bold border-2 border-black ${
+                                                    user.tier === 'pro' ? 'bg-yellow-400 text-black' : 
+                                                    user.tier === 'starter' ? 'bg-blue-500 text-white' : 
+                                                    'bg-gray-200'
+                                                }`}>
                                                     {user.tier?.toUpperCase() || 'FREE'}
                                                 </span>
                                             </td>
                                             <td className="p-3">
-                                                <ProExpiryBadge expiresAt={user.pro_expires_at} tier={user.tier} />
+                                                <PremiumExpiryBadge expiresAt={user.pro_expires_at} tier={user.tier} />
                                             </td>
                                             <td className="p-3">{user.daily_credits_used || 0}</td>
                                             <td className="p-3 text-sm text-gray-500">{new Date(user.created_at).toLocaleDateString()}</td>
                                             <td className="p-3">
                                                 <button
-                                                    onClick={() => toggleTier(user.id, user.tier || 'free')}
+                                                    onClick={() => openTierModal(user)}
                                                     disabled={updating === user.id}
                                                     className="text-xs font-bold underline hover:text-primary transition-colors disabled:opacity-50"
                                                 >
-                                                    {updating === user.id ? '...' : user.tier === 'pro' ? 'Downgrade' : 'Upgrade to Pro'}
+                                                    {updating === user.id ? '...' : 'Change Tier'}
                                                 </button>
                                             </td>
                                         </tr>
@@ -382,14 +402,13 @@ export default function AdminPage() {
                 </div>
             </div>
 
-            <ConfirmModal
-                isOpen={confirmModal.isOpen}
-                title={confirmModal.currentTier === 'pro' ? '⬇️ Downgrade User' : '⬆️ Upgrade to Pro'}
-                message={`Are you sure you want to change this user's tier to ${confirmModal.currentTier === 'pro' ? 'FREE' : 'PRO'}?`}
-                confirmText={confirmModal.currentTier === 'pro' ? 'Downgrade' : 'Upgrade'}
-                onConfirm={handleConfirmTierChange}
-                onClose={() => setConfirmModal({ isOpen: false, userId: '', currentTier: '' })}
-                isDestructive={confirmModal.currentTier === 'pro'}
+            <TierModal
+                isOpen={tierModal.isOpen}
+                currentTier={tierModal.currentTier}
+                email={tierModal.email}
+                isUpdating={updating === tierModal.userId}
+                onConfirm={handleTierChange}
+                onClose={() => setTierModal(prev => ({ ...prev, isOpen: false }))}
             />
 
             {/* Ticket Details Modal */}
@@ -506,9 +525,9 @@ function TicketStatusBadge({ status }: { status: string }) {
     );
 }
 
-function ProExpiryBadge({ expiresAt, tier }: { expiresAt: string | null; tier: string }) {
+function PremiumExpiryBadge({ expiresAt, tier }: { expiresAt: string | null; tier: string }) {
 
-    if (tier !== 'pro' || !expiresAt) return <span className="text-xs text-gray-400">—</span>;
+    if ((tier !== 'pro' && tier !== 'starter') || !expiresAt) return <span className="text-xs text-gray-400">—</span>;
 
     const expiry = new Date(expiresAt);
     const now = new Date();

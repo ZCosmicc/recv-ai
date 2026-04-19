@@ -67,6 +67,11 @@ export async function GET(req: Request) {
         .select('*', { count: 'exact', head: true })
         .eq('tier', 'pro');
 
+    const { count: starterUsers } = await serviceSupabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('tier', 'starter');
+
     const { count: freeUsers } = await serviceSupabase
         .from('profiles')
         .select('*', { count: 'exact', head: true })
@@ -92,6 +97,7 @@ export async function GET(req: Request) {
         totalUsers,
         newUsers7d,
         proUsers,
+        starterUsers,
         freeUsers,
         topUsers
     });

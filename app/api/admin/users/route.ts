@@ -53,7 +53,7 @@ export async function GET(req: Request) {
 
 // [Security Fix #5] Allowlist of valid tier values — prevents arbitrary strings
 // from being written to the tier column even via a compromised admin account.
-const VALID_TIERS = ['free', 'pro'] as const;
+const VALID_TIERS = ['free', 'starter', 'pro'] as const;
 type ValidTier = typeof VALID_TIERS[number];
 
 export async function PATCH(req: Request) {
@@ -81,9 +81,9 @@ export async function PATCH(req: Request) {
     // Update Target User - use service client to bypass RLS
     const serviceSupabase = getServiceClient();
 
-    // When setting tier to 'pro', also set pro_expires_at to 30 days from now (monthly subscription)
+    // When setting tier to 'pro' or 'starter', also set pro_expires_at to 30 days from now
     const updateData: Record<string, any> = { tier };
-    if (tier === 'pro') {
+    if (tier === 'pro' || tier === 'starter') {
         const expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + 30);
         updateData.pro_expires_at = expiryDate.toISOString();
