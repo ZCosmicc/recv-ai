@@ -490,7 +490,7 @@ function BuilderContent() {
   let content;
 
   if (step === 'home') {
-    content = <Home onStart={handleStart} />;
+    content = <Home onStart={handleStart} tier={tier} />;
   } else if (step === 'template') {
     content = (
       <ChooseTemplate

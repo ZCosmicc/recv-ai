@@ -12,9 +12,10 @@ import SlideIn from './SlideIn';
 
 interface HomeProps {
     onStart: () => void;
+    tier?: 'guest' | 'free' | 'starter' | 'pro';
 }
 
-export default function Home({ onStart }: HomeProps) {
+export default function Home({ onStart, tier }: HomeProps) {
     const { t } = useLanguage();
     const [text, setText] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
@@ -47,6 +48,20 @@ export default function Home({ onStart }: HomeProps) {
     }, [text, isDeleting, loopNum, typingSpeed]);
 
     const handlePayment = async (plan: 'starter' | 'pro') => {
+        // Validation: Don't allow Pro users to pay for Starter or Pro again
+        if (tier === 'pro') {
+            setAlertMessage(t.pricing.alreadyMemberPro);
+            setShowAlert(true);
+            return;
+        }
+
+        // Validation: Don't allow Starter users to pay for Starter again
+        if (plan === 'starter' && tier === 'starter') {
+            setAlertMessage(t.pricing.alreadyMemberStarter);
+            setShowAlert(true);
+            return;
+        }
+
         try {
             const res = await fetch('/api/payment/create', {
                 method: 'POST',

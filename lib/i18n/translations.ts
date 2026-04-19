@@ -85,6 +85,8 @@ export interface Translations {
         popular: string;
         bestValue: string;
         perMonth: string;
+        alreadyMemberPro: string;
+        alreadyMemberStarter: string;
         free: {
             title: string;
             price: string;
@@ -330,6 +332,8 @@ export const translations: Record<Language, Translations> = {
             popular: 'POPULAR',
             bestValue: 'BEST VALUE',
             perMonth: '/mo',
+            alreadyMemberPro: 'You are already a Pro member!',
+            alreadyMemberStarter: 'You are already a Starter member!',
             free: {
                 title: 'Free',
                 price: 'Rp.0k',
@@ -565,6 +569,8 @@ export const translations: Record<Language, Translations> = {
             popular: 'POPULER',
             bestValue: 'TERHEMAT',
             perMonth: '/bln',
+            alreadyMemberPro: 'Anda sudah menjadi member Pro!',
+            alreadyMemberStarter: 'Anda sudah menjadi member Starter!',
             free: {
                 title: 'Gratis',
                 price: 'Rp.0rb',

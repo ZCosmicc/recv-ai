@@ -33,6 +33,20 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
     const needsPremiumCTA = mode === 'premium_template' && !isPro;
 
     const handlePayment = async (plan: 'starter' | 'pro') => {
+        // Validation: Don't allow Pro users to pay for Starter or Pro again
+        if (tier === 'pro') {
+            setAlertMessage(t.pricing.alreadyMemberPro);
+            setShowAlert(true);
+            return;
+        }
+
+        // Validation: Don't allow Starter users to pay for Starter again
+        if (plan === 'starter' && tier === 'starter') {
+            setAlertMessage(t.pricing.alreadyMemberStarter);
+            setShowAlert(true);
+            return;
+        }
+
         try {
             const res = await fetch('/api/payment/create', {
                 method: 'POST',
