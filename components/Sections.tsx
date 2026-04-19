@@ -249,7 +249,7 @@ export default function Sections({
                                 >
                                     {templates.map(t => (
                                         <option key={t.id} value={t.id}>
-                                            {t.isPremium && tier !== 'pro' ? '🔒 ' : ''}{t.name}{t.isPremium ? ' (Pro)' : ''}
+                                            {t.isPremium && tier !== 'pro' && tier !== 'starter' ? '🔒 ' : ''}{t.name}{t.isPremium ? ' (Pro)' : ''}
                                         </option>
                                     ))}
                                 </select>
