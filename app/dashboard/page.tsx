@@ -20,7 +20,7 @@ interface CV {
 }
 
 interface Profile {
-    tier: 'guest' | 'pro';
+    tier: 'guest' | 'free' | 'starter' | 'pro';
 }
 
 export default function Dashboard() {
@@ -36,6 +36,7 @@ export default function Dashboard() {
 
     // Limit Modal State
     const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
+    const [limitModalMode, setLimitModalMode] = useState<'cv' | 'ai'>('cv');
 
     // Rename State
     const [renamingId, setRenamingId] = useState<string | null>(null);
@@ -88,9 +89,12 @@ export default function Dashboard() {
 
     const handleCreateCV = async () => {
         if (!profile) return;
-        const limit = profile.tier === 'pro' ? 4 : 1;
+        
+        const CV_LIMITS: Record<string, number> = { pro: 4, starter: 2, free: 1, guest: 1 };
+        const limit = CV_LIMITS[profile.tier] ?? 1;
 
         if (cvs.length >= limit) {
+            setLimitModalMode('cv');
             setIsLimitModalOpen(true);
             return;
         }
@@ -126,12 +130,12 @@ export default function Dashboard() {
 
     const handleCreateCoverLetter = () => {
         if (!profile) return;
-        const limit = profile.tier === 'pro' ? 4 : 1;
+        
+        const CL_LIMITS: Record<string, number> = { pro: 4, starter: 2, free: 1, guest: 1 };
+        const limit = CL_LIMITS[profile.tier] ?? 1;
 
         if (coverLetters.length >= limit) {
-            // Re-using the limit modal. 
-            // Ideally we might want to tell the modal it's for CLs, but basic "Limit Reached" works.
-            // We'll set a state to indicate context if needed, but for now just open it.
+            setLimitModalMode('ai'); // Use 'ai' mode for cover letter messaging
             setIsLimitModalOpen(true);
             return;
         }
@@ -254,11 +258,14 @@ export default function Dashboard() {
         );
     }
 
-    const limit = profile?.tier === 'pro' ? 4 : 1;
+    const CV_LIMITS: Record<string, number> = { pro: 4, starter: 2, free: 1, guest: 1 };
+    const CL_LIMITS: Record<string, number> = { pro: 4, starter: 2, free: 1, guest: 1 };
+
+    const limit = CV_LIMITS[profile?.tier || 'guest'] ?? 1;
     const isLimitReached = cvs.length >= limit;
     const isProAndLimitReached = profile?.tier === 'pro' && isLimitReached;
 
-    const clLimit = profile?.tier === 'pro' ? 4 : 1;
+    const clLimit = CL_LIMITS[profile?.tier || 'guest'] ?? 1;
     const isCLLimitReached = coverLetters.length >= clLimit;
     const isProAndCLLimitReached = profile?.tier === 'pro' && isCLLimitReached;
 
@@ -572,7 +579,7 @@ export default function Dashboard() {
                 isOpen={isLimitModalOpen}
                 onClose={() => setIsLimitModalOpen(false)}
                 tier={profile?.tier || 'guest'}
-                mode="cv"
+                mode={limitModalMode}
             />
         </div>
     );
