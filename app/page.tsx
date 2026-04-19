@@ -429,15 +429,22 @@ function BuilderContent() {
           if (tier === 'pro') {
             setAlertModal({
               isOpen: true,
-              title: 'CV Limit Reached',
-              message: "You've reached the maximum limit of 4 CVs. Please delete an existing CV from your dashboard to create a new one.",
+              title: t.limitModal.limitReached,
+              message: t.limitModal.reached4CVs + " 4 CVs. " + t.limitModal.deleteToCreate,
               type: 'warning'
+            });
+          } else if (tier === 'starter') {
+            setAlertModal({
+              isOpen: true,
+              title: t.limitModal.limitReached,
+              message: t.limitModal.cvLimitStarterTitle + " " + t.limitModal.cvLimitStarterDesc,
+              type: 'info'
             });
           } else {
             setAlertModal({
               isOpen: true,
-              title: 'Upgrade to Pro',
-              message: "You've reached your CV limit (1 free CV). Upgrade to Pro to create up to 4 saved CVs and unlock premium features!",
+              title: t.limitModal.goPro,
+              message: t.limitModal.cvLimitFreeTitle + " " + t.limitModal.cvLimitFreeDesc,
               type: 'info'
             });
           }
