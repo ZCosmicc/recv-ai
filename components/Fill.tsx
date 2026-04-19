@@ -194,7 +194,7 @@ export default function Fill({
         const newTemplateId = e.target.value;
         const template = templates.find(t => t.id === newTemplateId);
 
-        if (template?.isPremium && tier !== 'pro') {
+        if (template?.isPremium && tier !== 'pro' && tier !== 'starter') {
             setShowLimitModal(true);
             return;
         }

@@ -9,7 +9,7 @@ interface LimitModalProps {
     isOpen: boolean;
     onClose: () => void;
     tier: 'guest' | 'free' | 'starter' | 'pro';
-    mode?: 'cv' | 'ai' | 'premium_template'; // Default to 'cv'
+    mode?: 'cv' | 'ai' | 'premium_template' | 'cl'; // Default to 'cv'
 }
 
 const CREDIT_LIMITS: Record<string, number> = { pro: 30, starter: 10, free: 1 };
@@ -28,8 +28,8 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
     const isPro = tier === 'pro';
 
     // Who needs an upgrade CTA?
-    const needsStarterCTA = (isGuest || isFree) && (mode === 'ai' || mode === 'cv' || mode === 'premium_template');
-    const needsProCTA = isStarter && (mode === 'ai' || mode === 'cv');
+    const needsStarterCTA = (isGuest || isFree) && (mode === 'ai' || mode === 'cv' || mode === 'premium_template' || mode === 'cl');
+    const needsProCTA = isStarter && (mode === 'ai' || mode === 'cv' || mode === 'cl');
     const needsPremiumCTA = mode === 'premium_template' && !isPro;
 
     const handlePayment = async (plan: 'starter' | 'pro') => {
@@ -91,7 +91,7 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                     <div className="flex justify-between items-center p-3 sm:p-4 border-b-4 border-black bg-yellow-100">
                         <h2 className="text-base sm:text-lg md:text-xl font-bold flex items-center gap-1 sm:gap-2 text-yellow-600 pr-2">
                             {isGuest ? <Lock className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" /> : <Crown className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />}
-                            <span className="line-clamp-2">{mode === 'ai' ? t.limitModal.dailyLimit : mode === 'premium_template' ? t.limitModal.premiumTemplate : (isGuest ? t.limitModal.unlockMore : t.limitModal.limitReached)}</span>
+                            <span className="line-clamp-2">{mode === 'ai' ? t.limitModal.dailyLimit : mode === 'premium_template' ? t.limitModal.premiumTemplate : mode === 'cl' ? t.limitModal.limitReached : (isGuest ? t.limitModal.unlockMore : t.limitModal.limitReached)}</span>
                         </h2>
                         <button onClick={onClose} className="hover:bg-yellow-200 p-1 rounded transition-colors flex-shrink-0">
                             <X className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -121,6 +121,34 @@ export default function LimitModal({ isOpen, onClose, tier, mode = 'cv' }: Limit
                                     <strong>Upgrade to Starter or Pro</strong> {t.limitModal.upgradeUnlock}
                                 </p>
                             </>
+                        ) : mode === 'cl' ? (
+                            /* Cover Letter Limit Logic */
+                            isPro ? (
+                                <>
+                                    <p className="font-medium text-lg">
+                                        Reached maximum limit of <strong>{cvLimit} Cover Letters</strong>.
+                                    </p>
+                                    <p className="text-gray-600">Please delete an existing Cover Letter to create a new one.</p>
+                                </>
+                            ) : isStarter ? (
+                                <>
+                                    <p className="font-medium text-lg">
+                                        {t.limitModal.clLimitStarterTitle}
+                                    </p>
+                                    <p className="text-gray-600">
+                                        {t.limitModal.clLimitStarterDesc}
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <p className="font-medium text-lg">
+                                        {t.limitModal.clLimitFreeTitle}
+                                    </p>
+                                    <p className="text-gray-600">
+                                        {t.limitModal.clLimitFreeDesc}
+                                    </p>
+                                </>
+                            )
                         ) : (
                             /* CV Limit Logic */
                             isPro ? (

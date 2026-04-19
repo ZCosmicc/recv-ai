@@ -36,7 +36,7 @@ export default function Dashboard() {
 
     // Limit Modal State
     const [isLimitModalOpen, setIsLimitModalOpen] = useState(false);
-    const [limitModalMode, setLimitModalMode] = useState<'cv' | 'ai'>('cv');
+    const [limitModalMode, setLimitModalMode] = useState<'cv' | 'ai' | 'cl'>('cv');
 
     // Rename State
     const [renamingId, setRenamingId] = useState<string | null>(null);
@@ -135,7 +135,7 @@ export default function Dashboard() {
         const limit = CL_LIMITS[profile.tier] ?? 1;
 
         if (coverLetters.length >= limit) {
-            setLimitModalMode('ai'); // Use 'ai' mode for cover letter messaging
+            setLimitModalMode('cl');
             setIsLimitModalOpen(true);
             return;
         }

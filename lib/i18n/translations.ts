@@ -168,6 +168,10 @@ export interface Translations {
         cvLimitFreeDesc: string;
         cvLimitStarterTitle: string;
         cvLimitStarterDesc: string;
+        clLimitFreeTitle: string;
+        clLimitFreeDesc: string;
+        clLimitStarterTitle: string;
+        clLimitStarterDesc: string;
     };
 
     // Choose Template
@@ -422,6 +426,10 @@ export const translations: Record<Language, Translations> = {
             cvLimitFreeDesc: "Upgrade to Starter for 2 CVs & 10 AI credits, or go Pro for the full experience!",
             cvLimitStarterTitle: "You've reached your 2 CV limit.",
             cvLimitStarterDesc: "Upgrade to Pro to create up to 4 CVs and get 30 AI credits per day!",
+            clLimitFreeTitle: "You've used your 1 free Cover Letter.",
+            clLimitFreeDesc: "Upgrade to Starter for 2 Cover Letters, or go Pro for the full experience!",
+            clLimitStarterTitle: "You've reached your 2 Cover Letter limit.",
+            clLimitStarterDesc: "Upgrade to Pro to create up to 4 Cover Letters and get 30 AI credits per day!",
         },
         chooseTemplate: {
             title: 'Choose Template',
@@ -659,6 +667,10 @@ export const translations: Record<Language, Translations> = {
             cvLimitFreeDesc: "Upgrade ke Starter untuk 2 CV & 10 kredit AI, atau pilih Pro untuk pengalaman penuh!",
             cvLimitStarterTitle: "Anda telah mencapai batas 2 CV.",
             cvLimitStarterDesc: "Upgrade ke Pro untuk membuat hingga 4 CV dan dapatkan 30 kredit AI per hari!",
+            clLimitFreeTitle: "Anda telah menggunakan 1 Surat Lamaran gratis Anda.",
+            clLimitFreeDesc: "Upgrade ke Starter untuk 2 Surat Lamaran, atau pilih Pro untuk pengalaman penuh!",
+            clLimitStarterTitle: "Anda telah mencapai batas 2 Surat Lamaran.",
+            clLimitStarterDesc: "Upgrade ke Pro untuk membuat hingga 4 Surat Lamaran dan dapatkan 30 kredit AI per hari!",
         },
         chooseTemplate: {
             title: 'Pilih Template',

@@ -582,14 +582,14 @@ function BuilderContent() {
         className="fixed top-20 right-3 md:right-6 z-[100] flex flex-col gap-2 md:gap-3 items-end"
         aria-live="polite"
       >
-        {toasts.map((t) => (
+        {toasts.map((toast) => (
           <Toast
-            key={t.id}
-            message={t.message}
-            type={t.type}
-            duration={t.duration}
-            action={t.action}
-            onClose={() => removeToast(t.id)}
+            key={toast.id}
+            message={toast.message}
+            type={toast.type}
+            duration={toast.duration}
+            action={toast.action}
+            onClose={() => removeToast(toast.id)}
           />
         ))}
       </div>

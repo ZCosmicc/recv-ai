@@ -13,11 +13,12 @@ All notable changes to this project will be documented in this file.
   - Full access to all Premium Templates (Syntax, Executive, etc.).
   - Unlimited PDF exports with no watermark.
 - **Unified AI Credit Limits**: Standardized Pro plan AI credits at 30/day across the entire platform (Marketing, Limits, and API).
-- **Dashboard Synchronization**: Integrated Starter tier limits (2 CVs/2 CLs) into the user dashboard and upselling modals.
+- **Dashboard Synchronization**: Integrated Starter tier limits (2 CVs/2 CLs) into the user dashboard, including corrected "Limit Reached" messaging specifically for Cover Letters.
+- **Premium Access**: Explicitly unlocked all professional templates for the Starter tier across the editor pages.
 
 ### 🛠️ Administrative & Operational
 
-- **Enhanced Tier Management**: Replaced the binary Pro toggle with a new `TierModal`, allowing admins to manually assign Free, Starter, or Pro tiers to any user.
+- **Enhanced Tier Management**: Replaced the binary Pro toggle with a new `TierModal`, allowing admins to manually assign Free, Starter, or Pro tiers with a two-step confirmation guard to prevent accidental changes.
 - **Admin Stats Overhaul**: Added real-time tracking for Starter tier users and conversion metrics to the admin overview grid.
 - **Universal Expiry Logic**: Renamed the "Pro Expires" column to **"Expires Date"** and updated the backend to handle 30-day premium windows for both Starter and Pro manual upgrades.
 
