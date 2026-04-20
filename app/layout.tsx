@@ -23,8 +23,15 @@ export const metadata: Metadata = {
     default: "Recv. AI - Free ATS-Friendly CV Builder & Cover Letter Generator",
     template: "%s | Recv. AI"
   },
-  description: "Create professional, ATS-optimized resumes and AI-tailored cover letters in minutes. Free to use, multiple templates, and instant PDF download.",
-  keywords: ["CV Builder", "Resume Builder", "AI Cover Letter", "ATS Friendly", "Free Resume Templates", "Job Application Tool", "CV Maker", "Review CV"],
+  description: "Create professional, ATS-optimized resumes and AI-tailored cover letters in minutes. Free, fast, and multi-language.",
+  keywords: ["AI CV Maker", "CV Online", "Web CV Online", "CV Maker", "CV Builder", "ATS Friendly", "Free Resume Templates"],
+  alternates: {
+    canonical: 'https://recv-ai.me',
+    languages: {
+      'en-US': '/en',
+      'id-ID': '/id',
+    },
+  },
   authors: [{ name: "Recv. AI Team" }],
   creator: "Recv. AI",
   publisher: "Recv. AI",
@@ -82,6 +89,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "Recv. AI",
+              "operatingSystem": "All",
+              "applicationCategory": "BusinessApplication",
+              "description": "Professional ATS-friendly CV builder and AI-tailored cover letter generator.",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "IDR"
+              }
+            })
+          }}
+        />
+      </head>
       <body
         suppressHydrationWarning={true}
         className={`${plusJakartaSans.variable} ${geistMono.variable} ${jetbrainsMono.variable} font-sans antialiased`}

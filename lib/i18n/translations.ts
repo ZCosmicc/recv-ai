@@ -137,6 +137,7 @@ export interface Translations {
     footer: {
         privacy: string;
         terms: string;
+        templates: string;
         contact: string;
         madeWith: string;
         by: string;
@@ -394,11 +395,12 @@ export const translations: Record<Language, Translations> = {
             }
         },
         footer: {
-            privacy: 'Privacy',
-            terms: 'Terms',
-            contact: 'Contact',
+            privacy: 'Privacy Policy',
+            terms: 'Terms of Service',
+            templates: 'Templates',
+            contact: 'Contact Support',
             madeWith: 'Made with',
-            by: 'by ZCo Studio.'
+            by: 'by ZCO STUDIO'
         },
         limitModal: {
             dailyLimit: 'Daily AI Limit Reached',
@@ -635,11 +637,12 @@ export const translations: Record<Language, Translations> = {
             }
         },
         footer: {
-            privacy: 'Privasi',
-            terms: 'Ketentuan',
-            contact: 'Kontak',
+            privacy: 'Kebijakan Privasi',
+            terms: 'Syarat & Ketentuan',
+            templates: 'Template CV',
+            contact: 'Bantuan & Kontak',
             madeWith: 'Dibuat dengan',
-            by: 'oleh ZCo Studio.'
+            by: 'oleh ZCo Studio'
         },
         limitModal: {
             dailyLimit: 'Batas AI Harian Tercapai',

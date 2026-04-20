@@ -12,7 +12,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
 import SlideIn from './SlideIn';
 
-const DUMMY_SECTIONS: Section[] = [
+export const DUMMY_SECTIONS: Section[] = [
     { id: 'personal', name: 'Personal', required: true, enabled: true },
     { id: 'summary', name: 'Summary', required: true, enabled: true },
     { id: 'experience', name: 'Experience', required: true, enabled: true },
@@ -21,7 +21,7 @@ const DUMMY_SECTIONS: Section[] = [
     { id: 'projects', name: 'Projects', required: false, enabled: true },
 ];
 
-const DUMMY_CV_DATA: CVData = {
+export const DUMMY_CV_DATA: CVData = {
     personal: {
         name: 'Alex Morgan',
         email: 'alex.morgan@example.com',

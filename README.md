@@ -11,19 +11,19 @@ A modern, AI-powered platform designed to help job seekers create ATS-friendly C
 
 ### 🛠️ AI CV Builder
 - **Real-time Preview**: See your changes instantly as you type.
-- **Multiple Templates**: Choose from 5 professional designs (Minimal, Modern, Corporate, Creative, Executive).
+- **Multiple Templates**: Choose from 7 professional designs (Minimal, Modern, Corporate, Creative, Executive, Syntax, Syntax Nano).
 - **ATS Optimized**: Clean structure ensuring maximum compatibility with Applicant Tracking Systems.
-- **Premium Locking**: "Executive" template and advanced features locked for Pro users.
+- **Premium Locking**: "Executive" template and advanced features locked for Pro and Starter users.
 
 ### ✍️ AI Cover Letter Generator
 - **Smart Generation**: Uses Groq AI (Llama 3 70B) to write tailored letters based on your CV and job description.
 - **Multi-Language Support**: Generate letters in **English** or **Bahasa Indonesia**.
 - **Professional Formatting**: Automatically structures letters with proper salutations and sign-offs.
-- **History & Editing**: Save up to 4 letters (Pro) or 1 letter (Free), edit them anytime, or download as PDF.
+- **History & Editing**: Save up to 4 letters (Pro), 2 letters (Starter), or 1 letter (Free), edit them anytime, or download as PDF.
 
 ### 💰 Freemium Model & Payments
-- **Credit System**: Daily AI credits for free users.
-- **Pro Subscription**: Unlocks unlimited AI usage, premium templates, and higher storage limits.
+- **Credit System**: 1 Daily AI credits for free users.
+- **Pro Subscription**: Unlocks 30 Credits for AI usage, premium templates, and higher storage limits.
 - **Pakasir Integration**: Seamless payment processing for Indonesian users.
 
 ### 🌍 Localization
@@ -72,6 +72,11 @@ yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## 🛠️ Maintenance & Operations
+
+For operational tasks such as rotating API keys, see our utility guides in the [Maintenance Folder](./docs/maintenance/):
+- **[Groq API Key Rotation](./docs/maintenance/groq-key-rotation.md)**
 
 ## 📝 Changelog
 

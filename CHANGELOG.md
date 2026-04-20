@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2026-04-20
+
+### ✨ Dynamic Templates Showcase (`/templates`)
+
+- **Live Template Gallery**: Launched a dedicated, high-impact landing page featuring all 7 CV templates.
+  - **Live Component Rendering**: Replaced static image previews with a dynamic `CVPreview` engine, ensuring the showcase strictly reflects the editor's output.
+  - **Neo-Brutalist Aesthetic**: Implemented a "Changelog" style layout with bold borders, shadow-neo-lg effects, and professional typography.
+  - **Automated Previews**: Built an A4-ratio scaling system (aspect-[21/29.7]) with responsive scaling (`transform: scale`) for pixel-perfect previews across mobile and desktop.
+  - **Shared Dummy Data**: Seamlessly integrated the `DUMMY_CV_DATA` and `DUMMY_SECTIONS` from the editor for consistent branding.
+- **Enhanced Template Content**: 
+  - Conducted a full audit of template descriptions and features to ensure 100% visual accuracy.
+  - Added "Best For" usage advice and dedicated feature lists for each design.
+
+### 🔍 Search Engine Optimization (SEO)
+
+- **JSON-LD Structured Data**: Injected a `SoftwareApplication` schema into the global layout to signal Recv. AI's platform type to Google.
+- **High-Intent Keyword Targeting**: Optimized metadata for high-volume Indonesian/English search terms: `AI CV Maker`, `CV Online`, `Web CV Online`, `CV Maker`, and `CV Builder`.
+- **Multilingual SEO**: Configured `hreflang` language alternates (en/id) for better global and local indexing.
+- **Sitemap Expansion**: Registered the `/templates` route in `sitemap.ts` with a high crawl priority (`0.9`).
+
+### 🎨 UI/UX Refinements
+
+- **Global Footer Navigation**: Integrated a "Templates" navigation link between "Terms" and "Contact" across all pages.
+- **Branding Consistency**: Standardized colors and iconography for Template categories (Classic, Modern, Premium, Technical).
+
 ## [1.4.3] - 2026-04-20
 
 ### ✨ Subscription Tiers (Starter & Pro)

@@ -319,6 +319,7 @@ export default function Home({ onStart, tier }: HomeProps) {
                             <div className="flex gap-4 sm:gap-8 font-bold text-gray-600 flex-wrap justify-center">
                                 <a href="/privacy" className="hover:text-black hover:underline">{t.footer.privacy}</a>
                                 <a href="/terms" className="hover:text-black hover:underline">{t.footer.terms}</a>
+                                <a href="/templates" className="hover:text-black hover:underline">{t.footer.templates}</a>
                                 <button onClick={() => window.dispatchEvent(new Event('open-support'))} className="hover:text-black hover:underline font-bold text-gray-600">{t.footer.contact}</button>
                                 <a href="https://instagram.com/zcostudio" target="_blank" rel="noopener noreferrer" className="hover:text-black hover:underline">Instagram</a>
                             </div>

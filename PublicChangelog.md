@@ -2,6 +2,16 @@
 
 All user-facing updates and improvements to Recv. AI.
 
+## [1.5.0] - 2026-04-20
+### ✨ Explore Our New Template Gallery!
+- **Dynamic Previews:** We've launched a brand new **[Template Showcase](/templates)** page where you can explore all our designs in full high-resolution. No more static screenshots—you see exactly what the CV looks like in the live builder!
+- **Perfect Scaling:** Whether you're on a phone or a laptop, our new gallery perfectly scales each design so you can pick the best layout for your industry before you even start building.
+- **Professional Guidelines:** We've added "Best For" sections for every template, giving you expert advice on whether a design fits more formal corporate roles, creative marketing paths, or technical engineering applications.
+
+### 🌐 Better Search & Visibility
+- **Finding Us is Easier:** We've significantly upgraded our technical SEO. You can now more easily find Recv. AI when searching for professional tools like "AI CV Maker" or "Web CV Online."
+- **Seamless Local Experience:** Improved our language detection for search engines so that users in Indonesia and around the world always land on the right version of the platform.
+
 ## [1.4.3] - 2026-04-20
 ### ✨ Introducing the Starter Plan!
 - **Affordable Premium Access:** We’ve launched the brand new **Starter Plan** for just **Rp 5.000**! It’s the perfect middle ground if you need a professional boost without a full Pro subscription.
