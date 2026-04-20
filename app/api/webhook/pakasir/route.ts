@@ -101,8 +101,27 @@ export async function POST(req: Request) {
         const userId = profile.id;
 
         const newTier = planFromOrder === 'STARTER' ? 'starter' : 'pro';
-        console.log(`✅ Payment verified, upgrading user to ${newTier}`);
 
+        // [SA-05 Fix] Idempotency guard — prevent replay attacks from granting fresh windows.
+        // If the user is already on this tier and their subscription is still active,
+        // silently return 200 to stop Pakasir from retrying.
+        if (profile.tier === newTier) {
+            const { data: freshProfile } = await supabase
+                .from('profiles')
+                .select('pro_expires_at')
+                .eq('id', userId)
+                .single();
+
+            if (freshProfile?.pro_expires_at) {
+                const existing = new Date(freshProfile.pro_expires_at);
+                if (existing > new Date()) {
+                    console.log(`⚠️ Webhook replay detected — user already on ${newTier} tier, active until ${existing.toISOString()}`);
+                    return NextResponse.json({ message: 'Already processed — subscription still active.' }, { status: 200 });
+                }
+            }
+        }
+
+        console.log(`✅ Payment verified, upgrading user to ${newTier}`);
         // 8. Calculate expiry date (30 days from now)
         const expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + 30);

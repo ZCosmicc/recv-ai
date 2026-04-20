@@ -26,8 +26,8 @@ export async function POST(req: Request) {
 
         const now = new Date();
 
-        // Check if Pro subscription expired - auto-downgrade
-        if (profile.tier === 'pro' && profile.pro_expires_at) {
+        // Check if Pro/Starter subscription expired - auto-downgrade
+        if ((profile.tier === 'pro' || profile.tier === 'starter') && profile.pro_expires_at) {
             const expiryDate = new Date(profile.pro_expires_at);
             if (expiryDate < now) {
                 // Auto-downgrade to free
@@ -41,7 +41,9 @@ export async function POST(req: Request) {
         }
 
         const lastReset = new Date(profile.last_credit_reset || 0);
-        const limit = profile.tier === 'pro' ? 50 : 1; // 50 for Pro, 1 for Free
+        // [SA-01 Fix] Unified credit limits matching all other AI routes
+        const CREDIT_LIMITS: Record<string, number> = { pro: 30, starter: 10, free: 1 };
+        const limit = CREDIT_LIMITS[profile.tier] ?? 1;
 
         // Check if 24 hours have passed since last reset
         const hoursSuccess = Math.abs(now.getTime() - lastReset.getTime()) / 36e5;
@@ -192,10 +194,21 @@ export async function POST(req: Request) {
             });
         }
 
-        // Increment usage count in profile
-        await supabase.from('profiles').update({
-            daily_credits_used: currentUsage + 1
-        }).eq('id', user.id);
+        // [SA-04 Fix] Atomic increment — only increments if daily_credits_used hasn't changed.
+        // If data is empty, a concurrent request already consumed the last credit.
+        const { data: updatedRows } = await supabase
+            .from('profiles')
+            .update({ daily_credits_used: currentUsage + 1 })
+            .eq('id', user.id)
+            .eq('daily_credits_used', currentUsage)
+            .select('id');
+
+        if (!updatedRows || updatedRows.length === 0) {
+            return NextResponse.json(
+                { error: 'Daily limit reached. Upgrade to Pro for more.', code: 'LIMIT_REACHED' },
+                { status: 403 }
+            );
+        }
 
         // Log to usage_logs for analytics
         await supabase.from('usage_logs').insert({

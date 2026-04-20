@@ -100,5 +100,9 @@ export async function GET(req: Request) {
         starterUsers,
         freeUsers,
         topUsers
+    }, {
+        headers: {
+            'Cache-Control': 'max-age=30, s-maxage=30, stale-while-revalidate=59'
+        }
     });
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
+import { z } from 'zod';
 
 // Service role client for admin operations (bypasses RLS)
 function getServiceClient() {
@@ -51,18 +52,30 @@ export async function GET(req: Request) {
     return NextResponse.json({ users });
 }
 
-// [Security Fix #5] Allowlist of valid tier values — prevents arbitrary strings
+// [Security Fix SA-02] Allowlist of valid tier values — prevents arbitrary strings
 // from being written to the tier column even via a compromised admin account.
 const VALID_TIERS = ['free', 'starter', 'pro'] as const;
 type ValidTier = typeof VALID_TIERS[number];
 
+// [SA-02 Fix] Zod schema validates both tier AND userId format (UUID)
+const adminPatchSchema = z.object({
+    userId: z.string().uuid('userId must be a valid UUID'),
+    tier: z.enum(['free', 'starter', 'pro'])
+});
+
 export async function PATCH(req: Request) {
     const supabase = await createClient();
-    const { userId, tier } = await req.json();
 
-    if (!userId || !tier || !VALID_TIERS.includes(tier)) {
-        return NextResponse.json({ error: 'Invalid userId or tier value' }, { status: 400 });
+    // [SA-02] Validate request body — enforces UUID format on userId and enum on tier
+    const rawBody = await req.json().catch(() => ({}));
+    const validation = adminPatchSchema.safeParse(rawBody);
+    if (!validation.success) {
+        return NextResponse.json(
+            { error: 'Invalid request body', details: validation.error.flatten().fieldErrors },
+            { status: 400 }
+        );
     }
+    const { userId, tier } = validation.data;
 
     // Admin Check
     const { data: { user } } = await supabase.auth.getUser();

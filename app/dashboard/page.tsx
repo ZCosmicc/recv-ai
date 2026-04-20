@@ -208,7 +208,12 @@ export default function Dashboard() {
         setDeletingAccount(true);
         setDeleteAccountError(null);
         try {
-            const res = await fetch('/api/account', { method: 'DELETE' });
+            const res = await fetch('/api/account', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ confirm: 'DELETE' }),
+            });
+
             if (!res.ok) {
                 const data = await res.json();
                 setDeleteAccountError(data.error || 'Failed to delete account.');

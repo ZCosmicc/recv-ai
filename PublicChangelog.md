@@ -2,6 +2,13 @@
 
 All user-facing updates and improvements to Recv. AI.
 
+## [1.5.1] - 2026-04-21
+### 🛡️ Enhanced Platform Security & Reliability
+- **Self-Service Safety**: We've added a server-side confirmation requirement for account deletions, ensuring your data is never removed accidentally.
+- **Accurate Credit Limits**: Fixed a bug where **Starter** subscribers were seeing incorrect credit limits. Your 10 daily AI credits are now correctly applied across all AI features!
+- **Under-the-Hood Hardening**: Completed a comprehensive security audit! We've implemented advanced binary file verification, payment anti-replay protection, and atomic request handling to keep your experience secure and snappy.
+- **Browser-Level Protection**: Your session is now shielded by industry-standard security headers, protecting you from common web-based threats like clickjacking.
+
 ## [1.5.0] - 2026-04-20
 ### ✨ Explore Our New Template Gallery!
 - **Dynamic Previews:** We've launched a brand new **[Template Showcase](/templates)** page where you can explore all our designs in full high-resolution. No more static screenshots—you see exactly what the CV looks like in the live builder!

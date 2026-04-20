@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.1] - 2026-04-21
+
+### 🛡️ Security Audit — Phase 1, 2 & 3
+- **Unified Credit Engine**: Consolidated AI credit limits across all routes (`analyze`, `refine`, `cover-letter`) into a shared `CREDIT_LIMITS` map. This fixed a critical bug where **Starter** users were incorrectly capped at 1 credit/day instead of 10.
+- **Atomic AI Logic**: Replaced check-then-increment logic with atomic conditional updates in Supabase to prevent race conditions (double-submit credit bypass).
+- **Destructive Action Safety**: Added a server-side `confirm: "DELETE"` body requirement for the account deletion route to prevent accidental or unauthorized data loss.
+- **Input & Webhook Hardening**:
+    - Implemented Zod UUID validation for `userId` in admin PATCH requests.
+    - Added magic-byte binary verification for support screenshot uploads to prevent MIME spoofing.
+    - Built a webhook idempotency guard for Pakasir to protect against payment replay attacks.
+- **Infrastructure Polish**: 
+    - Configured standard HTTP security headers (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`) in `next.config.ts`.
+    - Implemented 30s `Cache-Control` for admin stats to optimize DB load.
+
+### 🛠️ Maintenance & Documentation
+- **Audit Verification**: Verified end-to-end payment parity for the Starter tier.
+- **Privacy Policy**: Moved sensitive audit plans and feature roadmaps to local-only tracking via `.gitignore`.
+
 ## [1.5.0] - 2026-04-20
 
 ### ✨ Dynamic Templates Showcase (`/templates`)

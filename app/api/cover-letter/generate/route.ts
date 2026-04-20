@@ -253,8 +253,20 @@ export async function POST(req: Request) {
             }, { status: 500 });
         }
 
-        // Increment usage count
-        await supabase.from('profiles').update({ daily_credits_used: currentUsage + 1 }).eq('id', user.id);
+        // [SA-04 Fix] Atomic increment — prevents race condition on concurrent requests
+        const { data: updatedRows } = await supabase
+            .from('profiles')
+            .update({ daily_credits_used: currentUsage + 1 })
+            .eq('id', user.id)
+            .eq('daily_credits_used', currentUsage)
+            .select('id');
+
+        if (!updatedRows || updatedRows.length === 0) {
+            return NextResponse.json(
+                { error: 'Daily limit reached. Upgrade to Pro for more.', code: 'LIMIT_REACHED' },
+                { status: 403 }
+            );
+        }
 
         // Log usage
         await supabase.from('usage_logs').insert({ user_id: user.id, model: 'llama-3.3-70b-cover-letter', tokens_used: 0 });

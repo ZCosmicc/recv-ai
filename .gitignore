@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Documentation & Roadmap (Local only)
+docs/FUTURE_IDEAS_AND_FEATURES.md
+docs/IMPLEMENTATION_PLAN.md

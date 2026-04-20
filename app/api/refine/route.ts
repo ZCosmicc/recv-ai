@@ -120,10 +120,20 @@ export async function POST(req: Request) {
 
         const refined_text = completion.choices[0]?.message?.content || current_suggestion;
 
-        // Increment usage count in profile
-        await supabase.from('profiles').update({
-            daily_credits_used: currentUsage + 1
-        }).eq('id', user.id);
+        // [SA-04 Fix] Atomic increment — prevents race condition on concurrent requests
+        const { data: updatedRows } = await supabase
+            .from('profiles')
+            .update({ daily_credits_used: currentUsage + 1 })
+            .eq('id', user.id)
+            .eq('daily_credits_used', currentUsage)
+            .select('id');
+
+        if (!updatedRows || updatedRows.length === 0) {
+            return NextResponse.json(
+                { error: 'Daily limit reached. Upgrade to Pro for more.', code: 'LIMIT_REACHED' },
+                { status: 403 }
+            );
+        }
 
         // Log to usage_logs for analytics
         await supabase.from('usage_logs').insert({

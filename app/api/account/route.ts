@@ -10,8 +10,18 @@ function getServiceSupabase() {
     );
 }
 
-export async function DELETE() {
+export async function DELETE(req: Request) {
     try {
+        // [SA-06 Fix] Server-side confirmation guard — client 'type DELETE' check alone is insufficient.
+        // This prevents CSRF-style or session-hijacking driven deletions.
+        const body = await req.json().catch(() => ({}));
+        if (body?.confirm !== 'DELETE') {
+            return NextResponse.json(
+                { error: 'Confirmation required. Send { confirm: "DELETE" } in the request body.' },
+                { status: 400 }
+            );
+        }
+
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
 

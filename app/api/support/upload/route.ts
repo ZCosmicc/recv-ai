@@ -5,6 +5,17 @@ import { createClient as createServiceClient } from '@supabase/supabase-js';
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 
+// [SA-03 Fix] Magic byte validation — verifies the actual binary file signature
+// regardless of what file.type (Content-Type header) claims.
+// Prevents content-type spoofing (e.g. an HTML file renamed to .jpg).
+function getMimeFromBytes(buf: Buffer): string | null {
+    if (buf[0] === 0xFF && buf[1] === 0xD8 && buf[2] === 0xFF) return 'image/jpeg';
+    if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47) return 'image/png';
+    if (buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46) return 'image/gif';
+    if (buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46) return 'image/webp'; // RIFF header
+    return null;
+}
+
 function getServiceSupabase() {
     return createServiceClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -30,7 +41,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'No file provided' }, { status: 400 });
         }
 
-        // Validate type
+        // Validate MIME type from the Content-Type header
         if (!ALLOWED_TYPES.includes(file.type)) {
             return NextResponse.json({ error: 'Only image files are allowed (JPEG, PNG, GIF, WebP)' }, { status: 400 });
         }
@@ -40,14 +51,23 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'File size must be under 5MB' }, { status: 400 });
         }
 
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+
+        // [SA-03] Magic byte validation — re-checks actual binary signature regardless of declared type
+        const actualMime = getMimeFromBytes(buffer);
+        if (!actualMime || !ALLOWED_TYPES.includes(actualMime)) {
+            return NextResponse.json(
+                { error: 'File content does not match an allowed image format.' },
+                { status: 400 }
+            );
+        }
+
         const folder = user.id;
 
         const timestamp = Date.now();
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
         const path = `${folder}/${timestamp}-${safeName}`;
-
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
 
         const serviceSupabase = getServiceSupabase();
         const { error } = await serviceSupabase.storage
