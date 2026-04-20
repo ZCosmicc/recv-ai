@@ -34,6 +34,15 @@ export const metadata: Metadata = {
     telephone: false,
   },
   metadataBase: new URL('https://recv-ai.me'),
+  icons: {
+    icon: [
+      { url: '/icon.png', sizes: '32x32' },
+      { url: '/icon.png', sizes: '192x192' },
+      { url: '/icon.png', sizes: '512x512' },
+    ],
+    shortcut: '/icon.png',
+    apple: '/apple-icon.png',
+  },
   openGraph: {
     title: "Recv. AI - Free ATS-Friendly CV Builder",
     description: "Build your professional CV and generate tailored cover letters with AI. Free, fast, and ATS-optimized.",
