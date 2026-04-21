@@ -153,7 +153,9 @@ export default function CoverLetterWizard() {
         keySkills,
         tone,
         language,
-        cvId: selectedCvId
+        cvId: selectedCvId,
+        // Include generated content so auto-save never blanks it out
+        content: generatedLetter?.content || undefined
     };
 
     const debouncedDraft = useDebounce(JSON.stringify(draftData), 2000);
@@ -498,17 +500,27 @@ export default function CoverLetterWizard() {
                 >
                     {t.coverLetter.back}
                 </button>
-                <motion.button
-                    onClick={handleGenerate}
-                    disabled={isGenerating || !jobTitle || !companyName || !jobDescription}
-                    whileHover={(isGenerating || !jobTitle || !companyName || !jobDescription) ? {} : { x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
-                    whileTap={(isGenerating || !jobTitle || !companyName || !jobDescription) ? {} : { scale: 0.98 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                    className="w-full md:w-auto px-8 py-3 bg-blue-600 text-white font-bold flex items-center justify-center gap-2 border-2 border-black shadow-neo disabled:opacity-50 disabled:shadow-none"
-                >
-                    {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
-                    {isGenerating ? t.coverLetter.generating : t.coverLetter.generate}
-                </motion.button>
+                <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+                    {generatedLetter?.content && (
+                        <button
+                            onClick={() => setStep(2)}
+                            className="w-full md:w-auto px-6 py-3 border-2 border-black font-bold hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 text-blue-700"
+                        >
+                            View Generated Letter →
+                        </button>
+                    )}
+                    <motion.button
+                        onClick={handleGenerate}
+                        disabled={isGenerating || !jobTitle || !companyName || !jobDescription}
+                        whileHover={(isGenerating || !jobTitle || !companyName || !jobDescription) ? {} : { x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
+                        whileTap={(isGenerating || !jobTitle || !companyName || !jobDescription) ? {} : { scale: 0.98 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                        className="w-full md:w-auto px-8 py-3 bg-blue-600 text-white font-bold flex items-center justify-center gap-2 border-2 border-black shadow-neo disabled:opacity-50 disabled:shadow-none"
+                    >
+                        {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
+                        {isGenerating ? t.coverLetter.generating : (generatedLetter?.content ? 'Regenerate Letter' : t.coverLetter.generate)}
+                    </motion.button>
+                </div>
             </div>
         </SlideIn>
     );
@@ -591,11 +603,13 @@ export default function CoverLetterWizard() {
             </div>
 
             {toast && (
-                <Toast
-                    message={toast.message}
-                    type={toast.type}
-                    onClose={() => setToast(null)}
-                />
+                <div className="fixed top-20 right-3 md:right-6 z-[100] flex flex-col gap-2 md:gap-3 items-end" aria-live="polite">
+                    <Toast
+                        message={toast.message}
+                        type={toast.type}
+                        onClose={() => setToast(null)}
+                    />
+                </div>
             )}
         </div>
     );

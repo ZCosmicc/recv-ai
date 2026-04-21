@@ -8,7 +8,7 @@ import Navbar from '@/components/Navbar';
 import ConfirmModal from '@/components/ConfirmModal';
 import LimitModal from '@/components/LimitModal';
 import PlanCard from '@/components/PlanCard';
-import { Plus, FileText, Trash2, Edit2, MoreVertical, Loader2, Check, X, Lock, AlertTriangle } from 'lucide-react';
+import { Plus, FileText, Trash2, Edit2, MoreVertical, Loader2, Check, X, Lock, AlertTriangle, Copy } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import SlideIn from '@/components/SlideIn';
 
@@ -51,6 +51,23 @@ export default function Dashboard() {
     const [deleteConfirmText, setDeleteConfirmText] = useState('');
     const [deletingAccount, setDeletingAccount] = useState(false);
     const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
+
+    // Dropdown Menu State
+    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+    // Duplicate State
+    const [duplicatingCv, setDuplicatingCv] = useState<CV | null>(null);
+    const [isDuplicating, setIsDuplicating] = useState(false);
+
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (!(e.target as Element).closest('.card-menu')) {
+                setOpenMenuId(null);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     useEffect(() => {
         const loadData = async () => {
@@ -146,6 +163,43 @@ export default function Dashboard() {
         e.stopPropagation();
         setDeletingId(id);
         setDeletingType(type);
+    };
+
+    const handleDuplicateClick = (cv: CV, e: React.MouseEvent) => {
+        e.stopPropagation();
+        setOpenMenuId(null);
+        
+        const CV_LIMITS: Record<string, number> = { pro: 4, starter: 2, free: 1, guest: 1 };
+        const limit = CV_LIMITS[profile?.tier ?? 'guest'] ?? 1;
+
+        if (cvs.length >= limit) {
+            setLimitModalMode('cv');
+            setIsLimitModalOpen(true);
+            return;
+        }
+
+        setDuplicatingCv(cv);
+    };
+
+    const confirmDuplicate = async () => {
+        if (!duplicatingCv) return;
+        setIsDuplicating(true);
+        const { data: { user } } = await supabase.auth.getUser();
+        const { data, error } = await supabase
+            .from('cvs')
+            .insert({
+                user_id: user?.id,
+                title: `Copy of ${duplicatingCv.title}`,
+                data: duplicatingCv.data,
+            })
+            .select()
+            .single();
+
+        if (data && !error) {
+            setCvs(prev => [data, ...prev]);
+        }
+        setIsDuplicating(false);
+        setDuplicatingCv(null);
     };
 
     const confirmDelete = async () => {
@@ -352,53 +406,81 @@ export default function Dashboard() {
                         ) : (
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {cvs.map((cv, index) => (
-                                    <SlideIn key={cv.id} delay={index * 0.1}>
+                                    <SlideIn key={cv.id} delay={index * 0.1} className="min-w-0">
                                         <motion.div
                                             onClick={() => handleEditCV(cv.id)}
                                             whileHover={{ y: -4 }}
                                             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                                            className="bg-white border-4 border-black p-6 shadow-neo cursor-pointer group relative h-full flex flex-col"
+                                            className="bg-white border-4 border-black p-6 shadow-neo cursor-pointer group relative h-full flex flex-col min-w-0 overflow-hidden"
                                         >
                                             <div className="flex justify-between items-start mb-4">
-                                            <div className="w-12 h-12 bg-primary/10 flex items-center justify-center border-2 border-black">
+                                            <div className="w-12 h-12 flex-shrink-0 bg-primary/10 flex items-center justify-center border-2 border-black">
                                                 <FileText className="w-6 h-6 text-primary" />
                                             </div>
-                                            <div className="flex gap-2">
+                                            <div className="relative card-menu flex-shrink-0">
                                                 <button
-                                                    onClick={(e) => startRenaming(e, cv, 'cv')}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setOpenMenuId(openMenuId === cv.id ? null : cv.id);
+                                                    }}
                                                     className="text-gray-400 hover:text-black p-2"
                                                 >
-                                                    <Edit2 className="w-4 h-4" />
+                                                    <MoreVertical className="w-5 h-5" />
                                                 </button>
-                                                <button
-                                                    onClick={(e) => handleDeleteClick(cv.id, 'cv', e)}
-                                                    className="text-gray-400 hover:text-red-500 p-2"
-                                                >
-                                                    <Trash2 className="w-5 h-5" />
-                                                </button>
+                                                {openMenuId === cv.id && (
+                                                    <div className="absolute right-0 top-10 z-20 bg-white border-2 border-black shadow-neo w-40 flex flex-col py-1">
+                                                        <button
+                                                            onClick={(e) => {
+                                                                setOpenMenuId(null);
+                                                                startRenaming(e, cv, 'cv');
+                                                            }}
+                                                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm font-bold text-left transition-colors cursor-pointer"
+                                                        >
+                                                            <Edit2 className="w-4 h-4" />
+                                                            Rename
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => handleDuplicateClick(cv, e)}
+                                                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm font-bold text-left transition-colors cursor-pointer"
+                                                        >
+                                                            <Copy className="w-4 h-4" />
+                                                            Duplicate
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => {
+                                                                setOpenMenuId(null);
+                                                                handleDeleteClick(cv.id, 'cv', e);
+                                                            }}
+                                                            className="flex items-center gap-2 px-4 py-2 hover:bg-red-50 text-red-600 text-sm font-bold text-left transition-colors whitespace-nowrap cursor-pointer"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 
                                         {renamingId === cv.id ? (
-                                            <div className="flex items-center gap-2 mb-1" onClick={e => e.stopPropagation()}>
+                                            <div className="flex items-center gap-2 mb-1 min-w-0" onClick={e => e.stopPropagation()}>
                                                 <input
                                                     type="text"
                                                     value={newTitle}
                                                     onChange={(e) => setNewTitle(e.target.value)}
-                                                    className="border-2 border-black px-2 py-1 text-sm w-full font-bold"
+                                                    className="border-2 border-black px-2 py-1 text-sm w-full font-bold min-w-0"
                                                     autoFocus
                                                 />
-                                                <motion.button onClick={handleRename} whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-green-500 text-white p-1 border-2 border-black shadow-neo-sm">
+                                                <motion.button onClick={handleRename} whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-green-500 text-white p-1 border-2 border-black shadow-neo-sm flex-shrink-0">
                                                     <Check className="w-3 h-3" />
                                                 </motion.button>
-                                                <motion.button onClick={cancelRenaming} whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-red-500 text-white p-1 border-2 border-black shadow-neo-sm">
+                                                <motion.button onClick={cancelRenaming} whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-red-500 text-white p-1 border-2 border-black shadow-neo-sm flex-shrink-0">
                                                     <X className="w-3 h-3" />
                                                 </motion.button>
                                             </div>
                                         ) : (
-                                            <h3 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors truncate">{cv.title}</h3>
+                                            <h3 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors truncate min-w-0">{cv.title}</h3>
                                         )}
-                                        <p className="text-sm text-gray-500">{t.dashboard.lastUpdated} {formatDate(cv.updated_at)}</p>
+                                        <p className="text-sm text-gray-500 truncate min-w-0">{t.dashboard.lastUpdated} {formatDate(cv.updated_at)}</p>
                                     </motion.div>
                                     </SlideIn>
                                 ))}
@@ -445,55 +527,76 @@ export default function Dashboard() {
                         ) : (
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {coverLetters.map((cl, index) => (
-                                    <SlideIn key={cl.id} delay={index * 0.1}>
+                                    <SlideIn key={cl.id} delay={index * 0.1} className="min-w-0">
                                         <motion.div
                                             onClick={() => router.push(`/cover-letter/create?id=${cl.id}`)}
                                             whileHover={{ y: -4 }}
                                             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                                            className="bg-white border-4 border-black p-6 shadow-neo cursor-pointer group relative h-full flex flex-col"
+                                            className="bg-white border-4 border-black p-6 shadow-neo cursor-pointer group relative h-full flex flex-col min-w-0 overflow-hidden"
                                         >
                                             <div className="flex justify-between items-start mb-4">
-                                                <div className="w-12 h-12 bg-primary/10 flex items-center justify-center border-2 border-black">
+                                                <div className="w-12 h-12 flex-shrink-0 bg-primary/10 flex items-center justify-center border-2 border-black">
                                                     <FileText className="w-6 h-6 text-primary" />
                                                 </div>
-                                                <div className="flex gap-2">
+                                                <div className="relative card-menu flex-shrink-0">
                                                     <button
-                                                        onClick={(e) => startRenaming(e, cl, 'cover-letter')}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setOpenMenuId(openMenuId === cl.id ? null : cl.id);
+                                                        }}
                                                         className="text-gray-400 hover:text-black p-2"
                                                     >
-                                                        <Edit2 className="w-4 h-4" />
+                                                        <MoreVertical className="w-5 h-5" />
                                                     </button>
-                                                    <button
-                                                        onClick={(e) => handleDeleteClick(cl.id, 'cover-letter', e)}
-                                                        className="text-gray-400 hover:text-red-500 p-2"
-                                                    >
-                                                        <Trash2 className="w-5 h-5" />
-                                                    </button>
+                                                    {openMenuId === cl.id && (
+                                                        <div className="absolute right-0 top-10 z-20 bg-white border-2 border-black shadow-neo w-40 flex flex-col py-1">
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    setOpenMenuId(null);
+                                                                    startRenaming(e, cl, 'cover-letter');
+                                                                }}
+                                                                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm font-bold text-left transition-colors cursor-pointer"
+                                                            >
+                                                                <Edit2 className="w-4 h-4" />
+                                                                Rename
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    setOpenMenuId(null);
+                                                                    handleDeleteClick(cl.id, 'cover-letter', e);
+                                                                }}
+                                                                className="flex items-center gap-2 px-4 py-2 hover:bg-red-50 text-red-600 text-sm font-bold text-left transition-colors whitespace-nowrap cursor-pointer"
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                                Delete
+                                                            </button>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
 
                                             {renamingId === cl.id ? (
-                                                <div className="flex items-center gap-2 mb-1" onClick={e => e.stopPropagation()}>
+                                                <div className="flex items-center gap-2 mb-1 min-w-0" onClick={e => e.stopPropagation()}>
                                                     <input
                                                         type="text"
                                                         value={newTitle}
                                                         onChange={(e) => setNewTitle(e.target.value)}
-                                                        className="border-2 border-black px-2 py-1 text-sm w-full font-bold"
+                                                        className="border-2 border-black px-2 py-1 text-sm w-full font-bold min-w-0"
                                                         autoFocus
                                                     />
-                                                    <motion.button onClick={handleRename} whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-green-500 text-white p-1 border-2 border-black shadow-neo-sm">
+                                                    <motion.button onClick={handleRename} whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-green-500 text-white p-1 border-2 border-black shadow-neo-sm flex-shrink-0">
                                                         <Check className="w-3 h-3" />
                                                     </motion.button>
-                                                    <motion.button onClick={cancelRenaming} whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-red-500 text-white p-1 border-2 border-black shadow-neo-sm">
+                                                    <motion.button onClick={cancelRenaming} whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }} whileTap={{ scale: 0.95 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} className="bg-red-500 text-white p-1 border-2 border-black shadow-neo-sm flex-shrink-0">
                                                         <X className="w-3 h-3" />
                                                     </motion.button>
                                                 </div>
                                             ) : (
-                                                <h3 className="text-xl font-bold mb-1 group-hover:text-blue-600 transition-colors truncate">{cl.title || cl.job_title || 'Untitled Position'}</h3>
+                                                <h3 className="text-xl font-bold mb-1 group-hover:text-blue-600 transition-colors truncate min-w-0">{cl.title || cl.job_title || 'Untitled Position'}</h3>
                                             )}
-                                            <p className="text-sm font-semibold text-gray-700 mb-2 truncate">{cl.company_name}</p>
+                                            <p className="text-sm font-semibold text-gray-700 mb-2 truncate min-w-0">{cl.company_name}</p>
                                             <div className="flex items-center gap-2 mb-2">
-                                                <span className="text-xs font-bold px-2 py-0.5 border border-black rounded bg-primary/10 text-blue-700 border-blue-200">{cl.tone}</span>
+                                                <span className="text-xs font-bold px-2 py-0.5 border border-black rounded bg-primary/10 text-blue-700 border-blue-200 truncate max-w-full">{cl.tone}</span>
                                             </div>
                                             <p className="text-sm text-gray-500 mt-auto">Created {formatDate(cl.created_at)}</p>
                                         </motion.div>
@@ -578,6 +681,16 @@ export default function Dashboard() {
                 message={deletingType === 'cv' ? t.dashboard.confirmDelete.message : t.coverLetter.deleteMessage}
                 confirmText={t.dashboard.confirmDelete.button}
                 isDestructive={true}
+            />
+
+            <ConfirmModal
+                isOpen={!!duplicatingCv}
+                onClose={() => setDuplicatingCv(null)}
+                onConfirm={confirmDuplicate}
+                title="Duplicate CV"
+                message={`Create a copy of "${duplicatingCv?.title}"? The duplicate will be named "Copy of ${duplicatingCv?.title}".`}
+                confirmText={isDuplicating ? 'Duplicating...' : 'Duplicate'}
+                isDestructive={false}
             />
 
             <LimitModal

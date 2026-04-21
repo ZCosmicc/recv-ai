@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [1.5.1] - 2026-04-21
 
+### ✨ Dashboard UX & CV Duplication
+- **CV Data Duplication**: Users can now seamlessly duplicate an existing CV directly from their dashboard. Clicking duplicate creates a full independent copy in the database and prepends it to the dashboard UI instantly. This respects all existing user tier limits (displaying the LimitModal when capped).
+- **Card Overflow Menus**: Replaced the individual inline 'Edit' and 'Delete' icon buttons across all CV and Cover Letter cards with a clean `MoreVertical` (⋯) dropdown menu. This fixes cramped layouts on smaller mobile devices and positions the UI for future actions.
+    - CV cards show: `Rename`, `Duplicate`, and `Delete`.
+    - Cover Letter cards show: `Rename` and `Delete`.
+
 ### 🛡️ Security Audit — Phase 1, 2 & 3
 - **Unified Credit Engine**: Consolidated AI credit limits across all routes (`analyze`, `refine`, `cover-letter`) into a shared `CREDIT_LIMITS` map. This fixed a critical bug where **Starter** users were incorrectly capped at 1 credit/day instead of 10.
 - **Atomic AI Logic**: Replaced check-then-increment logic with atomic conditional updates in Supabase to prevent race conditions (double-submit credit bypass).
@@ -19,6 +25,14 @@ All notable changes to this project will be documented in this file.
 ### 🛠️ Maintenance & Documentation
 - **Audit Verification**: Verified end-to-end payment parity for the Starter tier.
 - **Privacy Policy**: Moved sensitive audit plans and feature roadmaps to local-only tracking via `.gitignore`.
+
+### 🐛 Bug Fixes & UI Polish
+- **Dashboard Card Overflow (Mobile)**: Cover letter cards and CV cards were getting clipped/cut off on mobile screens. Root cause was missing `min-w-0` on `SlideIn` wrappers and card containers — without it, `truncate` can't clip text and grid children expand past their bounds. Fixed by adding `min-w-0 overflow-hidden` to all card wrappers and `flex-shrink-0` to icon/action button containers across both tabs.
+- **Cover Letter Toast Positioning**: The "Saving draft..." / "Draft saved!" toast in the Cover Letter Wizard was appearing at the bottom of the page content instead of the top-right corner. The `<Toast>` component has no built-in positioning — it must be wrapped in a `fixed` container. Added the same `fixed top-20 right-3 md:right-6 z-[100]` wrapper used by the main CV builder.
+- **Cover Letter Content Wiped by Auto-Save**: Opening a previously generated cover letter from the dashboard was landing on the Job Details step instead of the Preview step, making it impossible to view the saved letter. Root cause: the auto-save draft (`/api/cover-letter/save`) was writing `content: ''` on every field change, silently erasing the generated content in the database. Fixed with two layers of protection:
+    1. **Server-side guard** (`save/route.ts`): The `content` column is now only updated if a non-empty value is explicitly sent — prevents any draft save from blanking out a previously generated letter.
+    2. **Client-side** (`CoverLetterWizard.tsx`): The auto-save payload now includes `generatedLetter.content` so the generated letter is always preserved.
+    - Also added a **"View Generated Letter →"** button on the Job Details step when a letter already exists, giving users a direct path to their content. The Generate button now correctly labels itself **"Regenerate Letter"** in this state.
 
 ## [1.5.0] - 2026-04-20
 

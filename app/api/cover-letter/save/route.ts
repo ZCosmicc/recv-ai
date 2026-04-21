@@ -92,7 +92,9 @@ export async function POST(req: Request) {
             job_title: jobTitle || '',
             company_name: companyName || '',
             job_description: jobDescription || '',
-            content: content || '',
+            // Only include content if explicitly provided — prevents draft saves from blanking
+            // out a previously generated cover letter when the user edits form fields.
+            ...(content !== undefined && content !== '' ? { content } : {}),
             tone: tone || 'Professional',
             // key_skills: keySkills // If DB supports it, uncomment this!
         };

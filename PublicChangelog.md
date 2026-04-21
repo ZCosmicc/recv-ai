@@ -3,11 +3,20 @@
 All user-facing updates and improvements to Recv. AI.
 
 ## [1.5.1] - 2026-04-21
+### ✨ Enhance Your Workflow with CV Duplication!
+- **One-Click CV Duplication**: A highly requested feature has finally landed! You can now duplicate any of your existing CVs right from your dashboard. It's the perfect way to quickly tailor a "Marketing" version and a "Design" version of your resume without having to start entirely from scratch.
+- **Cleaner Dashboard Cards**: We've tidied up the interface on your CV and Cover Letter cards! The floating action icons have been consolidated into a clean, modern `⋯` menu. It's much less cluttered, perfectly organized, and makes editing on mobile devices feel extra spacious. 
+
 ### 🛡️ Enhanced Platform Security & Reliability
 - **Self-Service Safety**: We've added a server-side confirmation requirement for account deletions, ensuring your data is never removed accidentally.
 - **Accurate Credit Limits**: Fixed a bug where **Starter** subscribers were seeing incorrect credit limits. Your 10 daily AI credits are now correctly applied across all AI features!
 - **Under-the-Hood Hardening**: Completed a comprehensive security audit! We've implemented advanced binary file verification, payment anti-replay protection, and atomic request handling to keep your experience secure and snappy.
 - **Browser-Level Protection**: Your session is now shielded by industry-standard security headers, protecting you from common web-based threats like clickjacking.
+
+### 🐛 Bug Fixes & Polish
+- **Dashboard Cards No Longer Cut Off on Mobile**: The cover letter and CV cards in your dashboard were getting clipped on the right side on smaller screens, hiding the document title. Both card types are now fully contained and long titles gracefully truncate with an ellipsis (…) instead of overflowing.
+- **Cover Letter Notifications Now Appear in the Right Place**: The "Saving draft…" and "Draft saved!" pop-up messages in the Cover Letter editor were appearing below the page content. They now correctly show up in the top-right corner, just like every other notification in the app.
+- **Previously Generated Cover Letters Are Now Viewable Again**: This was a sneaky but important one — if you'd already generated a cover letter and later opened it from your dashboard, you'd land on the Job Details form instead of seeing your letter. Even worse, clicking "Generate Letter" again would silently overwrite your original. The root cause was an auto-save bug that was erasing the letter content in the background every time you changed a field. This is now fully fixed. Your generated letter is safely preserved, and we've also added a **"View Generated Letter →"** button so you can jump straight to your saved letter at any time without needing to re-generate it.
 
 ## [1.5.0] - 2026-04-20
 ### ✨ Explore Our New Template Gallery!
