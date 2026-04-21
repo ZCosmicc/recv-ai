@@ -411,7 +411,7 @@ export default function Dashboard() {
                                             onClick={() => handleEditCV(cv.id)}
                                             whileHover={{ y: -4 }}
                                             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                                            className="bg-white border-4 border-black p-6 shadow-neo cursor-pointer group relative h-full flex flex-col min-w-0 overflow-hidden"
+                                            className="bg-white border-4 border-black p-6 shadow-neo cursor-pointer group relative h-full flex flex-col min-w-0"
                                         >
                                             <div className="flex justify-between items-start mb-4">
                                             <div className="w-12 h-12 flex-shrink-0 bg-primary/10 flex items-center justify-center border-2 border-black">
@@ -532,7 +532,7 @@ export default function Dashboard() {
                                             onClick={() => router.push(`/cover-letter/create?id=${cl.id}`)}
                                             whileHover={{ y: -4 }}
                                             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                                            className="bg-white border-4 border-black p-6 shadow-neo cursor-pointer group relative h-full flex flex-col min-w-0 overflow-hidden"
+                                            className="bg-white border-4 border-black p-6 shadow-neo cursor-pointer group relative h-full flex flex-col min-w-0"
                                         >
                                             <div className="flex justify-between items-start mb-4">
                                                 <div className="w-12 h-12 flex-shrink-0 bg-primary/10 flex items-center justify-center border-2 border-black">
