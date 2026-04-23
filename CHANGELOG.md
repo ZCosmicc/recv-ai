@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.2] - 2026-04-23
+
+### ✨ Features
+- **Education "Currently Enrolling"**: Added a "Currently enrolling" checkbox to the Education section in the Fill page. When checked, the Graduation Date field is disabled and all CV templates display "Present" in its place.
+
+### 🐛 Bug Fixes
+- **Sections Drag Handle (Mobile)**: The drag handle in the Sections reorder list was too small for reliable touch targets on mobile. We increased the tap target size and optionally allowed dragging by the section text, **without** making the entire card draggable to prevent scroll conflicts. Also replaced the `≡` text glyph with a proper `GripVertical` icon for visual consistency.
+- **Section Order Resets on Navigation**: Reordering sections and immediately navigating to the Fill page (within the 2s auto-save debounce window) caused the reorder to not be persisted to the cloud, reverting on back/refresh. Clicking "Next: Fill Section" now triggers an immediate save before navigating.
+- **AI Review Language (English CV)**: Users with English CVs containing Indonesian proper nouns (Jakarta, Universitas Indonesia, etc.) were getting AI suggestions in Bahasa Indonesia. Strengthened the language detection directive to base detection on descriptive body text only, not proper nouns.
+- **Cover Letter AI Credits Display**: Pro users saw "50 credits" and Starter users saw "1 credit" in the CoverLetterWizard due to a stale client-side limit calculation. Unified to match the correct limits: Pro = 30, Starter = 10, Free = 1.
+- **Spurious Auto-Save on Page Navigation**: The auto-save debounce was firing a cloud save every time the user navigated between the Sections, Fill, Review, or Cover Letter pages — even if no data had changed. Root cause: `lastSavedData` was initialized to the empty default state before async cloud data loaded, so the first post-load debounce tick always detected a delta. Fixed in both `app/page.tsx` and `CoverLetterWizard.tsx` by initializing the ref to `null` and seeding it with raw loaded values synchronously inside `loadData()`/`fetchCoverLetter()`, replacing the unreliable `isFirstRender` guard.
+
 ## [1.5.1] - 2026-04-21
 
 ### ✨ Dashboard UX & CV Duplication

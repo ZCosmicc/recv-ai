@@ -2,6 +2,18 @@
 
 All user-facing updates and improvements to Recv. AI.
 
+## [1.5.2] - 2026-04-23
+
+### ✨ New in This Update
+- **"Currently Enrolling" for Education 🎓**: Still in school? We heard you! We've added a new **"Currently enrolling"** checkbox to the Education section in the CV builder. Tick it and the graduation date field disappears — and every single one of our CV templates will automatically show **"Present"** in its place. No more awkward blank dates or manual workarounds.
+
+### 🐛 Fixes & Improvements
+- **Easier Reordering on Mobile**: Rearranging your CV sections on a phone was a bit of a struggle — the drag handle was tiny and easy to miss. We've made the grip area significantly larger and added a clear grip icon, so reorganising your sections is now much smoother without accidentally scrolling the page at the same time.
+- **Section Order No Longer Resets**: This one was sneaky. If you reordered your sections and then quickly tapped "Next: Fill Section", your new order could vanish and snap back to the default the next time you opened your CV. That reset is now gone — your section order is saved the moment you move on.
+- **AI Review Responds in the Right Language**: If your CV is written in English but contains Indonesian place names (like "Jakarta" or "Universitas Indonesia"), the AI reviewer was sometimes replying entirely in Bahasa Indonesia. We've taught it to look at the actual content of your descriptions — not just proper nouns — to figure out what language your CV is in. English CV? English feedback. Simple as that.
+- **Correct AI Credit Count in Cover Letter Editor**: Pro users were seeing "50 credits" and Free users were seeing "1 credit" in the Cover Letter editor — both wrong. The displayed credit count now correctly reflects your plan: **Pro = 30**, **Starter = 10**, **Free = 1**.
+- **No More "Saving..." When You Haven't Changed Anything**: Every time you navigated between the Sections, Fill, Review, or Cover Letter pages, you'd see a "Saving changes…" notification pop up — even if you hadn't touched a single thing. That was a false alarm caused by an internal timing issue. Auto-save now only triggers when you've actually made a change to your CV. Your feed stays quiet while you're just browsing.
+
 ## [1.5.1] - 2026-04-21
 ### ✨ Enhance Your Workflow with CV Duplication!
 - **One-Click CV Duplication**: A highly requested feature has finally landed! You can now duplicate any of your existing CVs right from your dashboard. It's the perfect way to quickly tailor a "Marketing" version and a "Design" version of your resume without having to start entirely from scratch.

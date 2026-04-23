@@ -83,6 +83,10 @@ function BuilderContent() {
   // Track save-related toast so we can replace (not stack) them
   const saveToastIdRef = React.useRef<string | null>(null);
 
+  // Autosave baseline: null until data has been loaded from cloud/localStorage.
+  // Seeded inside loadData() with raw values so first debounce tick after load sees no delta.
+  const lastSavedData = React.useRef<string | null>(null);
+
   // Initial Load Logic
   useEffect(() => {
     const loadData = async (sessionUser?: any) => {
@@ -166,44 +170,40 @@ function BuilderContent() {
           
           setCvData(loadedData as CVData);
 
+          // Compute the final sections to use (for both setState and ref seeding)
+          const defaultSectionsList = [
+            { id: 'personal', name: 'Personal Info', required: true, enabled: true },
+            { id: 'summary', name: 'Summary', required: true, enabled: true },
+            { id: 'experience', name: 'Experience', required: true, enabled: true },
+            { id: 'education', name: 'Education', required: true, enabled: true },
+            { id: 'skills', name: 'Skills', required: true, enabled: true },
+            { id: 'projects', name: 'Projects', required: false, enabled: false },
+            { id: 'certification', name: 'Certification', required: false, enabled: false },
+            { id: 'language', name: 'Language', required: false, enabled: false }
+          ];
+
           // Merge loaded sections with default sections to add any new sections
           if (loadedData.sections) {
-            const defaultSections = [
-              { id: 'personal', name: 'Personal Info', required: true, enabled: true },
-              { id: 'summary', name: 'Summary', required: true, enabled: true },
-              { id: 'experience', name: 'Experience', required: true, enabled: true },
-              { id: 'education', name: 'Education', required: true, enabled: true },
-              { id: 'skills', name: 'Skills', required: true, enabled: true },
-              { id: 'projects', name: 'Projects', required: false, enabled: false },
-              { id: 'certification', name: 'Certification', required: false, enabled: false },
-              { id: 'language', name: 'Language', required: false, enabled: false }
-            ];
-
             const loadedSections = loadedData.sections;
-            const mergedSections = defaultSections.map(defaultSection => {
-              // Check if this section exists in loaded sections
+            const mergedSections = defaultSectionsList.map((defaultSection: Section) => {
               const existingSection = loadedSections.find((s: Section) => s.id === defaultSection.id);
-              // If it exists, use the loaded version; otherwise, use the default
               return existingSection || defaultSection;
             });
-
             setSections(mergedSections);
           } else {
-            // If no sections saved, use defaults
-            setSections([
-              { id: 'personal', name: 'Personal Info', required: true, enabled: true },
-              { id: 'summary', name: 'Summary', required: true, enabled: true },
-              { id: 'experience', name: 'Experience', required: true, enabled: true },
-              { id: 'education', name: 'Education', required: true, enabled: true },
-              { id: 'skills', name: 'Skills', required: true, enabled: true },
-              { id: 'projects', name: 'Projects', required: false, enabled: false },
-              { id: 'certification', name: 'Certification', required: false, enabled: false },
-              { id: 'language', name: 'Language', required: false, enabled: false }
-            ]);
+            setSections(defaultSectionsList);
           }
 
-          if (loadedData.selectedTemplate) setSelectedTemplate(loadedData.selectedTemplate);
+          const finalSections = loadedData.sections
+            ? defaultSectionsList.map((d: Section) => loadedData.sections.find((s: Section) => s.id === d.id) || d)
+            : defaultSectionsList;
+
+          const loadedTemplate = loadedData.selectedTemplate || null;
+          if (loadedTemplate) setSelectedTemplate(loadedTemplate);
           setStep('fill');
+          // Seed autosave baseline with the exact values we just loaded
+          // so the first debounce tick never sees a spurious "change"
+          lastSavedData.current = JSON.stringify({ cvData: loadedData as CVData, sections: finalSections, selectedTemplate: loadedTemplate });
         } else {
           console.error("CV not found", error);
         }
@@ -254,6 +254,9 @@ function BuilderContent() {
             parsedCvData.projects = ensureItemId(parsedCvData.projects);
             
             setCvData(parsedCvData);
+            // Seed autosave baseline with the localStorage values so the debounce
+            // never fires spuriously after loading (guest / no cvId users)
+            lastSavedData.current = JSON.stringify({ cvData: parsedCvData, sections: mergedSections, selectedTemplate: parsed.selectedTemplate });
             // setAiCredits(parsed.aiCredits); 
           }
         } catch (error) {
@@ -333,14 +336,11 @@ function BuilderContent() {
   // We exclude aiCredits from this check as it changes independently of content
   const dataString = JSON.stringify({ cvData, sections, selectedTemplate });
   const debouncedDataString = useDebounce(dataString, 2000);
-  const lastSavedData = React.useRef(dataString); // Track last saved to prevent duplicates
-  const isFirstRender = React.useRef(true);
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
+    // lastSavedData is null until loadData() seeds it — skip until then to
+    // prevent spurious saves triggered by the initial cloud data load.
+    if (!lastSavedData.current) return;
 
     // Only auto-save if:
     // 1. We have a cvId (Cloud mode)

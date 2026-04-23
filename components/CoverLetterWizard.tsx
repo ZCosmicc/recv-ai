@@ -91,7 +91,8 @@ export default function CoverLetterWizard() {
                 const lastReset = new Date(profile.last_credit_reset || 0);
                 const hoursSinceReset = Math.abs(now.getTime() - lastReset.getTime()) / 36e5;
 
-                const limit = profile.tier === 'pro' ? 50 : 1;
+                const CREDIT_LIMITS: Record<string, number> = { pro: 30, starter: 10, free: 1 };
+                const limit = CREDIT_LIMITS[profile.tier as string] ?? 1;
                 let currentUsage = profile.daily_credits_used || 0;
 
                 // If > 24h passed, treat as reset (0 usage)
@@ -122,13 +123,19 @@ export default function CoverLetterWizard() {
                         title: data.title || '' // Added title
                     });
 
-                    // Pre-fill fields
-                    setTitle(data.title || '');
-                    setJobTitle(data.job_title || '');
-                    setCompanyName(data.company_name || '');
-                    setJobDescription(data.job_description || '');
-                    setTone(data.tone || 'Professional');
-                    if (data.cv_id) setSelectedCvId(data.cv_id);
+                    // Pre-fill fields using local vars so we can seed lastSavedDraft
+                    const fetchedTitle = data.title || '';
+                    const fetchedJobTitle = data.job_title || '';
+                    const fetchedCompanyName = data.company_name || '';
+                    const fetchedJobDescription = data.job_description || '';
+                    const fetchedTone = data.tone || 'Professional';
+                    const fetchedCvId = data.cv_id || null;
+                    setTitle(fetchedTitle);
+                    setJobTitle(fetchedJobTitle);
+                    setCompanyName(fetchedCompanyName);
+                    setJobDescription(fetchedJobDescription);
+                    setTone(fetchedTone);
+                    if (fetchedCvId) setSelectedCvId(fetchedCvId);
 
                     // If content exists, go to preview, else step 1 (job details)
                     if (data.content) {
@@ -136,6 +143,21 @@ export default function CoverLetterWizard() {
                     } else {
                         setStep(1);
                     }
+
+                    // Seed autosave baseline with the fetched values.
+                    // Without this, the first debounce tick would compare against
+                    // the empty initial state and fire a spurious save.
+                    lastSavedDraft.current = JSON.stringify({
+                        title: fetchedTitle,
+                        jobTitle: fetchedJobTitle,
+                        companyName: fetchedCompanyName,
+                        jobDescription: fetchedJobDescription,
+                        keySkills,
+                        tone: fetchedTone,
+                        language,
+                        cvId: fetchedCvId,
+                        content: data.content || undefined
+                    });
                 }
             };
             fetchCoverLetter();
@@ -159,17 +181,16 @@ export default function CoverLetterWizard() {
     };
 
     const debouncedDraft = useDebounce(JSON.stringify(draftData), 2000);
-    const lastSavedDraft = React.useRef(JSON.stringify(draftData));
-    const isFirstRender = React.useRef(true);
+    // null = unseeded; seeded inside fetchCoverLetter() so the first debounce
+    // tick after load never sees a spurious "change" against the empty defaults.
+    const lastSavedDraft = React.useRef<string | null>(null);
 
     // Track ID separately as it might change from null -> string
     const currentLetterId = generatedLetter?.id || null;
 
     useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            return;
-        }
+        // Skip until lastSavedDraft is seeded by fetchCoverLetter
+        if (!lastSavedDraft.current) return;
 
         // Must have at least a CV selected to save
         if (!selectedCvId) return;

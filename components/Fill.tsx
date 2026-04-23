@@ -668,16 +668,35 @@ export default function Fill({
                                                             className="w-full px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
                                                         />
                                                         <div className="flex flex-col mb-1 w-full">
-                                                            <label className="text-xs font-bold text-gray-700 mb-1">Graduation Date</label>
+                                                            <div className="flex justify-between items-center mb-1">
+                                                                <label className="text-xs font-bold text-gray-700">Graduation Date</label>
+                                                                <label className="flex items-center gap-2 text-xs font-bold text-gray-700 cursor-pointer">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={edu.current || false}
+                                                                        onChange={(e) => {
+                                                                            const newEdu = [...cvData.education];
+                                                                            newEdu[idx].current = e.target.checked;
+                                                                            if (e.target.checked) {
+                                                                                newEdu[idx].year = '';
+                                                                            }
+                                                                            setCvData({ ...cvData, education: newEdu });
+                                                                        }}
+                                                                        className="w-3 h-3 border-2 border-black rounded-sm cursor-pointer accent-black"
+                                                                    />
+                                                                    Currently enrolling
+                                                                </label>
+                                                            </div>
                                                             <input
                                                                 type="month"
+                                                                disabled={edu.current}
                                                                 value={edu.year}
                                                                 onChange={(e) => {
                                                                     const newEdu = [...cvData.education];
                                                                     newEdu[idx].year = e.target.value;
                                                                     setCvData({ ...cvData, education: newEdu });
                                                                 }}
-                                                                className="w-full px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm"
+                                                                className={`w-full px-3 py-2 border-2 border-black rounded-none text-sm focus:outline-none focus:shadow-neo-sm ${edu.current ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : ''}`}
                                                             />
                                                         </div>
                                                     </div>
@@ -694,7 +713,7 @@ export default function Fill({
                                         </AnimatePresence>
                                         </Reorder.Group>
                                         <button
-                                            onClick={() => setCvData({ ...cvData, education: [...cvData.education, { id: crypto.randomUUID(), degree: '', major: '', institution: '', year: '' }] })}
+                                            onClick={() => setCvData({ ...cvData, education: [...cvData.education, { id: crypto.randomUUID(), degree: '', major: '', institution: '', year: '', current: false }] })}
                                             className="w-full p-3 border-2 border-dashed border-black rounded-none hover:bg-primary hover:text-white transition-colors font-bold text-black"
                                         >
                                             <Plus className="w-4 h-4 inline mr-2" />

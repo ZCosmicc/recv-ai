@@ -106,7 +106,10 @@ export async function POST(req: Request) {
         2. Provide a summary strictly stating that the content is invalid, irrelevant, or inappropriate for a CV review.
         3. Provide NO 'fix' improvements (you may provide a single 'warning' explaining the rejection).
 
-        LANGUAGE DIRECTIVE: Analyze the provided CV data and detect its primary language (e.g., English, Bahasa Indonesia). You MUST provide ALL of your feedback, reasoning, and 'fix' suggestions entirely in the detected language of the CV. If the CV is in Bahasa Indonesia, your response must be in Bahasa Indonesia.
+        LANGUAGE DIRECTIVE:
+        1. FIRST, analyze the descriptive body text of the CV (Summary, Experience descriptions, Project descriptions) to detect its primary language (e.g., English, Bahasa Indonesia).
+        2. IMPORTANT: Proper nouns such as city names (Jakarta, Bandung), institution names (Universitas Indonesia), and company names (PT. ABC) do NOT determine the CV language. The descriptive body text determines the language.
+        3. If the majority of the descriptive body content is in English, you MUST provide ALL of your feedback, reasoning, and 'fix' suggestions ENTIRELY in English. Do NOT respond in Bahasa Indonesia simply because of Indonesian proper nouns.
 
         TONE: Write all feedback with empathy. Never say "This is wrong". Say "Consider clarifying..." or "You might want to...". Avoid suggesting the user's real-life history is incorrect. Frame improvements as opportunities.
 

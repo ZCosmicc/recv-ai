@@ -84,7 +84,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                 <div key={idx} className="mb-3">
                                     {edu.degree && <h3 className="font-bold text-gray-900">{edu.degree}{edu.major && ` in ${edu.major}`}</h3>}
                                     {edu.institution && <p className="text-gray-800 italic">{edu.institution}</p>}
-                                    {edu.year && <p className="text-gray-700 text-xs">{new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
+                                    {(edu.year || edu.current) && <p className="text-gray-700 text-xs">{edu.current ? 'Present' : new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
                                 </div>
                             ))}
                         </div>
@@ -205,7 +205,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                 <div key={idx} className="mb-3">
                                     {edu.degree && <h3 className="font-bold text-gray-900">{edu.degree}{edu.major && ` in ${edu.major}`}</h3>}
                                     {edu.institution && <p className="text-blue-600">{edu.institution}</p>}
-                                    {edu.year && <p className="text-gray-500 text-xs">{new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
+                                    {(edu.year || edu.current) && <p className="text-gray-500 text-xs">{edu.current ? 'Present' : new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
                                 </div>
                             ))}
                         </div>
@@ -377,7 +377,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                     <div key={idx} className="mb-3">
                                         {edu.degree && <h3 className="font-bold text-gray-900">{edu.degree}{edu.major && ` in ${edu.major}`}</h3>}
                                         {edu.institution && <p className="text-purple-600">{edu.institution}</p>}
-                                        {edu.year && <p className="text-gray-500 text-xs">{new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
+                                        {(edu.year || edu.current) && <p className="text-gray-500 text-xs">{edu.current ? 'Present' : new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
                                     </div>
                                 ))}
                             </div>
@@ -478,7 +478,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                                 {edu.degree && <h3 className="font-bold text-gray-900">{edu.degree}{edu.major && ` in ${edu.major}`}</h3>}
                                                 {edu.institution && <p className="text-gray-700">{edu.institution}</p>}
                                             </div>
-                                            {edu.year && <p className="text-gray-600 text-xs">{new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
+                                            {(edu.year || edu.current) && <p className="text-gray-600 text-xs">{edu.current ? 'Present' : new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
                                         </div>
                                     </div>
                                 ))}
@@ -649,7 +649,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                             {edu.major && <p className="text-gray-600 text-sm">{edu.major}</p>}
                                             <div className="flex justify-between mt-2 pt-2 border-t border-gray-100 text-xs text-gray-500 uppercase font-bold">
                                                 <span>{edu.institution}</span>
-                                                {edu.year && <span>{new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric' })}</span>}
+                                                {(edu.year || edu.current) && <span>{edu.current ? 'Present' : new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric' })}</span>}
                                             </div>
                                         </div>
                                     ))}
@@ -772,7 +772,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                                 {edu.degree && <h3 className="font-bold">{edu.degree}{edu.major && ` in ${edu.major}`}</h3>}
                                                 {edu.institution && <p className="text-gray-600">{edu.institution}</p>}
                                             </div>
-                                            {edu.year && <p className="text-gray-500 text-xs">{new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
+                                            {(edu.year || edu.current) && <p className="text-gray-500 text-xs">{edu.current ? 'Present' : new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
                                         </div>
                                     ))}
                                 </div>
@@ -912,7 +912,7 @@ export default function CVPreview({ cvData, sections, selectedTemplate }: CVPrev
                                                 {edu.degree && <h3 className="font-bold">{edu.degree}{edu.major && ` - ${edu.major}`}</h3>}
                                                 {edu.institution && <p className="text-gray-600">{edu.institution}</p>}
                                             </div>
-                                            {edu.year && <p className="text-gray-500 text-xs">{new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
+                                            {(edu.year || edu.current) && <p className="text-gray-500 text-xs">{edu.current ? 'Present' : new Date(edu.year).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>}
                                         </div>
                                     ))}
                                 </div>

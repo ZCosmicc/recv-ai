@@ -28,6 +28,7 @@ export interface Education {
     major: string;
     institution: string;
     year: string;
+    current?: boolean;
 }
 
 export interface Project {

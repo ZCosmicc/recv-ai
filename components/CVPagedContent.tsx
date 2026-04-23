@@ -293,7 +293,7 @@ function SectionEducation({ cvData, template, highlightedPath, suggestedPaths }:
                             {edu.degree && <h3 className={`font-bold text-xs ${getHL(`education[${i}].degree`, hp, sp)}`}>{edu.degree}{edu.major && <span className={getHL(`education[${i}].major`, hp, sp)}>{` in ${edu.major}`}</span>}</h3>}
                             {edu.institution && <p className={`text-gray-600 text-[10px] ${getHL(`education[${i}].institution`, hp, sp)}`}>{edu.institution}</p>}
                         </div>
-                        {edu.year && <p className={`text-gray-500 text-[10px] ${getHL(`education[${i}].year`, hp, sp)}`}>{fmt(edu.year)}</p>}
+                        {(edu.year || edu.current) && <p className={`text-gray-500 text-[10px] ${getHL(`education[${i}].year`, hp, sp)}`}>{edu.current ? 'Present' : fmt(edu.year)}</p>}
                     </div>
                 ))}
             </div>
@@ -309,7 +309,7 @@ function SectionEducation({ cvData, template, highlightedPath, suggestedPaths }:
                             {edu.degree && <h3 className={`font-bold text-xs ${getHL(`education[${i}].degree`, hp, sp)}`}>{edu.degree}{edu.major && <span className={getHL(`education[${i}].major`, hp, sp)}>{` - ${edu.major}`}</span>}</h3>}
                             {edu.institution && <p className={`text-gray-600 text-[10px] ${getHL(`education[${i}].institution`, hp, sp)}`}>{edu.institution}</p>}
                         </div>
-                        {edu.year && <p className={`text-gray-500 text-[10px] ${getHL(`education[${i}].year`, hp, sp)}`}>{fmt(edu.year)}</p>}
+                        {(edu.year || edu.current) && <p className={`text-gray-500 text-[10px] ${getHL(`education[${i}].year`, hp, sp)}`}>{edu.current ? 'Present' : fmt(edu.year)}</p>}
                     </div>
                 ))}
             </div>
@@ -322,7 +322,7 @@ function SectionEducation({ cvData, template, highlightedPath, suggestedPaths }:
                 <div key={i} className="mb-2">
                     {edu.degree && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`education[${i}].degree`, hp, sp)}`}>{edu.degree}{edu.major && <span className={getHL(`education[${i}].major`, hp, sp)}>{` in ${edu.major}`}</span>}</h3>}
                     {edu.institution && <p className={`text-gray-800 italic text-xs ${getHL(`education[${i}].institution`, hp, sp)}`}>{edu.institution}</p>}
-                    {edu.year && <p className={`text-gray-700 text-xs ${getHL(`education[${i}].year`, hp, sp)}`}>{fmt(edu.year)}</p>}
+                    {(edu.year || edu.current) && <p className={`text-gray-700 text-xs ${getHL(`education[${i}].year`, hp, sp)}`}>{edu.current ? 'Present' : fmt(edu.year)}</p>}
                 </div>
             ))}
         </div>
@@ -337,7 +337,7 @@ function SectionEducation({ cvData, template, highlightedPath, suggestedPaths }:
                             {edu.degree && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`education[${i}].degree`, hp, sp)}`}>{edu.degree}{edu.major && <span className={getHL(`education[${i}].major`, hp, sp)}>{` in ${edu.major}`}</span>}</h3>}
                             {edu.institution && <p className={`text-gray-700 text-xs ${getHL(`education[${i}].institution`, hp, sp)}`}>{edu.institution}</p>}
                         </div>
-                        {edu.year && <p className={`text-gray-600 text-xs ${getHL(`education[${i}].year`, hp, sp)}`}>{fmt(edu.year)}</p>}
+                        {(edu.year || edu.current) && <p className={`text-gray-600 text-xs ${getHL(`education[${i}].year`, hp, sp)}`}>{edu.current ? 'Present' : fmt(edu.year)}</p>}
                     </div>
                 ))}
             </div>
@@ -350,7 +350,7 @@ function SectionEducation({ cvData, template, highlightedPath, suggestedPaths }:
                 <div key={i} className="mb-2">
                     {edu.degree && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`education[${i}].degree`, hp, sp)}`}>{edu.degree}{edu.major && <span className={getHL(`education[${i}].major`, hp, sp)}>{` in ${edu.major}`}</span>}</h3>}
                     {edu.institution && <p className={`text-purple-600 text-xs ${getHL(`education[${i}].institution`, hp, sp)}`}>{edu.institution}</p>}
-                    {edu.year && <p className={`text-gray-500 text-xs ${getHL(`education[${i}].year`, hp, sp)}`}>{fmt(edu.year)}</p>}
+                    {(edu.year || edu.current) && <p className={`text-gray-500 text-xs ${getHL(`education[${i}].year`, hp, sp)}`}>{edu.current ? 'Present' : fmt(edu.year)}</p>}
                 </div>
             ))}
         </div>
@@ -367,7 +367,7 @@ function SectionEducation({ cvData, template, highlightedPath, suggestedPaths }:
                         {edu.major && <p className={`text-gray-600 text-xs ${getHL(`education[${i}].major`, hp, sp)}`}>{edu.major}</p>}
                         <div className="flex justify-between mt-1 pt-1 border-t border-gray-100 text-xs text-gray-500 uppercase font-bold">
                             <span className={getHL(`education[${i}].institution`, hp, sp)}>{edu.institution}</span>
-                            {edu.year && <span className={getHL(`education[${i}].year`, hp, sp)}>{new Date(edu.year).getFullYear()}</span>}
+                            {(edu.year || edu.current) && <span className={getHL(`education[${i}].year`, hp, sp)}>{edu.current ? 'Present' : new Date(edu.year).getFullYear()}</span>}
                         </div>
                     </div>
                 ))}
@@ -381,7 +381,7 @@ function SectionEducation({ cvData, template, highlightedPath, suggestedPaths }:
                 <div key={i} className="mb-2">
                     {edu.degree && <h3 className={`font-bold text-gray-900 text-xs ${getHL(`education[${i}].degree`, hp, sp)}`}>{edu.degree}{edu.major && <span className={getHL(`education[${i}].major`, hp, sp)}>{` in ${edu.major}`}</span>}</h3>}
                     {edu.institution && <p className={`text-blue-600 text-xs ${getHL(`education[${i}].institution`, hp, sp)}`}>{edu.institution}</p>}
-                    {edu.year && <p className={`text-gray-500 text-xs ${getHL(`education[${i}].year`, hp, sp)}`}>{fmt(edu.year)}</p>}
+                    {(edu.year || edu.current) && <p className={`text-gray-500 text-xs ${getHL(`education[${i}].year`, hp, sp)}`}>{edu.current ? 'Present' : fmt(edu.year)}</p>}
                 </div>
             ))}
         </div>

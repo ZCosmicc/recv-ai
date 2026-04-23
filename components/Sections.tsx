@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Trash2, X, Plus, Sparkles, Crown, Lock, Loader2, Check } from 'lucide-react';
+import { Trash2, X, Plus, Sparkles, Crown, Lock, Loader2, Check, GripVertical } from 'lucide-react';
 import LimitModal from './LimitModal';
 import { motion, Reorder, useDragControls } from 'framer-motion';
 import SlideIn from './SlideIn';
@@ -162,9 +162,11 @@ export default function Sections({
                                         <div
                                             onPointerDown={startDrag}
                                             style={{ touchAction: 'none', cursor: 'grab' }}
-                                            className="text-gray-400 hover:text-gray-600 select-none"
-                                        >≡</div>
-                                        <span className="flex-1 font-medium text-base md:text-lg text-black">{section.name}</span>
+                                            className="flex-1 flex items-center gap-2 md:gap-3 py-2 -my-2 text-gray-400 hover:text-gray-600 select-none"
+                                        >
+                                            <GripVertical className="w-5 h-5 flex-shrink-0" />
+                                            <span className="font-medium text-base md:text-lg text-black flex-1">{section.name}</span>
+                                        </div>
                                         {!section.required && (
                                             <button
                                                 onClick={() => {
@@ -229,7 +231,10 @@ export default function Sections({
                             </div>
 
                             <motion.button
-                                onClick={() => onNavigate('fill')}
+                                onClick={() => {
+                                    if (onSave) onSave();
+                                    onNavigate('fill');
+                                }}
                                 whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
                                 whileTap={{ scale: 0.98 }}
                                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
