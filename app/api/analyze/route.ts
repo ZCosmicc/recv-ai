@@ -110,6 +110,8 @@ export async function POST(req: Request) {
         1. FIRST, analyze the descriptive body text of the CV (Summary, Experience descriptions, Project descriptions) to detect its primary language (e.g., English, Bahasa Indonesia).
         2. IMPORTANT: Proper nouns such as city names (Jakarta, Bandung), institution names (Universitas Indonesia), and company names (PT. ABC) do NOT determine the CV language. The descriptive body text determines the language.
         3. If the majority of the descriptive body content is in English, you MUST provide ALL of your feedback, reasoning, and 'fix' suggestions ENTIRELY in English. Do NOT respond in Bahasa Indonesia simply because of Indonesian proper nouns.
+        4. If the majority of the descriptive body content is in Bahasa Indonesia, you MUST provide ALL of your feedback, reasoning, and 'fix' suggestions ENTIRELY in Bahasa Indonesia. Do NOT default to English when the content is clearly written in Bahasa Indonesia.
+        5. Match the detected language EXACTLY and consistently throughout your entire response. Never mix languages.
 
         TONE: Write all feedback with empathy. Never say "This is wrong". Say "Consider clarifying..." or "You might want to...". Avoid suggesting the user's real-life history is incorrect. Frame improvements as opportunities.
 
@@ -162,6 +164,10 @@ export async function POST(req: Request) {
         // 3. Call Groq
         const completion = await groq.chat.completions.create({
             messages: [
+                {
+                    role: 'system',
+                    content: 'You are an expert ATS resume coach who provides feedback strictly in the same language as the CV content. CRITICAL RULE: If the CV descriptive text (Summary, Experience, Projects) is written in Bahasa Indonesia, your ENTIRE response — all feedback, summaries, strengths, improvement suggestions, and fix text — MUST be in Bahasa Indonesia. If the CV is in English, respond in English. Never default to English for a Bahasa Indonesia CV. Ignore proper nouns (city names, university names, company names) when detecting language.',
+                },
                 {
                     role: 'user',
                     content: prompt,

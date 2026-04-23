@@ -182,20 +182,27 @@ function BuilderContent() {
             { id: 'language', name: 'Language', required: false, enabled: false }
           ];
 
-          // Merge loaded sections with default sections to add any new sections
+          // Merge loaded sections with default sections to add any new sections.
+          // IMPORTANT: Iterate over loadedSections first to PRESERVE the user's saved order.
+          // Then append any new default sections not yet present in saved data.
           if (loadedData.sections) {
             const loadedSections = loadedData.sections;
-            const mergedSections = defaultSectionsList.map((defaultSection: Section) => {
-              const existingSection = loadedSections.find((s: Section) => s.id === defaultSection.id);
-              return existingSection || defaultSection;
-            });
+            const mergedSections: Section[] = [
+              // Keep all saved sections in saved order (filter out any that no longer exist in defaults)
+              ...loadedSections.filter((s: Section) => defaultSectionsList.some((d: Section) => d.id === s.id)),
+              // Append any brand-new default sections not yet in the saved data
+              ...defaultSectionsList.filter((d: Section) => !loadedSections.some((s: Section) => s.id === d.id)),
+            ];
             setSections(mergedSections);
           } else {
             setSections(defaultSectionsList);
           }
 
-          const finalSections = loadedData.sections
-            ? defaultSectionsList.map((d: Section) => loadedData.sections.find((s: Section) => s.id === d.id) || d)
+          const finalSections: Section[] = loadedData.sections
+            ? [
+                ...loadedData.sections.filter((s: Section) => defaultSectionsList.some((d: Section) => d.id === s.id)),
+                ...defaultSectionsList.filter((d: Section) => !loadedData.sections.some((s: Section) => s.id === d.id)),
+              ]
             : defaultSectionsList;
 
           const loadedTemplate = loadedData.selectedTemplate || null;
@@ -229,10 +236,11 @@ function BuilderContent() {
             ];
 
             const loadedSections = parsed.sections;
-            const mergedSections = defaultSections.map(defaultSection => {
-              const existingSection = loadedSections.find(s => s.id === defaultSection.id);
-              return existingSection || defaultSection;
-            });
+            // Preserve saved order: iterate saved sections first, then append any new defaults
+            const mergedSections = [
+              ...loadedSections.filter(s => defaultSections.some(d => d.id === s.id)),
+              ...defaultSections.filter(d => !loadedSections.some(s => s.id === d.id)),
+            ];
 
             setSections(mergedSections);
             const ensureItemShape = (arr: any[], field: 'value' | 'label') =>

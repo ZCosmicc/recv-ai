@@ -21,7 +21,7 @@ interface SectionsProps {
     onNavigate: (step: string) => void;
     onClearData: () => void;
     isCloud?: boolean;
-    onSave?: () => void;
+    onSave?: () => Promise<void>;
     isSaving?: boolean;
     tier?: 'guest' | 'free' | 'starter' | 'pro';
     aiCredits?: number;
@@ -159,12 +159,15 @@ export default function Sections({
                                         transition={{ type: 'spring', stiffness: 300, damping: 24, delay: index * 0.05 }}
                                     >
                                     {({ startDrag }) => (<>
-                                        <div
-                                            onPointerDown={startDrag}
-                                            style={{ touchAction: 'none', cursor: 'grab' }}
-                                            className="flex-1 flex items-center gap-2 md:gap-3 py-2 -my-2 text-gray-400 hover:text-gray-600 select-none"
-                                        >
-                                            <GripVertical className="w-5 h-5 flex-shrink-0" />
+                                        <div className="flex-1 flex items-center gap-2 md:gap-3 select-none">
+                                            {/* Drag handle only — large touch target, section text is NOT draggable */}
+                                            <div
+                                                onPointerDown={startDrag}
+                                                style={{ touchAction: 'none', cursor: 'grab' }}
+                                                className="p-3 -m-3 text-gray-400 hover:text-gray-600 flex items-center flex-shrink-0"
+                                            >
+                                                <GripVertical className="w-7 h-7" />
+                                            </div>
                                             <span className="font-medium text-base md:text-lg text-black flex-1">{section.name}</span>
                                         </div>
                                         {!section.required && (
@@ -231,8 +234,8 @@ export default function Sections({
                             </div>
 
                             <motion.button
-                                onClick={() => {
-                                    if (onSave) onSave();
+                                onClick={async () => {
+                                    if (onSave) await onSave();
                                     onNavigate('fill');
                                 }}
                                 whileHover={{ x: 2, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,1)' }}
